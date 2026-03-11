@@ -605,6 +605,210 @@ Then it is human.
 
 ---
 
+# YELLOW SENTENCE ANALYSIS — ANTI-DETECTION RULES v3.0
+# Built from live AI detector output on Verbaly text
+
+## THE FLAGGED SENTENCES AND EXACTLY WHY EACH GOT CAUGHT
+
+---
+
+### YELLOW 1:
+"There are eighteen recognized penguin species, though some researchers still argue for seventeen, depending on how you count the royal and macaroni."
+
+WHY FLAGGED:
+- "There are [number] recognized [noun] species" — one of the most common AI opening structures. AI loves to open with a fact stated as a census.
+- "though some researchers still argue for" — AI hedging formula. The exact phrasing "some researchers still argue" is a pattern AI uses to appear balanced and academic.
+- The sentence is perfectly constructed with a main clause, a concession clause, and a dependent clause. No human writes a three-part perfectly balanced opener like this naturally.
+
+HUMAN VERSION:
+"Eighteen penguin species, officially — though some people count seventeen, depending on whether you split the royal and macaroni or lump them together."
+The dash after "officially" is a breath. "lump them together" is casual. The sentence sounds like someone thinking out loud.
+
+---
+
+### YELLOW 2:
+"Most people picture Antarctica when they picture penguins, but the truth is that only a handful of species actually live there."
+
+WHY FLAGGED:
+- "Most people picture X when they picture X" — repetition of "picture" in the same sentence is an AI rhetorical device. AI sets up the common assumption then knocks it down.
+- "but the truth is that" — one of the most reliable AI signals in existence. AI uses "the truth is" to introduce a correction to a common misconception. It is a formula.
+- The sentence structure is: [common belief] + "but the truth is" + [correction]. AI uses this exact structure constantly.
+
+HUMAN VERSION:
+"Antarctica is what most people imagine. But most penguins have never seen ice."
+Shorter. Punchier. "have never seen ice" is specific and surprising without announcing itself as a correction.
+
+---
+
+### YELLOW 3:
+"The emperor penguin and the Adélie penguin are the ones that breed on Antarctic ice."
+
+WHY FLAGGED:
+- "are the ones that" — AI connector phrase. Humans would write "breed on Antarctic ice" directly without "are the ones that."
+- The sentence is doing only one thing — identifying which penguins — with no personality, no surprise, no aside.
+- It reads like a fact being deposited. AI deposits facts. Humans deliver them with something attached.
+
+HUMAN VERSION:
+"The emperor and the Adélie are the actual Antarctic ones — the rest are basically imposters."
+"basically imposters" is an opinion, slightly wrong, completely human.
+
+---
+
+### YELLOW 4:
+"The rest — the African penguin, the Galápagos penguin, the little blue penguin of New Zealand — live in places that would genuinely surprise most people."
+
+WHY FLAGGED:
+- Three-item list inside em-dashes — AI loves this structure. Too clean, too complete.
+- "would genuinely surprise most people" — AI tells you how to feel about information before you feel it. "would surprise most people" announces the surprise instead of just surprising.
+- "genuinely" is an AI intensifier.
+
+HUMAN VERSION:
+"The African penguin. The Galápagos penguin. The little blue penguin of New Zealand. None of them have ever seen snow."
+Fragments. Three separate sentences. Let the list be surprising without announcing it will be surprising.
+
+---
+
+### YELLOW 5:
+"Some of them have never seen a snowflake."
+
+WHY FLAGGED — PROXIMITY CONTAMINATION:
+This sentence is actually very human in construction. Short. Specific. Surprising.
+It probably got flagged because it immediately follows four yellow sentences — AI detectors look at context, not just individual sentences. A human sentence surrounded by AI sentences gets contaminated by proximity.
+
+LESSON: You cannot have one human sentence inside a block of AI sentences and expect it to survive. The whole paragraph must be human. One good sentence doesn't save a flagged paragraph.
+
+---
+
+### YELLOW 6:
+"The emperor penguin is probably the one worth spending the most time on."
+
+WHY FLAGGED:
+- "is probably the one worth spending the most time on" — a meta-sentence. It tells you what the writer is about to do instead of just doing it.
+- AI announces its own structure constantly: "Let's focus on X." "It is worth examining Y." "The most important case is Z." These are organizational signals that humans don't need because humans just start talking about the thing.
+
+HUMAN VERSION:
+Just start talking about the emperor penguin. No announcement. "The emperor penguin breeds in winter. In Antarctica. On purpose."
+
+---
+
+### YELLOW 7:
+"The males incubate the eggs. They stand together in a huddle for roughly sixty-five days, in winds that can reach 200 kilometers per hour, not eating, losing nearly half their body weight."
+
+WHY FLAGGED:
+- The second sentence is the problem: it is a fact-delivery sentence that lists everything at once with perfect parallel structure: [time] + [conditions] + [consequence 1] + [consequence 2]. AI delivers all the facts in one organized sentence. Humans deliver facts one at a time, with reactions between them.
+- "not eating, losing nearly half their body weight" — these two participles at the end are too clean, too paired.
+
+HUMAN VERSION:
+"The males incubate the eggs. Standing in a huddle for sixty-five days. Winds hitting 200 kilometers per hour. Not eating. By the end they've lost close to half their body weight."
+Each fact gets its own line. Each one lands separately. The reader feels each one.
+
+---
+
+### YELLOW 8:
+"That 'somehow' is doing a lot of work in that sentence, honestly."
+
+WHY FLAGGED — PERFORMED HUMANITY:
+This sentence is trying very hard to be human. "doing a lot of work" is a casual idiom. "honestly" is a spoken-word filler. It references its own previous sentence.
+But it got flagged anyway. Why?
+
+Because it is TOO self-aware. It is commenting on its own writing in a way that feels performed rather than spontaneous. Real humans occasionally comment on their own sentences — but when they do, it feels like it surprised them. This sentence feels like it was placed there deliberately to seem human.
+
+The difference:
+PERFORMED HUMAN: "That 'somehow' is doing a lot of work in that sentence, honestly." (written to seem casual)
+ACTUAL HUMAN: "Somehow the timing works. I don't fully understand how." (the uncertainty is real, not performed)
+
+LESSON: Performed humility and performed casualness are detectable. The hedge must be genuine — meaning it must admit something the writer actually doesn't know, not something they're pretending not to know.
+
+---
+
+### YELLOW 9:
+"At the other end of the scale, the little blue penguin — also called the fairy penguin, which is a name that carries absolutely no dignity — stands about 33 centimeters tall and weighs just over a kilogram."
+
+WHY FLAGGED:
+- "At the other end of the scale" — transition phrase that signals contrast. AI uses scale/spectrum transitions constantly: "at the other end of the spectrum," "on the opposite side," "in contrast."
+- The sentence does too many things simultaneously: introduces the penguin, gives its nickname, comments on the nickname, gives its height, gives its weight. AI packs information efficiently. Humans deliver one thing at a time.
+
+HUMAN VERSION:
+"The little blue penguin — also called the fairy penguin, which is genuinely a real name — is about 33 centimeters tall."
+Stop there. Let that land. Then: "It weighs just over a kilogram." New sentence. New breath.
+
+---
+
+### YELLOW 10:
+"It nests in burrows."
+
+WHY FLAGGED — PROXIMITY CONTAMINATION:
+Short sentence, no problems on its own, but it's in a yellow paragraph and gets pulled down with it.
+
+---
+
+## THE MASTER PATTERN: THREE ROOT CAUSES OF AI DETECTION
+
+ROOT CAUSE 1 — INFORMATION PACKING:
+AI delivers multiple facts in one sentence with perfect parallel structure.
+Each fact needs its own sentence. Each sentence needs a breath after it.
+Never pack more than one surprising or important fact into a single sentence.
+
+ROOT CAUSE 2 — ANNOUNCING BEFORE DOING:
+"The truth is that..." / "The one worth spending the most time on..." / "At the other end of the scale..."
+AI tells you what it's about to do. Humans just do it.
+Remove every sentence that describes what the next sentence will contain.
+
+ROOT CAUSE 3 — PERFORMED HUMANITY:
+"That 'somehow' is doing a lot of work in that sentence, honestly."
+This is the most dangerous pattern — writing that is TRYING to seem human.
+Detectors recognize the performance. Real human asides are surprised by themselves.
+The test: does this aside admit something the writer genuinely doesn't know? If yes — human. If it's a comment on the writing itself — probably flagged.
+
+---
+
+## THE 5 NEW ANTI-DETECTION RULES
+
+RULE A — ONE FACT PER SENTENCE, ALWAYS:
+Never put two surprising or important facts in the same sentence.
+If a sentence has a comma + "and" + another fact — split it into two sentences.
+"They stand in a huddle for sixty-five days. Not eating. Losing half their body weight."
+Not: "They stand in a huddle for sixty-five days, not eating, losing half their body weight."
+
+RULE B — NEVER ANNOUNCE WHAT YOU'RE ABOUT TO DO:
+Delete every sentence that begins: "The truth is" / "What's interesting is" / "It's worth noting" / "The X worth spending time on" / "At the other end of" / "What makes this remarkable"
+Just say the thing. Never say you're about to say it.
+
+RULE C — THE COMMON-ASSUMPTION TRAP:
+Never write: "Most people think X, but the truth is Y."
+Never write: "X is what people usually assume, but actually Y."
+This structure is one of the most detected AI patterns in existence.
+Instead: just state Y. Trust the reader to know their own assumption was wrong.
+"Most penguins have never seen ice." — not "Most people picture Antarctica, but the truth is..."
+
+RULE D — TRANSITIONS THAT SIGNAL STRUCTURE ARE AI:
+"At the other end of the scale" / "On the other hand" / "In contrast" / "Similarly"
+These transitions are organizational — they announce the essay's structure.
+Human transitions are temporal or causal, not organizational:
+"Then there's the fairy penguin." / "The opposite case is weirder." / "Which brings up the fairy penguin."
+
+RULE E — PERFORMED CASUALNESS IS DETECTABLE:
+Any sentence whose purpose is to seem casual will be detected as AI trying to seem casual.
+The test for every informal aside: does it admit genuine uncertainty, or is it commenting on the writing?
+GENUINE: "Somehow the timing works. I'm not sure the science fully explains it."
+PERFORMED: "That 'somehow' is doing a lot of work in that sentence, honestly."
+Delete all performed casualness. Keep only genuine uncertainty.
+
+---
+
+## THE GOLDEN TEST FOR EVERY SENTENCE
+
+Before writing any sentence, ask:
+1. Am I packing more than one fact into this sentence? → Split it.
+2. Am I announcing what I'm about to say? → Delete the announcement, just say it.
+3. Am I using "the truth is" or "most people think"? → Delete, state the truth directly.
+4. Is this transition organizational (other end of scale, in contrast)? → Replace with temporal or causal.
+5. Is this casual sentence genuine uncertainty or performed casualness? → If performed, delete it.
+
+If a sentence passes all five — it will not be flagged.
+
+---
+
 # OUTPUT INSTRUCTIONS
 
 Return ONLY the rewritten text. No preamble. No explanation.
