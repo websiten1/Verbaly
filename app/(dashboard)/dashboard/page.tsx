@@ -46,17 +46,18 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div style={{ padding: '40px 48px', minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
       {/* Header */}
-      <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
-          <h1 style={{ color: '#0F172A', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px' }}>
+          <h1 className="text-xl md:text-3xl" style={{ color: '#0F172A', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px' }}>
             Welcome back
           </h1>
           <p style={{ color: '#64748B', fontSize: '14px' }}>{user.email}</p>
         </div>
         <Link
           href="/rewrite"
+          className="w-full sm:w-auto text-center"
           style={{
             backgroundColor: '#1E3A5F',
             color: '#FFFFFF',
@@ -65,14 +66,15 @@ export default async function DashboardPage() {
             textDecoration: 'none',
             fontSize: '14px',
             fontWeight: '700',
+            display: 'inline-block',
           }}
         >
           + New Rewrite
         </Link>
       </div>
 
-      {/* Stats cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+      {/* Stats cards — 2 columns on mobile, 4 on desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {stats.map((stat) => (
           <div
             key={stat.label}
@@ -148,53 +150,85 @@ export default async function DashboardPage() {
             </Link>
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}>
-                {['Date', 'Original Text', 'Match Score', 'Intensity'].map((col) => (
-                  <th key={col} style={{
-                    padding: '12px 24px',
-                    textAlign: 'left',
-                    color: '#64748B',
-                    fontSize: '12px',
-                    fontWeight: '500',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                  }}>{col}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            {/* Mobile cards view */}
+            <div className="block md:hidden divide-y divide-[#E2E8F0]">
               {recentRewrites.map((rewrite) => (
-                <tr key={rewrite.id} style={{ borderBottom: '1px solid rgba(226,232,240,0.7)', backgroundColor: '#FFFFFF' }}>
-                  <td style={{ padding: '16px 24px', color: '#64748B', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                <div key={rewrite.id} style={{ padding: '16px', backgroundColor: '#FFFFFF' }}>
+                  <div style={{ color: '#64748B', fontSize: '12px', marginBottom: '6px' }}>
                     {new Date(rewrite.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                  </td>
-                  <td style={{ padding: '16px 24px', color: '#0F172A', fontSize: '13px', maxWidth: '300px' }}>
-                    <span>
-                      {rewrite.original_text?.substring(0, 80)}
-                      {rewrite.original_text?.length > 80 ? '...' : ''}
-                    </span>
-                  </td>
-                  <td style={{ padding: '16px 24px' }}>
+                  </div>
+                  <p style={{ color: '#0F172A', fontSize: '13px', lineHeight: '1.5', marginBottom: '10px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
+                    {rewrite.original_text}
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{
                       backgroundColor: '#10B981',
                       color: '#FFFFFF',
-                      padding: '4px 10px',
+                      padding: '3px 8px',
                       borderRadius: '100px',
-                      fontSize: '13px',
+                      fontSize: '12px',
                       fontWeight: '600',
                     }}>
                       {rewrite.match_score}%
                     </span>
-                  </td>
-                  <td style={{ padding: '16px 24px', color: '#64748B', fontSize: '13px' }}>
-                    {rewrite.intensity}/10
-                  </td>
-                </tr>
+                    <span style={{ color: '#64748B', fontSize: '12px' }}>Intensity {rewrite.intensity}/10</span>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+
+            {/* Desktop table view */}
+            <div className="hidden md:block">
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}>
+                    {['Date', 'Original Text', 'Match Score', 'Intensity'].map((col) => (
+                      <th key={col} style={{
+                        padding: '12px 24px',
+                        textAlign: 'left',
+                        color: '#64748B',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}>{col}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentRewrites.map((rewrite) => (
+                    <tr key={rewrite.id} style={{ borderBottom: '1px solid rgba(226,232,240,0.7)', backgroundColor: '#FFFFFF' }}>
+                      <td style={{ padding: '16px 24px', color: '#64748B', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                        {new Date(rewrite.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </td>
+                      <td style={{ padding: '16px 24px', color: '#0F172A', fontSize: '13px', maxWidth: '300px' }}>
+                        <span>
+                          {rewrite.original_text?.substring(0, 80)}
+                          {rewrite.original_text?.length > 80 ? '...' : ''}
+                        </span>
+                      </td>
+                      <td style={{ padding: '16px 24px' }}>
+                        <span style={{
+                          backgroundColor: '#10B981',
+                          color: '#FFFFFF',
+                          padding: '4px 10px',
+                          borderRadius: '100px',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                        }}>
+                          {rewrite.match_score}%
+                        </span>
+                      </td>
+                      <td style={{ padding: '16px 24px', color: '#64748B', fontSize: '13px' }}>
+                        {rewrite.intensity}/10
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </div>

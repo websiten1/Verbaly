@@ -33,7 +33,7 @@ export default function Navbar() {
 
   return (
     <nav style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #E2E8F0' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <span style={{ fontSize: '24px', color: '#1E3A5F', letterSpacing: '-0.5px' }}>
@@ -41,7 +41,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          {/* Nav links — hidden on mobile, shown on md+ */}
+          <div className="hidden md:flex items-center gap-8">
             {!loading && (
               <>
                 {user ? (
@@ -92,6 +93,43 @@ export default function Navbar() {
                   </>
                 )}
               </>
+            )}
+          </div>
+
+          {/* Mobile: show only one CTA button */}
+          <div className="flex md:hidden">
+            {!loading && (
+              user ? (
+                <Link
+                  href="/dashboard"
+                  style={{
+                    backgroundColor: '#1E3A5F',
+                    color: '#FFFFFF',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    textDecoration: 'none',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                  }}
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/signup"
+                  style={{
+                    backgroundColor: '#1E3A5F',
+                    color: '#FFFFFF',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    textDecoration: 'none',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                  }}
+                >
+                  Get Started
+                </Link>
+              )
             )}
           </div>
         </div>

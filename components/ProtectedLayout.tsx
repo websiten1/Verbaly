@@ -10,17 +10,17 @@ interface ProtectedLayoutProps {
 }
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', color: '#3B82F6', delay: '0ms', icon: 'dashboard' },
-  { href: '/rewrite', label: 'Rewrite', color: '#10B981', delay: '75ms', icon: 'rewrite' },
-  { href: '/generate', label: 'Generate', color: '#8B5CF6', delay: '150ms', icon: 'generate' },
-  { href: '/profile', label: 'Style Profile', color: '#F59E0B', delay: '225ms', icon: 'profile' },
-  { href: '/history', label: 'History', color: '#EC4899', delay: '300ms', icon: 'history' },
+  { href: '/dashboard', label: 'Dashboard', shortLabel: 'Home', color: '#3B82F6', delay: '0ms', icon: 'dashboard' },
+  { href: '/rewrite', label: 'Rewrite', shortLabel: 'Rewrite', color: '#10B981', delay: '75ms', icon: 'rewrite' },
+  { href: '/generate', label: 'Generate', shortLabel: 'Generate', color: '#8B5CF6', delay: '150ms', icon: 'generate' },
+  { href: '/profile', label: 'Style Profile', shortLabel: 'Profile', color: '#F59E0B', delay: '225ms', icon: 'profile' },
+  { href: '/history', label: 'History', shortLabel: 'History', color: '#EC4899', delay: '300ms', icon: 'history' },
 ]
 
-function NavIcon({ icon, color }: { icon: string; color: string }) {
+function NavIcon({ icon, color, size = 18 }: { icon: string; color: string; size?: number }) {
   const svgProps = {
-    width: 18,
-    height: 18,
+    width: size,
+    height: size,
     viewBox: '0 0 24 24',
     fill: 'none' as const,
     stroke: 'currentColor',
@@ -97,19 +97,20 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
-      {/* Sidebar */}
-      <aside style={{
-        width: '240px',
-        backgroundColor: '#1E3A5F',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        zIndex: 10,
-      }}>
+    <div className="flex h-screen" style={{ backgroundColor: '#F8FAFC' }}>
+      {/* Sidebar — hidden on mobile, shown on md+ */}
+      <aside
+        className="hidden md:flex md:flex-col md:w-64 md:flex-shrink-0"
+        style={{
+          backgroundColor: '#1E3A5F',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          zIndex: 10,
+          width: '240px',
+        }}
+      >
         <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <span style={{ fontSize: '22px', color: '#FFFFFF' }}>
@@ -197,10 +198,37 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
         </div>
       </aside>
 
-      {/* Main content */}
-      <main style={{ marginLeft: '240px', flex: 1, minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
-        {children}
+      {/* Main content — offset by sidebar width on md+, pad bottom for mobile nav */}
+      <main className="flex-1 overflow-y-auto pb-16 md:pb-0" style={{ marginLeft: '0' }}>
+        <div className="md:ml-60">
+          {children}
+        </div>
       </main>
+
+      {/* Mobile bottom nav bar — visible only on mobile */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around bg-[#1E3A5F] border-t border-[#2D5A8E] px-2 py-2">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex flex-col items-center gap-1 min-w-[44px] min-h-[44px] justify-center px-1"
+              style={{
+                textDecoration: 'none',
+                color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.6)',
+                backgroundColor: isActive ? `${item.color}26` : 'transparent',
+                borderRadius: '8px',
+              }}
+            >
+              <NavIcon icon={item.icon} color={isActive ? item.color : 'rgba(255,255,255,0.6)'} size={20} />
+              <span style={{ fontSize: '10px', fontWeight: isActive ? 600 : 400, lineHeight: 1 }}>
+                {item.shortLabel}
+              </span>
+            </Link>
+          )
+        })}
+      </nav>
     </div>
   )
 }

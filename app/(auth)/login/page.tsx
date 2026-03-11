@@ -115,6 +115,7 @@ export default function LoginPage() {
             cursor: loading ? 'not-allowed' : 'pointer',
             marginTop: '8px',
             transition: 'opacity 0.15s',
+            width: '100%',
           }}
         >
           {loading ? 'Signing in...' : 'Sign In'}

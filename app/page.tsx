@@ -8,12 +8,7 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Hero */}
-      <section style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '100px 24px 80px',
-        textAlign: 'center',
-      }}>
+      <section className="px-4 md:px-8 py-16 md:py-24" style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
         <div style={{
           display: 'inline-block',
           backgroundColor: 'rgba(30,58,95,0.08)',
@@ -27,8 +22,7 @@ export default function LandingPage() {
           </span>
         </div>
 
-        <h1 style={{
-          fontSize: 'clamp(40px, 6vw, 72px)',
+        <h1 className="text-3xl md:text-5xl lg:text-6xl" style={{
           fontWeight: '700',
           color: '#0F172A',
           lineHeight: '1.1',
@@ -41,8 +35,7 @@ export default function LandingPage() {
           <span style={{ color: '#1E3A5F' }}>Every single time.</span>
         </h1>
 
-        <p style={{
-          fontSize: '18px',
+        <p className="text-base md:text-xl" style={{
           color: '#0F172A',
           lineHeight: '1.7',
           maxWidth: '560px',
@@ -51,9 +44,10 @@ export default function LandingPage() {
           Upload your writing samples. <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#10B981', fontSize: '110%' }}>ly</em> learns your unique voice, rhythm, and style — then transforms any AI-generated text to sound authentically like you.
         </p>
 
-        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
           <Link
             href="/signup"
+            className="w-full sm:w-auto text-center"
             style={{
               backgroundColor: '#1E3A5F',
               color: '#FFFFFF',
@@ -63,12 +57,14 @@ export default function LandingPage() {
               fontSize: '16px',
               fontWeight: '700',
               letterSpacing: '-0.3px',
+              display: 'block',
             }}
           >
             Start for free
           </Link>
           <Link
             href="/login"
+            className="w-full sm:w-auto text-center"
             style={{
               backgroundColor: '#FFFFFF',
               color: '#0F172A',
@@ -78,6 +74,7 @@ export default function LandingPage() {
               fontSize: '16px',
               fontWeight: '500',
               border: '1px solid #E2E8F0',
+              display: 'block',
             }}
           >
             Log in
@@ -89,8 +86,8 @@ export default function LandingPage() {
         </p>
       </section>
 
-      {/* Demo preview */}
-      <section style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 24px 80px' }}>
+      {/* Demo preview — hidden on mobile to save space */}
+      <section className="hidden md:block px-4 md:px-8" style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: '80px' }}>
         <div style={{
           backgroundColor: '#FFFFFF',
           border: '1px solid #E2E8F0',
@@ -137,7 +134,7 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 24px' }}>
+      <section className="px-4 md:px-8 py-12 md:py-20" style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '64px' }}>
           <h2 style={{ fontSize: '40px', fontWeight: '700', color: '#0F172A', letterSpacing: '-1px', marginBottom: '16px' }}>
             How it works
@@ -145,7 +142,7 @@ export default function LandingPage() {
           <p style={{ color: '#64748B', fontSize: '17px' }}>Three simple steps to writing that&apos;s unmistakably you.</p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
               step: '01',
@@ -216,7 +213,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 24px' }}>
+      <section className="px-4 md:px-8 py-12 md:py-20" style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '64px' }}>
           <h2 style={{ fontSize: '40px', fontWeight: '700', color: '#0F172A', letterSpacing: '-1px', marginBottom: '16px' }}>
             Simple pricing
@@ -224,7 +221,7 @@ export default function LandingPage() {
           <p style={{ color: '#64748B', fontSize: '17px' }}>Start free. Upgrade when you&apos;re ready.</p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', maxWidth: '900px', margin: '0 auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ maxWidth: '900px', margin: '0 auto' }}>
           {[
             {
               name: 'Free',

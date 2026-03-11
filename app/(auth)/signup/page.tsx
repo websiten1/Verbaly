@@ -35,7 +35,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`,
       },
     })
 
@@ -191,6 +191,7 @@ export default function SignupPage() {
             fontWeight: '700',
             cursor: loading ? 'not-allowed' : 'pointer',
             marginTop: '8px',
+            width: '100%',
           }}
         >
           {loading ? 'Creating account...' : 'Create Account'}

@@ -85,7 +85,7 @@ export default function RewritePage() {
   }
 
   return (
-    <div style={{ padding: '40px 48px', minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ color: '#0F172A', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px' }}>
           Rewrite
@@ -102,42 +102,41 @@ export default function RewritePage() {
         borderRadius: '12px',
         padding: '20px 24px',
         marginBottom: '24px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '24px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
       }}>
-        <div style={{ minWidth: '160px' }}>
-          <div style={{ color: '#64748B', fontSize: '13px', fontWeight: '500', marginBottom: '4px' }}>
-            Rewrite Intensity
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          <div style={{ minWidth: '160px' }}>
+            <div style={{ color: '#64748B', fontSize: '13px', fontWeight: '500', marginBottom: '4px' }}>
+              Rewrite Intensity
+            </div>
+            <div style={{ color: '#1E3A5F', fontSize: '15px', fontWeight: '600' }}>
+              {intensity} — {intensityLabels[intensity]}
+            </div>
           </div>
-          <div style={{ color: '#1E3A5F', fontSize: '15px', fontWeight: '600' }}>
-            {intensity} — {intensityLabels[intensity]}
-          </div>
-        </div>
-        <div style={{ flex: 1, position: 'relative' }}>
-          <input
-            type="range"
-            min={1}
-            max={10}
-            value={intensity}
-            onChange={(e) => setIntensity(Number(e.target.value))}
-            style={{
-              width: '100%',
-              accentColor: '#1E3A5F',
-              cursor: 'pointer',
-              height: '4px',
-            }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
-            <span style={{ color: '#64748B', fontSize: '11px', opacity: 0.7 }}>Subtle</span>
-            <span style={{ color: '#64748B', fontSize: '11px', opacity: 0.7 }}>Complete</span>
+          <div style={{ flex: 1, position: 'relative' }}>
+            <input
+              type="range"
+              min={1}
+              max={10}
+              value={intensity}
+              onChange={(e) => setIntensity(Number(e.target.value))}
+              style={{
+                width: '100%',
+                accentColor: '#1E3A5F',
+                cursor: 'pointer',
+                height: '4px',
+              }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
+              <span style={{ color: '#64748B', fontSize: '11px', opacity: 0.7 }}>Subtle</span>
+              <span style={{ color: '#64748B', fontSize: '11px', opacity: 0.7 }}>Complete</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Split panel */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+      {/* Split panel — stacked on mobile, side-by-side on md+ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Left - Input */}
         <div style={{
           backgroundColor: '#FFFFFF',
@@ -178,7 +177,9 @@ export default function RewritePage() {
               lineHeight: '1.7',
               resize: 'none',
               outline: 'none',
-              minHeight: '400px',
+              minHeight: '200px',
+              width: '100%',
+              boxSizing: 'border-box',
             }}
           />
         </div>
@@ -237,7 +238,7 @@ export default function RewritePage() {
           <div style={{
             flex: 1,
             padding: '20px',
-            minHeight: '400px',
+            minHeight: '200px',
             position: 'relative',
           }}>
             {loading ? (

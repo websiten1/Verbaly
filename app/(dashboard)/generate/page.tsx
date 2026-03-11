@@ -78,7 +78,7 @@ export default function GeneratePage() {
   ]
 
   return (
-    <div style={{ padding: '40px 48px', minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ color: '#0F172A', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -95,7 +95,8 @@ export default function GeneratePage() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+      {/* Stacked on mobile, side-by-side on md+ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left: inputs */}
         <div>
           <div style={{
@@ -131,6 +132,7 @@ export default function GeneratePage() {
                   resize: 'vertical',
                   outline: 'none',
                   boxSizing: 'border-box',
+                  minHeight: '120px',
                 }}
               />
             </div>
@@ -140,15 +142,15 @@ export default function GeneratePage() {
               <label style={{ display: 'block', color: '#0F172A', fontSize: '13px', marginBottom: '10px', fontWeight: '500' }}>
                 Length
               </label>
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {lengthButtons.map((btn) => {
                   const isActive = length === btn.value
                   return (
                     <button
                       key={btn.value}
                       onClick={() => setLength(btn.value)}
+                      className="flex-1 min-w-[80px]"
                       style={{
-                        flex: 1,
                         backgroundColor: isActive ? '#1E3A5F' : '#FFFFFF',
                         color: isActive ? '#FFFFFF' : '#0F172A',
                         border: isActive ? 'none' : '1px solid #E2E8F0',
@@ -193,7 +195,7 @@ export default function GeneratePage() {
                   max={100}
                   value={tone}
                   onChange={(e) => setTone(Number(e.target.value))}
-                  style={{ flex: 1, accentColor: '#1E3A5F' }}
+                  style={{ flex: 1, accentColor: '#1E3A5F', width: '100%' }}
                 />
                 <span style={{ color: '#64748B', fontSize: '12px', whiteSpace: 'nowrap' }}>Casual</span>
               </div>

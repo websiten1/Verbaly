@@ -10,7 +10,7 @@ export default function AuthLayout({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '24px',
+      padding: '32px 16px',
     }}>
       <div style={{
         width: '100%',
@@ -27,7 +27,7 @@ export default function AuthLayout({
           backgroundColor: '#FFFFFF',
           border: '1px solid #E2E8F0',
           borderRadius: '16px',
-          padding: '40px',
+          padding: '32px 28px',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         }}>
           {children}

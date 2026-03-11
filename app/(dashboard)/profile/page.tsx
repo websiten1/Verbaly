@@ -167,7 +167,7 @@ export default function ProfilePage() {
     : samples.length > 0 ? 10 : 0
 
   return (
-    <div style={{ padding: '40px 48px', minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ color: '#0F172A', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px' }}>
           Style Profile
@@ -186,7 +186,7 @@ export default function ProfilePage() {
         marginBottom: '24px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-5">
           <div>
             <h2 style={{ color: '#0F172A', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
               Choose a Preset Profile
@@ -208,6 +208,7 @@ export default function ProfilePage() {
                 fontSize: '13px',
                 cursor: presetSaving ? 'not-allowed' : 'pointer',
                 whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
             >
               Clear preset
@@ -229,7 +230,8 @@ export default function ProfilePage() {
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        {/* Preset cards grid — 1 col on mobile, 2 cols on sm+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {PRESET_PROFILES.map((preset) => {
             const isActive = activePreset === preset.name
             return (
@@ -277,6 +279,7 @@ export default function ProfilePage() {
                     fontWeight: '600',
                     cursor: presetSaving || isActive ? 'not-allowed' : 'pointer',
                     opacity: presetSaving ? 0.6 : 1,
+                    minHeight: '44px',
                   }}
                 >
                   {isActive ? 'Active' : 'Use This Profile'}
@@ -287,7 +290,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Profile strength */}
+      {/* Profile strength — full width */}
       <div style={{
         backgroundColor: '#FFFFFF',
         border: '1px solid #E2E8F0',
@@ -300,7 +303,7 @@ export default function ProfilePage() {
           <span style={{ color: '#0F172A', fontSize: '14px', fontWeight: '500' }}>Profile Strength</span>
           <span style={{ color: '#10B981', fontSize: '14px', fontWeight: '700' }}>{profileStrength}%</span>
         </div>
-        <div style={{ backgroundColor: '#E2E8F0', borderRadius: '100px', height: '8px', overflow: 'hidden' }}>
+        <div style={{ backgroundColor: '#E2E8F0', borderRadius: '100px', height: '8px', overflow: 'hidden', width: '100%' }}>
           <div style={{
             backgroundColor: '#10B981',
             height: '100%',
@@ -318,7 +321,8 @@ export default function ProfilePage() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+      {/* Upload + Style traits — stacked on mobile, side-by-side on md+ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left: Upload */}
         <div>
           <div style={{
@@ -352,6 +356,7 @@ export default function ProfilePage() {
                   fontSize: '14px',
                   outline: 'none',
                   boxSizing: 'border-box',
+                  minHeight: '44px',
                 }}
               />
             </div>
@@ -377,6 +382,7 @@ export default function ProfilePage() {
                   resize: 'vertical',
                   outline: 'none',
                   boxSizing: 'border-box',
+                  minHeight: '120px',
                 }}
               />
               {content && (
@@ -423,6 +429,7 @@ export default function ProfilePage() {
                 fontWeight: '700',
                 cursor: uploading ? 'not-allowed' : 'pointer',
                 width: '100%',
+                minHeight: '44px',
               }}
             >
               {uploading ? 'Uploading...' : 'Upload Sample'}
@@ -471,6 +478,8 @@ export default function ProfilePage() {
                       cursor: 'pointer',
                       fontSize: '18px',
                       padding: '4px 8px',
+                      minHeight: '44px',
+                      minWidth: '44px',
                     }}
                   >
                     ×
@@ -513,6 +522,7 @@ export default function ProfilePage() {
                   cursor: analyzing || samples.length === 0 ? 'not-allowed' : 'pointer',
                   fontSize: '13px',
                   fontWeight: '600',
+                  minHeight: '44px',
                 }}
               >
                 {analyzing ? 'Analyzing...' : 'Analyze Style'}
@@ -539,6 +549,7 @@ export default function ProfilePage() {
                       backgroundColor: '#F8FAFC',
                       borderRadius: '10px',
                       border: '1px solid #E2E8F0',
+                      width: '100%',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
