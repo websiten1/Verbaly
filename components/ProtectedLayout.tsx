@@ -15,6 +15,7 @@ const navItems = [
   { href: '/generate', label: 'Generate', shortLabel: 'Generate', color: '#8B5CF6', delay: '150ms', icon: 'generate' },
   { href: '/profile', label: 'Style Profile', shortLabel: 'Profile', color: '#F59E0B', delay: '225ms', icon: 'profile' },
   { href: '/history', label: 'History', shortLabel: 'History', color: '#EC4899', delay: '300ms', icon: 'history' },
+  { href: '/pricing', label: 'Pricing', shortLabel: 'Plans', color: '#14B8A6', delay: '375ms', icon: 'pricing' },
 ]
 
 function NavIcon({ icon, color, size = 18 }: { icon: string; color: string; size?: number }) {
@@ -74,6 +75,14 @@ function NavIcon({ icon, color, size = 18 }: { icon: string; color: string; size
       <svg {...svgProps}>
         <circle cx="12" cy="12" r="10"/>
         <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    )
+  }
+  if (icon === 'pricing') {
+    return (
+      <svg {...svgProps}>
+        <line x1="12" y1="1" x2="12" y2="23"/>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
       </svg>
     )
   }
