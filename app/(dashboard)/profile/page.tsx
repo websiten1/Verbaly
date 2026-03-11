@@ -41,6 +41,12 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState<string | null>(null)
   const [activePreset, setActivePreset] = useState<string | null>(null)
   const [presetSaving, setPresetSaving] = useState(false)
+  const [vocabItems, setVocabItems] = useState<string[]>([])
+  const [phraseItems, setPhraseItems] = useState<string[]>([])
+  const [punctItems, setPunctItems] = useState<string[]>([])
+  const [structItems, setStructItems] = useState<string[]>([])
+  const [voiceItems, setVoiceItems] = useState<string[]>([])
+  const [neverItems, setNeverItems] = useState<string[]>([])
   const router = useRouter()
   const supabase = createClient()
 
@@ -51,8 +57,22 @@ export default function ProfilePage() {
       supabase.from('profiles').select('preset_type').eq('user_id', uid).maybeSingle(),
     ])
     setSamples(samplesResult.data ?? [])
-    setTraits(traitsResult.data ?? [])
+    const traitsData = traitsResult.data ?? []
+    setTraits(traitsData)
     setActivePreset(profileResult.data?.preset_type ?? null)
+
+    const vocab = traitsData.find((t: StyleTrait) => t.trait_name === 'vocabulary')
+    if (vocab) { try { setVocabItems(JSON.parse(vocab.trait_value)) } catch { setVocabItems([]) } }
+    const phrases = traitsData.find((t: StyleTrait) => t.trait_name === 'phrases')
+    if (phrases) { try { setPhraseItems(JSON.parse(phrases.trait_value)) } catch { setPhraseItems([]) } }
+    const punct = traitsData.find((t: StyleTrait) => t.trait_name === 'punctuation')
+    if (punct) { try { setPunctItems(JSON.parse(punct.trait_value)) } catch { setPunctItems([]) } }
+    const struct = traitsData.find((t: StyleTrait) => t.trait_name === 'structure')
+    if (struct) { try { setStructItems(JSON.parse(struct.trait_value)) } catch { setStructItems([]) } }
+    const voice = traitsData.find((t: StyleTrait) => t.trait_name === 'voice')
+    if (voice) { try { setVoiceItems(JSON.parse(voice.trait_value)) } catch { setVoiceItems([]) } }
+    const never = traitsData.find((t: StyleTrait) => t.trait_name === 'never_does')
+    if (never) { try { setNeverItems(JSON.parse(never.trait_value)) } catch { setNeverItems([]) } }
   }, [supabase])
 
   useEffect(() => {
@@ -99,8 +119,9 @@ export default function ProfilePage() {
 
     const wordCount = content.trim().split(/\s+/).filter(Boolean).length
 
-    // NOTE: Run this SQL in Supabase to permanently fix the content column type:
+    // SUPABASE SQL — run these in your Supabase SQL editor if not already done:
     // ALTER TABLE writing_samples ALTER COLUMN content TYPE TEXT;
+    // ALTER TABLE style_traits ALTER COLUMN trait_value TYPE TEXT;
     const safeName = filename?.slice(0, 200) || 'Untitled'
     const safeContent = content?.slice(0, 50000) || ''
     const { error: insertError } = await supabase.from('writing_samples').insert({
@@ -150,7 +171,22 @@ export default function ProfilePage() {
         return
       }
 
-      setTraits(data.traits)
+      const returnedTraits: StyleTrait[] = data.traits ?? []
+      setTraits(returnedTraits)
+
+      const vocab = returnedTraits.find((t) => t.trait_name === 'vocabulary')
+      if (vocab) { try { setVocabItems(JSON.parse(vocab.trait_value)) } catch { setVocabItems([]) } }
+      const phrases = returnedTraits.find((t) => t.trait_name === 'phrases')
+      if (phrases) { try { setPhraseItems(JSON.parse(phrases.trait_value)) } catch { setPhraseItems([]) } }
+      const punct = returnedTraits.find((t) => t.trait_name === 'punctuation')
+      if (punct) { try { setPunctItems(JSON.parse(punct.trait_value)) } catch { setPunctItems([]) } }
+      const struct = returnedTraits.find((t) => t.trait_name === 'structure')
+      if (struct) { try { setStructItems(JSON.parse(struct.trait_value)) } catch { setStructItems([]) } }
+      const voice = returnedTraits.find((t) => t.trait_name === 'voice')
+      if (voice) { try { setVoiceItems(JSON.parse(voice.trait_value)) } catch { setVoiceItems([]) } }
+      const never = returnedTraits.find((t) => t.trait_name === 'never_does')
+      if (never) { try { setNeverItems(JSON.parse(never.trait_value)) } catch { setNeverItems([]) } }
+
       setSuccess('Style analysis complete!')
       setTimeout(() => setSuccess(null), 3000)
     } catch {
@@ -166,9 +202,8 @@ export default function ProfilePage() {
     await loadData(userId)
   }
 
-  const profileStrength = traits.length > 0
-    ? Math.min(100, Math.round((traits.length / 6) * 100))
-    : samples.length > 0 ? 10 : 0
+  const hasStyleData = vocabItems.length > 0 || phraseItems.length > 0 || punctItems.length > 0 || structItems.length > 0 || voiceItems.length > 0 || neverItems.length > 0
+  const profileStrength = hasStyleData ? 75 : samples.length > 0 ? 10 : 0
 
   return (
     <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
@@ -533,50 +568,152 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            {traits.length === 0 ? (
+            {!hasStyleData ? (
               <div style={{ padding: '48px 24px', textAlign: 'center' }}>
                 <div style={{ fontSize: '32px', color: '#E2E8F0', marginBottom: '16px' }}>◈</div>
                 <p style={{ color: '#64748B', fontSize: '14px' }}>
-                  {samples.length === 0
-                    ? 'Upload writing samples, then click "Analyze Style"'
-                    : 'Click "Analyze Style" to discover your writing traits'}
+                  Upload writing samples and click Analyze Style to see your writing fingerprint.
                 </p>
               </div>
             ) : (
               <div style={{ padding: '16px' }}>
-                {traits.map((trait) => (
-                  <div
-                    key={trait.id}
-                    style={{
-                      padding: '14px 16px',
-                      marginBottom: '8px',
-                      backgroundColor: '#F8FAFC',
-                      borderRadius: '10px',
-                      border: '1px solid #E2E8F0',
-                      width: '100%',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <div>
-                        <div style={{ color: '#0F172A', fontSize: '13px', fontWeight: '600', textTransform: 'capitalize' }}>
-                          {trait.trait_name.replace(/_/g, ' ')}
-                        </div>
-                        <div style={{ color: '#64748B', fontSize: '12px', marginTop: '2px' }}>
-                          {trait.trait_value}
-                        </div>
+                {/* Row 1: Vocabulary + Phrases */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ marginBottom: '16px' }}>
+                  {/* Vocabulary Fingerprint */}
+                  {vocabItems.length > 0 && (
+                    <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                        Vocabulary Fingerprint
                       </div>
-                      <span style={{ color: '#1E3A5F', fontSize: '15px', fontWeight: '700' }}>{trait.score}</span>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {vocabItems.map((item, i) => (
+                          <span key={i} style={{
+                            backgroundColor: '#FFFFFF',
+                            border: '1px solid #1E3A5F',
+                            borderRadius: '100px',
+                            padding: '4px 12px',
+                            fontSize: '13px',
+                            color: '#1E3A5F',
+                            fontWeight: '500',
+                          }}>{item}</span>
+                        ))}
+                      </div>
                     </div>
-                    <div style={{ backgroundColor: '#E2E8F0', borderRadius: '100px', height: '4px' }}>
-                      <div style={{
-                        backgroundColor: '#10B981',
-                        height: '100%',
-                        width: `${trait.score}%`,
-                        borderRadius: '100px',
-                      }}></div>
+                  )}
+                  {/* Favorite Phrases */}
+                  {phraseItems.length > 0 && (
+                    <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                        Favorite Phrases
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {phraseItems.map((item, i) => (
+                          <span key={i} style={{
+                            backgroundColor: '#FFFFFF',
+                            border: '1px solid #1E3A5F',
+                            borderRadius: '100px',
+                            padding: '4px 12px',
+                            fontSize: '13px',
+                            color: '#1E3A5F',
+                            fontWeight: '500',
+                          }}>{item}</span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )}
+                </div>
+
+                {/* Row 2: Punctuation + Structure */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ marginBottom: '16px' }}>
+                  {/* Punctuation Patterns */}
+                  {punctItems.length > 0 && (
+                    <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                        Punctuation Patterns
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {punctItems.map((item, i) => (
+                          <span key={i} style={{
+                            backgroundColor: '#F8FAFC',
+                            border: '1px solid #E2E8F0',
+                            borderRadius: '8px',
+                            padding: '6px 12px',
+                            fontSize: '13px',
+                            color: '#0F172A',
+                            lineHeight: '1.5',
+                          }}>{item}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {/* Sentence Structure */}
+                  {structItems.length > 0 && (
+                    <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                        Sentence Structure
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {structItems.map((item, i) => (
+                          <span key={i} style={{
+                            backgroundColor: '#F8FAFC',
+                            border: '1px solid #E2E8F0',
+                            borderRadius: '8px',
+                            padding: '6px 12px',
+                            fontSize: '13px',
+                            color: '#0F172A',
+                            lineHeight: '1.5',
+                          }}>{item}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Row 3: Voice + Never Does */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Voice Markers */}
+                  {voiceItems.length > 0 && (
+                    <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                        Voice Markers
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {voiceItems.map((item, i) => (
+                          <span key={i} style={{
+                            backgroundColor: '#F8FAFC',
+                            border: '1px solid #E2E8F0',
+                            borderRadius: '8px',
+                            padding: '6px 12px',
+                            fontSize: '13px',
+                            color: '#0F172A',
+                            lineHeight: '1.5',
+                          }}>{item}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {/* Things They Never Do */}
+                  {neverItems.length > 0 && (
+                    <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                        Things They Never Do
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {neverItems.map((item, i) => (
+                          <span key={i} style={{
+                            backgroundColor: '#FEF3C7',
+                            border: 'none',
+                            borderRadius: '100px',
+                            padding: '4px 12px',
+                            fontSize: '13px',
+                            color: '#D97706',
+                            fontWeight: '500',
+                          }}>{item}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

@@ -6,60 +6,13 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
 })
 
-interface PosSummary {
-  noun_count: number
-  verb_count: number
-  adjective_count: number
-  adverb_count: number
-  pronoun_count: number
-  adj_to_noun_ratio: number
-  adv_to_verb_ratio: number
-  most_common_noun: string
-  most_common_verb: string
-  most_common_adjective: string
-}
-
-interface DistinctiveVocabulary {
-  characteristic_words: string[]
-  favorite_transitions: string[]
-  unusual_expressions: string[]
-  non_ai_phrases: string[]
-}
-
-interface PunctuationPatterns {
-  omission_patterns: string[]
-  addition_patterns: string[]
-  overall_style: 'sparse' | 'standard' | 'heavy'
-  specific_deviations: string[]
-}
-
-interface SentenceStructure {
-  avg_length: number
-  short_sentence_pct: number
-  long_sentence_pct: number
-  uses_fragments: boolean
-  fragment_frequency: 'never' | 'rare' | 'occasional' | 'frequent'
-  run_on_tendency: boolean
-  parenthetical_frequency: 'never' | 'rare' | 'occasional' | 'frequent'
-  common_openers: string[]
-}
-
-interface VoiceMarkers {
-  first_person_pct: number
-  second_person_pct: number
-  third_person_pct: number
-  active_voice_pct: number
-  formality_score: number
-  hedging_frequency: 'low' | 'medium' | 'high'
-  expressiveness_score: number
-}
-
-interface DeepAnalysis {
-  pos_summary: PosSummary
-  distinctive_vocabulary: DistinctiveVocabulary
-  punctuation_patterns: PunctuationPatterns
-  sentence_structure: SentenceStructure
-  voice_markers: VoiceMarkers
+interface StyleAnalysis {
+  vocabulary: string[]
+  phrases: string[]
+  punctuation: string[]
+  structure: string[]
+  voice: string[]
+  never_does: string[]
 }
 
 export async function POST(request: NextRequest) {
@@ -81,45 +34,15 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'user',
-          content: `Analyze these writing samples and return a JSON object with exactly this structure:
+          content: `Analyze these writing samples and return a JSON object with EXACTLY these 6 keys. Each key must contain an array of specific strings extracted from or derived directly from the text.
+
 {
-  "pos_summary": {
-    "noun_count": number, "verb_count": number, "adjective_count": number,
-    "adverb_count": number, "pronoun_count": number,
-    "adj_to_noun_ratio": number, "adv_to_verb_ratio": number,
-    "most_common_noun": string, "most_common_verb": string, "most_common_adjective": string
-  },
-  "distinctive_vocabulary": {
-    "characteristic_words": string[],
-    "favorite_transitions": string[],
-    "unusual_expressions": string[],
-    "non_ai_phrases": string[]
-  },
-  "punctuation_patterns": {
-    "omission_patterns": string[],
-    "addition_patterns": string[],
-    "overall_style": "sparse" | "standard" | "heavy",
-    "specific_deviations": string[]
-  },
-  "sentence_structure": {
-    "avg_length": number,
-    "short_sentence_pct": number,
-    "long_sentence_pct": number,
-    "uses_fragments": boolean,
-    "fragment_frequency": "never" | "rare" | "occasional" | "frequent",
-    "run_on_tendency": boolean,
-    "parenthetical_frequency": "never" | "rare" | "occasional" | "frequent",
-    "common_openers": string[]
-  },
-  "voice_markers": {
-    "first_person_pct": number,
-    "second_person_pct": number,
-    "third_person_pct": number,
-    "active_voice_pct": number,
-    "formality_score": number,
-    "hedging_frequency": "low" | "medium" | "high",
-    "expressiveness_score": number
-  }
+  "vocabulary": [list of exactly 10 most distinctive/unusual words this person uses — not common words, words specific to their voice],
+  "phrases": [list of up to 10 recurring phrases, expressions, or sentence starters this person uses],
+  "punctuation": [list of 3-5 specific observations about how they use commas, dashes, ellipses, semicolons — each observation should include a quoted example from the text],
+  "structure": [list of 3-5 observations about sentence length and construction — include average length estimate, whether they use fragments, whether sentences are short/punchy or long/flowing — each with a quoted example],
+  "voice": [list of 3-5 observations about formality, hedging, first-person use, rhetorical questions, confidence level — each with a specific example from the text],
+  "never_does": [list of 5 patterns completely absent from their writing that would be out of character — things like "never uses numbered lists", "never writes in passive voice", "never starts sentences with 'Furthermore'"]
 }
 
 Writing samples:
@@ -131,7 +54,7 @@ ${combinedSamples}`,
     const responseText =
       message.content[0].type === 'text' ? message.content[0].text : ''
 
-    let analysis: DeepAnalysis
+    let analysis: StyleAnalysis
     try {
       // Strip optional markdown fences before parsing
       const cleaned = responseText.replace(/^```[a-z]*\n?/i, '').replace(/```$/, '').trim()
@@ -140,141 +63,94 @@ ${combinedSamples}`,
       return NextResponse.json({ error: 'Failed to parse style analysis' }, { status: 500 })
     }
 
-    const { pos_summary, distinctive_vocabulary, punctuation_patterns, sentence_structure, voice_markers } = analysis
-
-    // ── Derived scores (per spec) ─────────────────────────────────────────────
-    const posSummaryScore = Math.min(
-      Math.round((pos_summary.adj_to_noun_ratio + pos_summary.adv_to_verb_ratio) * 50),
-      100
-    )
-    const distinctiveScore = Math.min(distinctive_vocabulary.characteristic_words.length * 6, 100)
-    const punctScore =
-      punctuation_patterns.overall_style === 'sparse'
-        ? 30
-        : punctuation_patterns.overall_style === 'standard'
-        ? 60
-        : 85
-    const sentenceStructureScore = Math.min(
-      Math.round(
-        Math.abs(50 - sentence_structure.short_sentence_pct) +
-          Math.abs(50 - sentence_structure.long_sentence_pct)
-      ),
-      100
-    )
-    const voiceMarkersScore = voice_markers.expressiveness_score
-
-    // ── Display trait values (per spec) ──────────────────────────────────────
-    const vocabularyRichnessValue =
-      voice_markers.formality_score > 70
-        ? 'Rich, sophisticated vocabulary'
-        : voice_markers.formality_score > 40
-        ? 'Balanced everyday vocabulary'
-        : 'Casual, conversational vocabulary'
-
-    const sentenceVarietyValue =
-      sentence_structure.avg_length < 10
-        ? 'Short, punchy sentences'
-        : sentence_structure.avg_length > 20
-        ? 'Long, complex sentences'
-        : 'Mixed sentence lengths'
-
-    const toneValue =
-      voice_markers.formality_score > 70
-        ? 'Formal & academic'
-        : voice_markers.formality_score > 40
-        ? 'Semi-formal & balanced'
-        : 'Casual & conversational'
-
-    const voiceValue =
-      voice_markers.first_person_pct > 50
-        ? 'Strong first-person voice'
-        : voice_markers.third_person_pct > 50
-        ? 'Third-person perspective'
-        : 'Mixed perspective'
-
     // ── Build rows to upsert ─────────────────────────────────────────────────
     const now = new Date().toISOString()
 
-    const deepTraits = [
+    const categoryTraits = [
       {
         user_id: userId,
-        trait_name: 'pos_summary',
-        trait_value: JSON.stringify(pos_summary),
-        score: posSummaryScore,
+        trait_name: 'vocabulary',
+        trait_value: JSON.stringify(analysis.vocabulary),
+        score: Math.min(analysis.vocabulary.length * 10, 100),
         updated_at: now,
       },
       {
         user_id: userId,
-        trait_name: 'distinctive_vocabulary',
-        trait_value: JSON.stringify(distinctive_vocabulary),
-        score: distinctiveScore,
+        trait_name: 'phrases',
+        trait_value: JSON.stringify(analysis.phrases),
+        score: Math.min(analysis.phrases.length * 10, 100),
         updated_at: now,
       },
       {
         user_id: userId,
-        trait_name: 'punctuation_patterns',
-        trait_value: JSON.stringify(punctuation_patterns),
-        score: punctScore,
+        trait_name: 'punctuation',
+        trait_value: JSON.stringify(analysis.punctuation),
+        score: 75,
         updated_at: now,
       },
       {
         user_id: userId,
-        trait_name: 'sentence_structure',
-        trait_value: JSON.stringify(sentence_structure),
-        score: sentenceStructureScore,
-        updated_at: now,
-      },
-      {
-        user_id: userId,
-        trait_name: 'voice_markers',
-        trait_value: JSON.stringify(voice_markers),
-        score: voiceMarkersScore,
-        updated_at: now,
-      },
-    ]
-
-    const displayTraits = [
-      {
-        user_id: userId,
-        trait_name: 'vocabulary_richness',
-        trait_value: vocabularyRichnessValue,
-        score: posSummaryScore,
-        updated_at: now,
-      },
-      {
-        user_id: userId,
-        trait_name: 'sentence_variety',
-        trait_value: sentenceVarietyValue,
-        score: Math.min(
-          Math.round(sentence_structure.short_sentence_pct + sentence_structure.long_sentence_pct),
-          100
-        ),
-        updated_at: now,
-      },
-      {
-        user_id: userId,
-        trait_name: 'tone',
-        trait_value: toneValue,
-        score: voice_markers.formality_score,
+        trait_name: 'structure',
+        trait_value: JSON.stringify(analysis.structure),
+        score: 75,
         updated_at: now,
       },
       {
         user_id: userId,
         trait_name: 'voice',
-        trait_value: voiceValue,
-        score: voice_markers.active_voice_pct,
+        trait_value: JSON.stringify(analysis.voice),
+        score: 75,
+        updated_at: now,
+      },
+      {
+        user_id: userId,
+        trait_name: 'never_does',
+        trait_value: JSON.stringify(analysis.never_does),
+        score: 80,
+        updated_at: now,
+      },
+    ]
+
+    // ── Display traits for backward compatibility ─────────────────────────────
+    const displayTraits = [
+      {
+        user_id: userId,
+        trait_name: 'vocabulary_richness',
+        trait_value: analysis.vocabulary.slice(0, 3).join(', '),
+        score: 80,
+        updated_at: now,
+      },
+      {
+        user_id: userId,
+        trait_name: 'sentence_variety',
+        trait_value: analysis.structure[0] || 'Mixed sentence lengths',
+        score: 75,
+        updated_at: now,
+      },
+      {
+        user_id: userId,
+        trait_name: 'tone',
+        trait_value: analysis.voice[0] || 'Balanced',
+        score: 70,
+        updated_at: now,
+      },
+      {
+        user_id: userId,
+        trait_name: 'voice_markers_display',
+        trait_value: analysis.voice.find(v => v.toLowerCase().includes('person')) || analysis.voice[0] || 'Mixed',
+        score: 75,
         updated_at: now,
       },
       {
         user_id: userId,
         trait_name: 'punctuation_style',
-        trait_value: punctuation_patterns.overall_style,
-        score: punctScore,
+        trait_value: analysis.punctuation[0] || 'Standard',
+        score: 70,
         updated_at: now,
       },
     ]
 
-    const allTraits = [...deepTraits, ...displayTraits]
+    const allTraits = [...categoryTraits, ...displayTraits]
 
     // ── Persist to Supabase (upsert on user_id + trait_name) ─────────────────
     const supabase = await createClient()
@@ -288,14 +164,9 @@ ${combinedSamples}`,
       return NextResponse.json({ error: upsertError.message }, { status: 500 })
     }
 
-    // ── Profile strength = average of display trait scores ───────────────────
-    const profileStrength = Math.round(
-      displayTraits.reduce((sum, t) => sum + t.score, 0) / displayTraits.length
-    )
-
     return NextResponse.json({
       traits: upsertedTraits,
-      profileStrength,
+      profileStrength: 75,
     })
   } catch (error) {
     console.error('Analyze style error:', error)
