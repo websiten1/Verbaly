@@ -99,10 +99,11 @@ export default function ProfilePage() {
 
     const wordCount = content.trim().split(/\s+/).filter(Boolean).length
 
+    const safeName = filename?.slice(0, 200) || 'Untitled'
     const { error: insertError } = await supabase.from('writing_samples').insert({
       user_id: userId,
       content: content.trim(),
-      filename: filename.trim(),
+      filename: safeName,
       word_count: wordCount,
     })
 
