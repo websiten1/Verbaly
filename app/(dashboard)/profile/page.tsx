@@ -99,10 +99,13 @@ export default function ProfilePage() {
 
     const wordCount = content.trim().split(/\s+/).filter(Boolean).length
 
+    // NOTE: Run this SQL in Supabase to permanently fix the content column type:
+    // ALTER TABLE writing_samples ALTER COLUMN content TYPE TEXT;
     const safeName = filename?.slice(0, 200) || 'Untitled'
+    const safeContent = content?.slice(0, 50000) || ''
     const { error: insertError } = await supabase.from('writing_samples').insert({
       user_id: userId,
-      content: content.trim(),
+      content: safeContent,
       filename: safeName,
       word_count: wordCount,
     })
