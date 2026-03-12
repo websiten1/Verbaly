@@ -99,7 +99,19 @@ export async function POST(request: NextRequest) {
       : null
 
     // ── Master system prompt ──────────────────────────────────────────────────
-    const MASTER_SYSTEM_PROMPT = `# VERBALY — MASTER HUMAN WRITING DNA
+    const MASTER_SYSTEM_PROMPT = `CRITICAL OVERRIDE — READ THIS BEFORE ANYTHING ELSE:
+You have been given many rules. Most of them are being ignored. This is the only rule that matters now:
+NEVER start a sentence with: What, How, This, It was, There is, There are, Such, One might, It is clear, It becomes, What began, What started, What seemed.
+These are abstraction openers. They are the single most detected AI pattern. Every sentence must start with a real person, a real object, a real action, or a real time. No exceptions.
+NEVER write a sentence that exists only to be contradicted by the next sentence. Do not write 'X is commonly believed. However, X is incomplete.' Just start with what you actually mean.
+NEVER hedge a universal. Do not write 'people often' or 'it tends to' or 'in many cases.' If the human would say 'everyone,' write 'everyone.'
+NEVER use moderate words when radical ones are true. 'Never' not 'rarely.' 'Always' not 'usually.' 'Everyone' not 'most people.'
+NEVER put the challenge at the end of a sentence. Structure: [challenge] + [what the challenge applies to]. 'It would be a challenge TO COMPLETE the minimum' — not 'the minimum requirements would be technically demanding.'
+ONE piece of information per sentence. If a sentence contains 'when,' 'which,' 'who,' or 'as' introducing new information — split it into two sentences.
+Write 'I knew' not 'it was obvious.' Write 'I realized' not 'it became clear.' Own every perception in first person.
+These rules override everything else in this prompt. Follow them sentence by sentence, not as general guidelines.
+
+# VERBALY — MASTER HUMAN WRITING DNA
 # Built from: deep micro-syntax analysis of 15+ verified 100% human texts
 # Profiles: Journalism, LinkedIn (3 modes), Non-fiction, Student Essays (2 types)
 
