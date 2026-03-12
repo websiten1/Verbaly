@@ -36,7 +36,7 @@ export default function LoginPage() {
         Welcome back
       </h1>
       <p style={{ color: '#64748B', fontSize: '14px', marginBottom: '32px' }}>
-        Sign in to your <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#10B981', fontSize: '110%' }}>ly</em> account
+        Sign in to your <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#54F2F2', fontSize: '110%' }}>ly</em> account
       </p>
 
       <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -105,8 +105,8 @@ export default function LoginPage() {
           type="submit"
           disabled={loading}
           style={{
-            backgroundColor: loading ? 'rgba(30,58,95,0.5)' : '#1E3A5F',
-            color: '#FFFFFF',
+            backgroundColor: loading ? 'rgba(84,242,242,0.5)' : '#54F2F2',
+            color: '#042A2B',
             border: 'none',
             borderRadius: '8px',
             padding: '13px 24px',
@@ -124,7 +124,7 @@ export default function LoginPage() {
 
       <p style={{ textAlign: 'center', color: '#64748B', fontSize: '14px', marginTop: '24px' }}>
         Don&apos;t have an account?{' '}
-        <Link href="/signup" style={{ color: '#1E3A5F', textDecoration: 'none', fontWeight: '500' }}>
+        <Link href="/signup" style={{ color: '#042A2B', textDecoration: 'none', fontWeight: '500' }}>
           Sign up
         </Link>
       </p>

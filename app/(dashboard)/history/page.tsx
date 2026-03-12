@@ -41,13 +41,13 @@ export default function HistoryPage() {
 
   if (loading) {
     return (
-      <div className="p-4 md:p-8" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', backgroundColor: '#F8FAFC' }}>
+      <div className="p-4 md:p-8" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', backgroundColor: '#FCFCFC' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
             width: '40px',
             height: '40px',
-            border: '3px solid rgba(30,58,95,0.2)',
-            borderTop: '3px solid #1E3A5F',
+            border: '3px solid rgba(84,242,242,0.2)',
+            borderTop: '3px solid #54F2F2',
             borderRadius: '50%',
             margin: '0 auto 16px',
             animation: 'spin 1s linear infinite',
@@ -60,7 +60,7 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#FCFCFC' }}>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ color: '#0F172A', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px' }}>
           Rewrite History
@@ -77,7 +77,7 @@ export default function HistoryPage() {
           borderRadius: '12px',
           padding: '64px 24px',
           textAlign: 'center',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
         }}>
           <div style={{ fontSize: '40px', color: '#E2E8F0', marginBottom: '16px' }}>◷</div>
           <p style={{ color: '#64748B', fontSize: '15px' }}>No rewrites yet.</p>
@@ -97,12 +97,11 @@ export default function HistoryPage() {
                   border: '1px solid #E2E8F0',
                   borderRadius: '12px',
                   padding: '16px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
                   cursor: 'pointer',
                 }}
                 onClick={() => toggleExpand(rewrite.id)}
               >
-                {/* Date */}
                 <div style={{ color: '#64748B', fontSize: '12px', marginBottom: '8px' }}>
                   {new Date(rewrite.created_at).toLocaleDateString('en-US', {
                     month: 'short',
@@ -111,7 +110,6 @@ export default function HistoryPage() {
                   })}
                 </div>
 
-                {/* Original text preview — 2 lines max */}
                 <p style={{
                   color: '#0F172A',
                   fontSize: '13px',
@@ -125,11 +123,10 @@ export default function HistoryPage() {
                   {rewrite.original_text}
                 </p>
 
-                {/* Bottom row: badges */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <span style={{
-                    backgroundColor: '#10B981',
-                    color: '#FFFFFF',
+                    backgroundColor: '#54F2F2',
+                    color: '#042A2B',
                     padding: '3px 8px',
                     borderRadius: '100px',
                     fontSize: '12px',
@@ -141,8 +138,8 @@ export default function HistoryPage() {
                     {rewrite.rewritten_text?.split(/\s+/).filter(Boolean).length ?? 0} words
                   </span>
                   <span style={{
-                    backgroundColor: 'rgba(30,58,95,0.08)',
-                    color: '#1E3A5F',
+                    backgroundColor: 'rgba(4,42,43,0.07)',
+                    color: '#042A2B',
                     padding: '3px 8px',
                     borderRadius: '100px',
                     fontSize: '12px',
@@ -155,11 +152,10 @@ export default function HistoryPage() {
                   </span>
                 </div>
 
-                {/* Expanded: full original + rewritten */}
                 {expandedId === rewrite.id && (
                   <div className="grid grid-cols-1 gap-3 mt-4">
                     <div style={{
-                      backgroundColor: '#F8FAFC',
+                      backgroundColor: '#FCFCFC',
                       border: '1px solid #E2E8F0',
                       borderRadius: '10px',
                       padding: '16px',
@@ -172,12 +168,12 @@ export default function HistoryPage() {
                       </p>
                     </div>
                     <div style={{
-                      backgroundColor: '#F8FAFC',
-                      border: '1px solid rgba(30,58,95,0.25)',
+                      backgroundColor: '#FCFCFC',
+                      border: '1px solid rgba(84,242,242,0.3)',
                       borderRadius: '10px',
                       padding: '16px',
                     }}>
-                      <div style={{ color: '#1E3A5F', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
+                      <div style={{ color: '#042A2B', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
                         Rewritten
                       </div>
                       <p style={{ color: '#0F172A', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
@@ -196,11 +192,11 @@ export default function HistoryPage() {
             border: '1px solid #E2E8F0',
             borderRadius: '12px',
             overflow: 'hidden',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
           }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}>
+                <tr style={{ borderBottom: '1px solid #E2E8F0', backgroundColor: '#FCFCFC' }}>
                   {['Date', 'Original (preview)', 'Match Score', 'Words', 'Intensity', ''].map((col) => (
                     <th
                       key={col}
@@ -244,8 +240,8 @@ export default function HistoryPage() {
                       </td>
                       <td style={{ padding: '16px 20px' }}>
                         <span style={{
-                          backgroundColor: '#10B981',
-                          color: '#FFFFFF',
+                          backgroundColor: '#54F2F2',
+                          color: '#042A2B',
                           padding: '4px 10px',
                           borderRadius: '100px',
                           fontSize: '13px',
@@ -269,7 +265,7 @@ export default function HistoryPage() {
                         <td colSpan={6} style={{ padding: '0 20px 20px' }}>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', paddingTop: '16px' }}>
                             <div style={{
-                              backgroundColor: '#F8FAFC',
+                              backgroundColor: '#FCFCFC',
                               border: '1px solid #E2E8F0',
                               borderRadius: '10px',
                               padding: '16px',
@@ -282,12 +278,12 @@ export default function HistoryPage() {
                               </p>
                             </div>
                             <div style={{
-                              backgroundColor: '#F8FAFC',
-                              border: '1px solid rgba(30,58,95,0.25)',
+                              backgroundColor: '#FCFCFC',
+                              border: '1px solid rgba(84,242,242,0.3)',
                               borderRadius: '10px',
                               padding: '16px',
                             }}>
-                              <div style={{ color: '#1E3A5F', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
+                              <div style={{ color: '#042A2B', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
                                 Rewritten
                               </div>
                               <p style={{ color: '#0F172A', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>

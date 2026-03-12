@@ -36,8 +36,8 @@ export default function Navbar() {
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontSize: '24px', color: '#1E3A5F', letterSpacing: '-0.5px' }}>
-              <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#10B981', fontSize: '110%' }}>ly</em>
+            <span style={{ fontSize: '24px', color: '#042A2B', letterSpacing: '-0.5px' }}>
+              <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#54F2F2', fontSize: '110%' }}>ly</em>
             </span>
           </Link>
 
@@ -79,8 +79,8 @@ export default function Navbar() {
                     <Link
                       href="/signup"
                       style={{
-                        backgroundColor: '#1E3A5F',
-                        color: '#FFFFFF',
+                        backgroundColor: '#54F2F2',
+                        color: '#042A2B',
                         padding: '8px 20px',
                         borderRadius: '6px',
                         textDecoration: 'none',
@@ -103,8 +103,8 @@ export default function Navbar() {
                 <Link
                   href="/dashboard"
                   style={{
-                    backgroundColor: '#1E3A5F',
-                    color: '#FFFFFF',
+                    backgroundColor: '#54F2F2',
+                    color: '#042A2B',
                     padding: '8px 16px',
                     borderRadius: '6px',
                     textDecoration: 'none',
@@ -118,8 +118,8 @@ export default function Navbar() {
                 <Link
                   href="/signup"
                   style={{
-                    backgroundColor: '#1E3A5F',
-                    color: '#FFFFFF',
+                    backgroundColor: '#54F2F2',
+                    color: '#042A2B',
                     padding: '8px 16px',
                     borderRadius: '6px',
                     textDecoration: 'none',

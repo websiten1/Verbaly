@@ -118,10 +118,6 @@ export default function ProfilePage() {
     setUploading(true)
 
     const wordCount = content.trim().split(/\s+/).filter(Boolean).length
-
-    // SUPABASE SQL — run these in your Supabase SQL editor if not already done:
-    // ALTER TABLE writing_samples ALTER COLUMN content TYPE TEXT;
-    // ALTER TABLE style_traits ALTER COLUMN trait_value TYPE TEXT;
     const safeName = filename?.slice(0, 200) || 'Untitled'
     const safeContent = content?.slice(0, 50000) || ''
     const { error: insertError } = await supabase.from('writing_samples').insert({
@@ -206,7 +202,7 @@ export default function ProfilePage() {
   const profileStrength = hasStyleData ? 75 : samples.length > 0 ? 10 : 0
 
   return (
-    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#FCFCFC' }}>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ color: '#0F172A', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px' }}>
           Style Profile
@@ -223,7 +219,7 @@ export default function ProfilePage() {
         borderRadius: '12px',
         padding: '24px',
         marginBottom: '24px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
       }}>
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-5">
           <div>
@@ -257,11 +253,11 @@ export default function ProfilePage() {
 
         {!activePreset && (
           <div style={{
-            backgroundColor: 'rgba(16,185,129,0.07)',
-            border: '1px solid rgba(16,185,129,0.25)',
+            backgroundColor: 'rgba(84,242,242,0.08)',
+            border: '1px solid rgba(84,242,242,0.25)',
             borderRadius: '8px',
             padding: '10px 14px',
-            color: '#10B981',
+            color: '#042A2B',
             fontSize: '13px',
             marginBottom: '16px',
           }}>
@@ -269,7 +265,6 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Preset cards grid — 1 col on mobile, 2 cols on sm+ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {PRESET_PROFILES.map((preset) => {
             const isActive = activePreset === preset.name
@@ -277,10 +272,10 @@ export default function ProfilePage() {
               <div
                 key={preset.name}
                 style={{
-                  border: isActive ? '2px solid #1E3A5F' : '1px solid #E2E8F0',
+                  border: isActive ? '2px solid #54F2F2' : '1px solid #E2E8F0',
                   borderRadius: '10px',
                   padding: '16px',
-                  backgroundColor: isActive ? 'rgba(30,58,95,0.04)' : '#FFFFFF',
+                  backgroundColor: isActive ? 'rgba(84,242,242,0.05)' : '#FFFFFF',
                   position: 'relative',
                 }}
               >
@@ -289,8 +284,8 @@ export default function ProfilePage() {
                     position: 'absolute',
                     top: '12px',
                     right: '12px',
-                    backgroundColor: '#1E3A5F',
-                    color: '#FFFFFF',
+                    backgroundColor: '#54F2F2',
+                    color: '#042A2B',
                     fontSize: '11px',
                     fontWeight: '700',
                     padding: '2px 8px',
@@ -309,9 +304,9 @@ export default function ProfilePage() {
                   onClick={() => handleSelectPreset(preset.name)}
                   disabled={presetSaving || isActive}
                   style={{
-                    backgroundColor: isActive ? 'rgba(30,58,95,0.08)' : '#1E3A5F',
-                    color: isActive ? '#1E3A5F' : '#FFFFFF',
-                    border: isActive ? '1px solid rgba(30,58,95,0.2)' : 'none',
+                    backgroundColor: isActive ? 'rgba(84,242,242,0.1)' : '#54F2F2',
+                    color: '#042A2B',
+                    border: isActive ? '1px solid rgba(84,242,242,0.3)' : 'none',
                     borderRadius: '7px',
                     padding: '7px 14px',
                     fontSize: '13px',
@@ -329,22 +324,22 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Profile strength — full width */}
+      {/* Profile strength */}
       <div style={{
         backgroundColor: '#FFFFFF',
         border: '1px solid #E2E8F0',
         borderRadius: '12px',
         padding: '24px',
         marginBottom: '24px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
           <span style={{ color: '#0F172A', fontSize: '14px', fontWeight: '500' }}>Profile Strength</span>
-          <span style={{ color: '#10B981', fontSize: '14px', fontWeight: '700' }}>{profileStrength}%</span>
+          <span style={{ color: '#042A2B', fontSize: '14px', fontWeight: '700' }}>{profileStrength}%</span>
         </div>
         <div style={{ backgroundColor: '#E2E8F0', borderRadius: '100px', height: '8px', overflow: 'hidden', width: '100%' }}>
           <div style={{
-            backgroundColor: '#10B981',
+            backgroundColor: '#54F2F2',
             height: '100%',
             width: `${profileStrength}%`,
             borderRadius: '100px',
@@ -360,7 +355,7 @@ export default function ProfilePage() {
         </p>
       </div>
 
-      {/* Upload + Style traits — stacked on mobile, side-by-side on md+ */}
+      {/* Upload + Style traits */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left: Upload */}
         <div>
@@ -370,7 +365,7 @@ export default function ProfilePage() {
             borderRadius: '12px',
             padding: '24px',
             marginBottom: '20px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
           }}>
             <h2 style={{ color: '#0F172A', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>
               Upload Writing Sample
@@ -445,11 +440,11 @@ export default function ProfilePage() {
 
             {success && (
               <div style={{
-                backgroundColor: 'rgba(16,185,129,0.1)',
-                border: '1px solid rgba(16,185,129,0.3)',
+                backgroundColor: 'rgba(84,242,242,0.1)',
+                border: '1px solid rgba(84,242,242,0.3)',
                 borderRadius: '8px',
                 padding: '10px 14px',
-                color: '#10B981',
+                color: '#042A2B',
                 fontSize: '13px',
                 marginBottom: '12px',
               }}>{success}</div>
@@ -459,8 +454,8 @@ export default function ProfilePage() {
               onClick={handleUpload}
               disabled={uploading}
               style={{
-                backgroundColor: uploading ? 'rgba(16,185,129,0.5)' : '#10B981',
-                color: '#FFFFFF',
+                backgroundColor: uploading ? 'rgba(84,242,242,0.45)' : '#54F2F2',
+                color: '#042A2B',
                 border: 'none',
                 borderRadius: '8px',
                 padding: '11px 20px',
@@ -482,7 +477,7 @@ export default function ProfilePage() {
               border: '1px solid #E2E8F0',
               borderRadius: '12px',
               overflow: 'hidden',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
             }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0' }}>
                 <h3 style={{ color: '#0F172A', fontSize: '14px', fontWeight: '600' }}>
@@ -536,7 +531,7 @@ export default function ProfilePage() {
             border: '1px solid #E2E8F0',
             borderRadius: '12px',
             overflow: 'hidden',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
           }}>
             <div style={{
               padding: '16px 20px',
@@ -552,9 +547,9 @@ export default function ProfilePage() {
                 onClick={handleAnalyze}
                 disabled={analyzing || samples.length === 0}
                 style={{
-                  backgroundColor: analyzing || samples.length === 0 ? 'rgba(16,185,129,0.3)' : '#10B981',
+                  backgroundColor: analyzing || samples.length === 0 ? 'rgba(84,242,242,0.35)' : '#54F2F2',
                   border: 'none',
-                  color: '#FFFFFF',
+                  color: '#042A2B',
                   opacity: analyzing || samples.length === 0 ? 0.6 : 1,
                   padding: '7px 14px',
                   borderRadius: '8px',
@@ -579,42 +574,40 @@ export default function ProfilePage() {
               <div style={{ padding: '16px' }}>
                 {/* Row 1: Vocabulary + Phrases */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ marginBottom: '16px' }}>
-                  {/* Vocabulary Fingerprint */}
                   {vocabItems.length > 0 && (
                     <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#042A2B', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Vocabulary Fingerprint
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {vocabItems.map((item, i) => (
                           <span key={i} style={{
                             backgroundColor: '#FFFFFF',
-                            border: '1px solid #1E3A5F',
+                            border: '1px solid #042A2B',
                             borderRadius: '100px',
                             padding: '4px 12px',
                             fontSize: '13px',
-                            color: '#1E3A5F',
+                            color: '#042A2B',
                             fontWeight: '500',
                           }}>{item}</span>
                         ))}
                       </div>
                     </div>
                   )}
-                  {/* Favorite Phrases */}
                   {phraseItems.length > 0 && (
                     <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#042A2B', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Favorite Phrases
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {phraseItems.map((item, i) => (
                           <span key={i} style={{
                             backgroundColor: '#FFFFFF',
-                            border: '1px solid #1E3A5F',
+                            border: '1px solid #042A2B',
                             borderRadius: '100px',
                             padding: '4px 12px',
                             fontSize: '13px',
-                            color: '#1E3A5F',
+                            color: '#042A2B',
                             fontWeight: '500',
                           }}>{item}</span>
                         ))}
@@ -625,16 +618,15 @@ export default function ProfilePage() {
 
                 {/* Row 2: Punctuation + Structure */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ marginBottom: '16px' }}>
-                  {/* Punctuation Patterns */}
                   {punctItems.length > 0 && (
                     <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#042A2B', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Punctuation Patterns
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {punctItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: '#F8FAFC',
+                            backgroundColor: '#FCFCFC',
                             border: '1px solid #E2E8F0',
                             borderRadius: '8px',
                             padding: '6px 12px',
@@ -646,16 +638,15 @@ export default function ProfilePage() {
                       </div>
                     </div>
                   )}
-                  {/* Sentence Structure */}
                   {structItems.length > 0 && (
                     <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#042A2B', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Sentence Structure
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {structItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: '#F8FAFC',
+                            backgroundColor: '#FCFCFC',
                             border: '1px solid #E2E8F0',
                             borderRadius: '8px',
                             padding: '6px 12px',
@@ -671,16 +662,15 @@ export default function ProfilePage() {
 
                 {/* Row 3: Voice + Never Does */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Voice Markers */}
                   {voiceItems.length > 0 && (
                     <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#042A2B', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Voice Markers
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {voiceItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: '#F8FAFC',
+                            backgroundColor: '#FCFCFC',
                             border: '1px solid #E2E8F0',
                             borderRadius: '8px',
                             padding: '6px 12px',
@@ -692,10 +682,9 @@ export default function ProfilePage() {
                       </div>
                     </div>
                   )}
-                  {/* Things They Never Do */}
                   {neverItems.length > 0 && (
                     <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1E3A5F', textTransform: 'uppercase', marginBottom: '12px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#042A2B', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Things They Never Do
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>

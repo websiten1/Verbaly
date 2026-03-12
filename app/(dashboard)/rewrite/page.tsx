@@ -85,7 +85,7 @@ export default function RewritePage() {
   }
 
   return (
-    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#FCFCFC' }}>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ color: '#0F172A', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px' }}>
           Rewrite
@@ -102,14 +102,14 @@ export default function RewritePage() {
         borderRadius: '12px',
         padding: '20px 24px',
         marginBottom: '24px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
       }}>
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           <div style={{ minWidth: '160px' }}>
             <div style={{ color: '#64748B', fontSize: '13px', fontWeight: '500', marginBottom: '4px' }}>
               Rewrite Intensity
             </div>
-            <div style={{ color: '#1E3A5F', fontSize: '15px', fontWeight: '600' }}>
+            <div style={{ color: '#042A2B', fontSize: '15px', fontWeight: '600' }}>
               {intensity} — {intensityLabels[intensity]}
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function RewritePage() {
               onChange={(e) => setIntensity(Number(e.target.value))}
               style={{
                 width: '100%',
-                accentColor: '#1E3A5F',
+                accentColor: '#54F2F2',
                 cursor: 'pointer',
                 height: '4px',
               }}
@@ -145,7 +145,7 @@ export default function RewritePage() {
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
         }}>
           <div style={{
             padding: '14px 20px',
@@ -187,12 +187,12 @@ export default function RewritePage() {
         {/* Right - Output */}
         <div style={{
           backgroundColor: '#FFFFFF',
-          border: `1px solid ${rewrittenText ? 'rgba(30,58,95,0.4)' : '#E2E8F0'}`,
+          border: `1px solid ${rewrittenText ? 'rgba(84,242,242,0.4)' : '#E2E8F0'}`,
           borderRadius: '12px',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: rewrittenText ? '0 4px 16px rgba(30,58,95,0.1)' : '0 1px 3px rgba(0,0,0,0.1)',
+          boxShadow: rewrittenText ? '0 4px 16px rgba(84,242,242,0.1)' : '0 1px 3px rgba(0,0,0,0.06)',
         }}>
           <div style={{
             padding: '14px 20px',
@@ -202,13 +202,13 @@ export default function RewritePage() {
             alignItems: 'center',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ color: rewrittenText ? '#1E3A5F' : '#64748B', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <span style={{ color: rewrittenText ? '#042A2B' : '#64748B', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 Your Voice
               </span>
               {matchScore !== null && (
                 <span style={{
-                  backgroundColor: '#10B981',
-                  color: '#FFFFFF',
+                  backgroundColor: '#54F2F2',
+                  color: '#042A2B',
                   padding: '2px 10px',
                   borderRadius: '100px',
                   fontSize: '12px',
@@ -253,8 +253,8 @@ export default function RewritePage() {
                 <div style={{
                   width: '40px',
                   height: '40px',
-                  border: '3px solid rgba(30,58,95,0.2)',
-                  borderTop: '3px solid #1E3A5F',
+                  border: '3px solid rgba(84,242,242,0.2)',
+                  borderTop: '3px solid #54F2F2',
                   borderRadius: '50%',
                   animation: 'spin 1s linear infinite',
                 }}></div>
@@ -294,8 +294,8 @@ export default function RewritePage() {
         onClick={handleRewrite}
         disabled={loading || !originalText.trim()}
         style={{
-          backgroundColor: loading || !originalText.trim() ? 'rgba(30,58,95,0.4)' : '#1E3A5F',
-          color: '#FFFFFF',
+          backgroundColor: loading || !originalText.trim() ? 'rgba(84,242,242,0.35)' : '#54F2F2',
+          color: '#042A2B',
           border: 'none',
           borderRadius: '8px',
           padding: '14px 32px',

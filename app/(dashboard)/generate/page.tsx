@@ -78,10 +78,10 @@ export default function GeneratePage() {
   ]
 
   return (
-    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#FCFCFC' }}>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ color: '#0F172A', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="#A78BFA" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
             <path d="M5 3v4"/>
             <path d="M3 5h4"/>
@@ -104,7 +104,7 @@ export default function GeneratePage() {
             border: '1px solid #E2E8F0',
             borderRadius: '12px',
             padding: '24px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
           }}>
             <h2 style={{ color: '#0F172A', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>
               What do you want to write?
@@ -151,8 +151,8 @@ export default function GeneratePage() {
                       onClick={() => setLength(btn.value)}
                       className="flex-1 min-w-[80px]"
                       style={{
-                        backgroundColor: isActive ? '#1E3A5F' : '#FFFFFF',
-                        color: isActive ? '#FFFFFF' : '#0F172A',
+                        backgroundColor: isActive ? '#54F2F2' : '#FFFFFF',
+                        color: isActive ? '#042A2B' : '#0F172A',
                         border: isActive ? 'none' : '1px solid #E2E8F0',
                         borderRadius: '8px',
                         padding: '10px 8px',
@@ -177,8 +177,8 @@ export default function GeneratePage() {
                   Tone
                 </label>
                 <span style={{
-                  backgroundColor: 'rgba(30,58,95,0.08)',
-                  color: '#1E3A5F',
+                  backgroundColor: 'rgba(4,42,43,0.07)',
+                  color: '#042A2B',
                   fontSize: '12px',
                   fontWeight: '600',
                   padding: '2px 10px',
@@ -195,7 +195,7 @@ export default function GeneratePage() {
                   max={100}
                   value={tone}
                   onChange={(e) => setTone(Number(e.target.value))}
-                  style={{ flex: 1, accentColor: '#1E3A5F', width: '100%' }}
+                  style={{ flex: 1, accentColor: '#54F2F2', width: '100%' }}
                 />
                 <span style={{ color: '#64748B', fontSize: '12px', whiteSpace: 'nowrap' }}>Casual</span>
               </div>
@@ -219,8 +219,8 @@ export default function GeneratePage() {
               onClick={handleGenerate}
               disabled={loading}
               style={{
-                backgroundColor: loading ? 'rgba(16,185,129,0.5)' : '#10B981',
-                color: '#FFFFFF',
+                backgroundColor: loading ? 'rgba(84,242,242,0.45)' : '#54F2F2',
+                color: '#042A2B',
                 border: 'none',
                 borderRadius: '8px',
                 padding: '12px 20px',
@@ -240,8 +240,8 @@ export default function GeneratePage() {
                     display: 'inline-block',
                     width: '14px',
                     height: '14px',
-                    border: '2px solid rgba(255,255,255,0.4)',
-                    borderTopColor: '#FFFFFF',
+                    border: '2px solid rgba(4,42,43,0.3)',
+                    borderTopColor: '#042A2B',
                     borderRadius: '50%',
                     animation: 'spin 0.7s linear infinite',
                   }} />
@@ -270,7 +270,7 @@ export default function GeneratePage() {
             border: '1px solid #E2E8F0',
             borderRadius: '12px',
             overflow: 'hidden',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
             minHeight: '360px',
             display: 'flex',
             flexDirection: 'column',
@@ -289,11 +289,11 @@ export default function GeneratePage() {
                 <button
                   onClick={handleCopy}
                   style={{
-                    backgroundColor: copied ? 'rgba(16,185,129,0.1)' : 'rgba(30,58,95,0.08)',
-                    border: `1px solid ${copied ? 'rgba(16,185,129,0.3)' : 'rgba(30,58,95,0.2)'}`,
+                    backgroundColor: copied ? 'rgba(84,242,242,0.12)' : 'rgba(4,42,43,0.06)',
+                    border: `1px solid ${copied ? 'rgba(84,242,242,0.4)' : 'rgba(4,42,43,0.15)'}`,
                     borderRadius: '7px',
                     padding: '6px 14px',
-                    color: copied ? '#10B981' : '#1E3A5F',
+                    color: copied ? '#042A2B' : '#042A2B',
                     fontSize: '13px',
                     fontWeight: '600',
                     cursor: 'pointer',
@@ -328,8 +328,8 @@ export default function GeneratePage() {
                     display: 'inline-block',
                     width: '32px',
                     height: '32px',
-                    border: '3px solid #E2E8F0',
-                    borderTopColor: '#1E3A5F',
+                    border: '3px solid rgba(84,242,242,0.2)',
+                    borderTopColor: '#54F2F2',
                     borderRadius: '50%',
                     animation: 'spin 0.7s linear infinite',
                     marginBottom: '16px',

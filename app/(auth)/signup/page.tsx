@@ -61,15 +61,15 @@ export default function SignupPage() {
         <div style={{
           width: '56px',
           height: '56px',
-          backgroundColor: 'rgba(16,185,129,0.12)',
-          border: '1px solid rgba(16,185,129,0.3)',
+          backgroundColor: 'rgba(84,242,242,0.12)',
+          border: '1px solid rgba(84,242,242,0.35)',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 20px',
           fontSize: '24px',
-          color: '#10B981',
+          color: '#042A2B',
         }}>
           ✓
         </div>
@@ -182,8 +182,8 @@ export default function SignupPage() {
           type="submit"
           disabled={loading}
           style={{
-            backgroundColor: loading ? 'rgba(30,58,95,0.5)' : '#1E3A5F',
-            color: '#FFFFFF',
+            backgroundColor: loading ? 'rgba(84,242,242,0.5)' : '#54F2F2',
+            color: '#042A2B',
             border: 'none',
             borderRadius: '8px',
             padding: '13px 24px',
@@ -200,7 +200,7 @@ export default function SignupPage() {
 
       <p style={{ textAlign: 'center', color: '#64748B', fontSize: '14px', marginTop: '24px' }}>
         Already have an account?{' '}
-        <Link href="/login" style={{ color: '#1E3A5F', textDecoration: 'none', fontWeight: '500' }}>
+        <Link href="/login" style={{ color: '#042A2B', textDecoration: 'none', fontWeight: '500' }}>
           Sign in
         </Link>
       </p>

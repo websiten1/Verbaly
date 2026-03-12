@@ -46,7 +46,7 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', backgroundColor: '#FCFCFC' }}>
       {/* Header */}
       <div className="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
@@ -59,8 +59,8 @@ export default async function DashboardPage() {
           href="/rewrite"
           className="w-full sm:w-auto text-center"
           style={{
-            backgroundColor: '#1E3A5F',
-            color: '#FFFFFF',
+            backgroundColor: '#54F2F2',
+            color: '#042A2B',
             padding: '10px 20px',
             borderRadius: '8px',
             textDecoration: 'none',
@@ -83,14 +83,14 @@ export default async function DashboardPage() {
               border: '1px solid #E2E8F0',
               borderRadius: '12px',
               padding: '24px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
               <span style={{ color: '#64748B', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{stat.label}</span>
               <span style={{
-                backgroundColor: 'rgba(30,58,95,0.08)',
-                color: '#1E3A5F',
+                backgroundColor: 'rgba(84,242,242,0.1)',
+                color: '#042A2B',
                 width: '32px',
                 height: '32px',
                 borderRadius: '8px',
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
                 fontSize: '14px',
               }}>{stat.icon}</span>
             </div>
-            <div style={{ color: '#1E3A5F', fontSize: '32px', fontWeight: '700', letterSpacing: '-1px' }}>
+            <div style={{ color: '#042A2B', fontSize: '32px', fontWeight: '700', letterSpacing: '-1px' }}>
               {stat.value}{stat.suffix}
             </div>
           </div>
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
         border: '1px solid #E2E8F0',
         borderRadius: '12px',
         overflow: 'hidden',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
       }}>
         <div style={{
           padding: '20px 24px',
@@ -123,7 +123,7 @@ export default async function DashboardPage() {
           alignItems: 'center',
         }}>
           <h2 style={{ color: '#0F172A', fontSize: '16px', fontWeight: '600' }}>Recent Rewrites</h2>
-          <Link href="/history" style={{ color: '#1E3A5F', textDecoration: 'none', fontSize: '13px' }}>
+          <Link href="/history" style={{ color: '#042A2B', textDecoration: 'none', fontSize: '13px' }}>
             View all →
           </Link>
         </div>
@@ -137,8 +137,8 @@ export default async function DashboardPage() {
             <Link
               href="/rewrite"
               style={{
-                backgroundColor: '#1E3A5F',
-                color: '#FFFFFF',
+                backgroundColor: '#54F2F2',
+                color: '#042A2B',
                 padding: '10px 20px',
                 borderRadius: '8px',
                 textDecoration: 'none',
@@ -163,8 +163,8 @@ export default async function DashboardPage() {
                   </p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{
-                      backgroundColor: '#10B981',
-                      color: '#FFFFFF',
+                      backgroundColor: '#54F2F2',
+                      color: '#042A2B',
                       padding: '3px 8px',
                       borderRadius: '100px',
                       fontSize: '12px',
@@ -182,7 +182,7 @@ export default async function DashboardPage() {
             <div className="hidden md:block">
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ borderBottom: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}>
+                  <tr style={{ borderBottom: '1px solid #E2E8F0', backgroundColor: '#FCFCFC' }}>
                     {['Date', 'Original Text', 'Match Score', 'Intensity'].map((col) => (
                       <th key={col} style={{
                         padding: '12px 24px',
@@ -210,8 +210,8 @@ export default async function DashboardPage() {
                       </td>
                       <td style={{ padding: '16px 24px' }}>
                         <span style={{
-                          backgroundColor: '#10B981',
-                          color: '#FFFFFF',
+                          backgroundColor: '#54F2F2',
+                          color: '#042A2B',
                           padding: '4px 10px',
                           borderRadius: '100px',
                           fontSize: '13px',

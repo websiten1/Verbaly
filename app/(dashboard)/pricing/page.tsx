@@ -21,7 +21,6 @@ interface Plan {
   annualPrice: number | null
   annualMonthlyPrice: number | null
   color: string
-  accent: string
   description: string
   features: string[]
   cta: string
@@ -35,7 +34,6 @@ const plans: Plan[] = [
     annualPrice: 0,
     annualMonthlyPrice: 0,
     color: '#64748B',
-    accent: '#94A3B8',
     description: 'Get started with the basics.',
     features: [
       '3 rewrites per month',
@@ -51,8 +49,7 @@ const plans: Plan[] = [
     monthlyPrice: 7,
     annualPrice: 70,
     annualMonthlyPrice: 5.83,
-    color: '#10B981',
-    accent: '#34D399',
+    color: '#54F2F2',
     description: 'For students who write constantly.',
     features: [
       'Unlimited rewrites',
@@ -70,8 +67,7 @@ const plans: Plan[] = [
     monthlyPrice: 18,
     annualPrice: 180,
     annualMonthlyPrice: 15,
-    color: '#8B5CF6',
-    accent: '#A78BFA',
+    color: '#5EB1BF',
     description: 'For serious academic writers.',
     features: [
       'Everything in Student',
@@ -149,7 +145,7 @@ export default function PricingPage() {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#F8FAFC',
+        backgroundColor: '#FCFCFC',
         padding: '40px 24px',
       }}
     >
@@ -159,7 +155,7 @@ export default function PricingPage() {
           style={{
             fontSize: 36,
             fontWeight: 700,
-            color: '#1E3A5F',
+            color: '#042A2B',
             marginBottom: 12,
             opacity: mounted ? 1 : 0,
             transform: mounted ? 'translateY(0)' : 'translateY(12px)',
@@ -200,8 +196,8 @@ export default function PricingPage() {
               cursor: 'pointer',
               fontSize: 14,
               fontWeight: 500,
-              backgroundColor: !annual ? '#1E3A5F' : 'transparent',
-              color: !annual ? '#FFFFFF' : '#64748B',
+              backgroundColor: !annual ? '#042A2B' : 'transparent',
+              color: !annual ? '#FCFCFC' : '#64748B',
               transition: 'all 200ms ease',
             }}
           >
@@ -216,8 +212,8 @@ export default function PricingPage() {
               cursor: 'pointer',
               fontSize: 14,
               fontWeight: 500,
-              backgroundColor: annual ? '#1E3A5F' : 'transparent',
-              color: annual ? '#FFFFFF' : '#64748B',
+              backgroundColor: annual ? '#042A2B' : 'transparent',
+              color: annual ? '#FCFCFC' : '#64748B',
               transition: 'all 200ms ease',
               display: 'flex',
               alignItems: 'center',
@@ -227,8 +223,8 @@ export default function PricingPage() {
             Annual
             <span
               style={{
-                backgroundColor: '#10B981',
-                color: '#FFFFFF',
+                backgroundColor: '#54F2F2',
+                color: '#042A2B',
                 fontSize: 11,
                 fontWeight: 700,
                 padding: '2px 8px',
@@ -260,20 +256,20 @@ export default function PricingPage() {
             <div
               key={plan.key}
               style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: isPopular ? '#042A2B' : '#FFFFFF',
                 borderRadius: 16,
                 padding: 28,
-                border: isCurrent
+                border: isPopular
+                  ? '2px solid #54F2F2'
+                  : isCurrent
                   ? `2px solid ${plan.color}`
-                  : isPopular
-                  ? `2px solid ${plan.color}40`
                   : '2px solid #E2E8F0',
                 position: 'relative',
                 opacity: mounted ? 1 : 0,
                 transform: mounted ? 'translateY(0)' : 'translateY(16px)',
                 transition: `opacity 400ms ease ${i * 80}ms, transform 400ms ease ${i * 80}ms`,
                 boxShadow: isPopular
-                  ? `0 8px 32px ${plan.color}20`
+                  ? '0 8px 32px rgba(84,242,242,0.15)'
                   : '0 1px 4px rgba(0,0,0,0.06)',
               }}
             >
@@ -285,8 +281,8 @@ export default function PricingPage() {
                     top: -14,
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    backgroundColor: plan.color,
-                    color: '#FFFFFF',
+                    backgroundColor: '#54F2F2',
+                    color: '#042A2B',
                     fontSize: 12,
                     fontWeight: 700,
                     padding: '4px 16px',
@@ -309,13 +305,13 @@ export default function PricingPage() {
                     flexShrink: 0,
                   }}
                 />
-                <span style={{ fontSize: 18, fontWeight: 700, color: '#1E3A5F' }}>
+                <span style={{ fontSize: 18, fontWeight: 700, color: isPopular ? '#FCFCFC' : '#042A2B' }}>
                   {plan.name}
                 </span>
               </div>
 
               {/* Description */}
-              <p style={{ fontSize: 13, color: '#64748B', marginBottom: 20, lineHeight: 1.5 }}>
+              <p style={{ fontSize: 13, color: isPopular ? 'rgba(252,252,252,0.7)' : '#64748B', marginBottom: 20, lineHeight: 1.5 }}>
                 {plan.description}
               </p>
 
@@ -323,19 +319,19 @@ export default function PricingPage() {
               <div style={{ marginBottom: 24 }}>
                 {plan.monthlyPrice === 0 ? (
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                    <span style={{ fontSize: 40, fontWeight: 800, color: '#1E3A5F' }}>$0</span>
+                    <span style={{ fontSize: 40, fontWeight: 800, color: '#042A2B' }}>$0</span>
                     <span style={{ fontSize: 14, color: '#94A3B8' }}>/ forever</span>
                   </div>
                 ) : (
                   <>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                      <span style={{ fontSize: 40, fontWeight: 800, color: '#1E3A5F' }}>
+                      <span style={{ fontSize: 40, fontWeight: 800, color: isPopular ? '#54F2F2' : '#042A2B' }}>
                         ${price}
                       </span>
-                      <span style={{ fontSize: 14, color: '#94A3B8' }}>/ mo</span>
+                      <span style={{ fontSize: 14, color: isPopular ? 'rgba(252,252,252,0.5)' : '#94A3B8' }}>/ mo</span>
                     </div>
                     {annual && (
-                      <p style={{ fontSize: 12, color: '#10B981', marginTop: 2, fontWeight: 500 }}>
+                      <p style={{ fontSize: 12, color: isPopular ? '#54F2F2' : '#5EB1BF', marginTop: 2, fontWeight: 500 }}>
                         Billed ${plan.annualPrice}/year
                       </p>
                     )}
@@ -361,11 +357,15 @@ export default function PricingPage() {
                     ? `${plan.color}20`
                     : plan.key === 'free'
                     ? '#F1F5F9'
+                    : isPopular
+                    ? '#54F2F2'
                     : plan.color,
                   color: isCurrent
                     ? plan.color
                     : plan.key === 'free'
                     ? '#94A3B8'
+                    : isPopular
+                    ? '#042A2B'
                     : '#FFFFFF',
                   opacity: loading === plan.key ? 0.7 : 1,
                 }}
@@ -382,14 +382,14 @@ export default function PricingPage() {
                 {plan.features.map((feature) => (
                   <li
                     key={feature}
-                    style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: '#475569' }}
+                    style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: isPopular ? 'rgba(252,252,252,0.85)' : '#475569' }}
                   >
                     <svg
                       width={16}
                       height={16}
                       viewBox="0 0 24 24"
                       fill="none"
-                      stroke={plan.color}
+                      stroke={isPopular ? '#54F2F2' : plan.color}
                       strokeWidth={2.5}
                       strokeLinecap="round"
                       strokeLinejoin="round"

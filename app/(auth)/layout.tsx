@@ -6,7 +6,7 @@ export default function AuthLayout({
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: '#F8FAFC',
+      backgroundColor: '#FCFCFC',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -18,8 +18,8 @@ export default function AuthLayout({
       }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <a href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontSize: '32px', color: '#1E3A5F' }}>
-              <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#10B981', fontSize: '110%' }}>ly</em>
+            <span style={{ fontSize: '32px', color: '#042A2B' }}>
+              <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#54F2F2', fontSize: '110%' }}>ly</em>
             </span>
           </a>
         </div>

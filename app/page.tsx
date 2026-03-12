@@ -4,20 +4,20 @@ import Link from 'next/link'
 
 export default function LandingPage() {
   return (
-    <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: '#FCFCFC', minHeight: '100vh' }}>
       <Navbar />
 
       {/* Hero */}
       <section className="px-4 md:px-8 py-16 md:py-24" style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
         <div style={{
           display: 'inline-block',
-          backgroundColor: 'rgba(30,58,95,0.08)',
-          border: '1px solid rgba(30,58,95,0.2)',
+          backgroundColor: 'rgba(4,42,43,0.06)',
+          border: '1px solid rgba(4,42,43,0.15)',
           borderRadius: '100px',
           padding: '6px 16px',
           marginBottom: '32px',
         }}>
-          <span style={{ color: '#1E3A5F', fontSize: '13px', fontWeight: '500' }}>
+          <span style={{ color: '#042A2B', fontSize: '13px', fontWeight: '500' }}>
             ✦ Powered by Claude AI
           </span>
         </div>
@@ -32,7 +32,7 @@ export default function LandingPage() {
           margin: '0 auto 24px',
         }}>
           Write like yourself.{' '}
-          <span style={{ color: '#1E3A5F' }}>Every single time.</span>
+          <span style={{ color: '#042A2B' }}>Every single time.</span>
         </h1>
 
         <p className="text-base md:text-xl" style={{
@@ -41,7 +41,7 @@ export default function LandingPage() {
           maxWidth: '560px',
           margin: '0 auto 48px',
         }}>
-          Upload your writing samples. <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#10B981', fontSize: '110%' }}>ly</em> learns your unique voice, rhythm, and style — then transforms any AI-generated text to sound authentically like you.
+          Upload your writing samples. <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#54F2F2', fontSize: '110%' }}>ly</em> learns your unique voice, rhythm, and style — then transforms any AI-generated text to sound authentically like you.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
@@ -49,8 +49,8 @@ export default function LandingPage() {
             href="/signup"
             className="w-full sm:w-auto text-center"
             style={{
-              backgroundColor: '#1E3A5F',
-              color: '#FFFFFF',
+              backgroundColor: '#54F2F2',
+              color: '#042A2B',
               padding: '14px 32px',
               borderRadius: '8px',
               textDecoration: 'none',
@@ -96,7 +96,7 @@ export default function LandingPage() {
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         }}>
           <div style={{
-            backgroundColor: '#F8FAFC',
+            backgroundColor: '#FCFCFC',
             padding: '12px 16px',
             borderBottom: '1px solid #E2E8F0',
             display: 'flex',
@@ -114,11 +114,11 @@ export default function LandingPage() {
               </p>
             </div>
             <div style={{ padding: '24px' }}>
-              <div style={{ color: '#1E3A5F', fontSize: '12px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ color: '#042A2B', fontSize: '12px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span>Your Voice</span>
                 <span style={{
-                  backgroundColor: '#10B981',
-                  color: '#FFFFFF',
+                  backgroundColor: '#54F2F2',
+                  color: '#042A2B',
                   padding: '2px 8px',
                   borderRadius: '100px',
                   fontSize: '11px',
@@ -189,14 +189,14 @@ export default function LandingPage() {
               <div style={{
                 width: '48px',
                 height: '48px',
-                backgroundColor: 'rgba(30,58,95,0.08)',
-                border: '1px solid rgba(30,58,95,0.15)',
+                backgroundColor: 'rgba(84,242,242,0.1)',
+                border: '1px solid rgba(84,242,242,0.25)',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '22px',
-                color: '#1E3A5F',
+                color: '#042A2B',
                 marginBottom: '20px',
               }}>
                 {item.icon}
@@ -232,31 +232,31 @@ export default function LandingPage() {
               highlight: false,
             },
             {
-              name: 'Pro',
-              price: '$12',
+              name: 'Student',
+              price: '$7',
               period: 'per month',
-              features: ['Unlimited rewrites', '10 writing samples', 'Advanced style analysis', 'Priority support', 'Export history'],
-              cta: 'Start Pro',
+              features: ['Unlimited rewrites', '5 writing samples', 'Full style analysis', 'Priority support', 'Rewrite history'],
+              cta: 'Start Student',
               highlight: true,
             },
             {
-              name: 'Team',
-              price: '$29',
+              name: 'Academic Pro',
+              price: '$18',
               period: 'per month',
-              features: ['Everything in Pro', '5 team members', 'Shared style profiles', 'Team analytics', 'Dedicated support'],
-              cta: 'Start Team',
+              features: ['Everything in Student', '15 writing samples', 'Advanced profiling', 'Generate from scratch', 'Export history'],
+              cta: 'Start Pro',
               highlight: false,
             },
           ].map((plan) => (
             <div
               key={plan.name}
               style={{
-                backgroundColor: '#FFFFFF',
-                border: plan.highlight ? '2px solid #1E3A5F' : '1px solid #E2E8F0',
+                backgroundColor: plan.highlight ? '#042A2B' : '#FFFFFF',
+                border: plan.highlight ? '2px solid #54F2F2' : '1px solid #E2E8F0',
                 borderRadius: '16px',
                 padding: '32px',
                 position: 'relative',
-                boxShadow: plan.highlight ? '0 4px 16px rgba(30,58,95,0.15)' : '0 1px 3px rgba(0,0,0,0.06)',
+                boxShadow: plan.highlight ? '0 8px 32px rgba(4,42,43,0.2)' : '0 1px 3px rgba(0,0,0,0.06)',
               }}
             >
               {plan.highlight && (
@@ -265,8 +265,8 @@ export default function LandingPage() {
                   top: '-12px',
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  backgroundColor: '#1E3A5F',
-                  color: '#FFFFFF',
+                  backgroundColor: '#54F2F2',
+                  color: '#042A2B',
                   padding: '4px 16px',
                   borderRadius: '100px',
                   fontSize: '12px',
@@ -277,16 +277,16 @@ export default function LandingPage() {
                 </div>
               )}
               <div style={{ marginBottom: '24px' }}>
-                <h3 style={{ color: '#0F172A', fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>{plan.name}</h3>
+                <h3 style={{ color: plan.highlight ? '#FCFCFC' : '#0F172A', fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>{plan.name}</h3>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                  <span style={{ color: plan.highlight ? '#1E3A5F' : '#0F172A', fontSize: '40px', fontWeight: '700', letterSpacing: '-2px' }}>{plan.price}</span>
-                  <span style={{ color: '#64748B', fontSize: '14px' }}>/{plan.period}</span>
+                  <span style={{ color: plan.highlight ? '#54F2F2' : '#0F172A', fontSize: '40px', fontWeight: '700', letterSpacing: '-2px' }}>{plan.price}</span>
+                  <span style={{ color: plan.highlight ? 'rgba(252,252,252,0.6)' : '#64748B', fontSize: '14px' }}>/{plan.period}</span>
                 </div>
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {plan.features.map((feature) => (
-                  <li key={feature} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#0F172A', fontSize: '14px' }}>
-                    <span style={{ color: '#10B981', fontSize: '16px' }}>✓</span>
+                  <li key={feature} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: plan.highlight ? 'rgba(252,252,252,0.85)' : '#0F172A', fontSize: '14px' }}>
+                    <span style={{ color: '#54F2F2', fontSize: '16px' }}>✓</span>
                     {feature}
                   </li>
                 ))}
@@ -301,8 +301,8 @@ export default function LandingPage() {
                   textDecoration: 'none',
                   fontSize: '15px',
                   fontWeight: '600',
-                  backgroundColor: plan.highlight ? '#1E3A5F' : 'transparent',
-                  color: plan.highlight ? '#FFFFFF' : '#0F172A',
+                  backgroundColor: plan.highlight ? '#54F2F2' : 'transparent',
+                  color: plan.highlight ? '#042A2B' : '#0F172A',
                   border: plan.highlight ? 'none' : '1px solid #E2E8F0',
                 }}
               >
