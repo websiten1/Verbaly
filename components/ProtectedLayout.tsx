@@ -10,25 +10,26 @@ interface ProtectedLayoutProps {
 }
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', shortLabel: 'Home', color: '#3B82F6', delay: '0ms', icon: 'dashboard' },
-  { href: '/rewrite', label: 'Rewrite', shortLabel: 'Rewrite', color: '#54F2F2', delay: '75ms', icon: 'rewrite' },
-  { href: '/generate', label: 'Generate', shortLabel: 'Generate', color: '#A78BFA', delay: '150ms', icon: 'generate' },
-  { href: '/profile', label: 'Style Profile', shortLabel: 'Profile', color: '#F59E0B', delay: '225ms', icon: 'profile' },
-  { href: '/history', label: 'History', shortLabel: 'History', color: '#EC4899', delay: '300ms', icon: 'history' },
-  { href: '/pricing', label: 'Pricing', shortLabel: 'Plans', color: '#5EB1BF', delay: '375ms', icon: 'pricing' },
+  { href: '/dashboard', label: 'Dashboard', shortLabel: 'Home', delay: '0ms', icon: 'dashboard' },
+  { href: '/rewrite', label: 'Rewrite', shortLabel: 'Rewrite', delay: '75ms', icon: 'rewrite' },
+  { href: '/generate', label: 'Generate', shortLabel: 'Generate', delay: '150ms', icon: 'generate' },
+  { href: '/profile', label: 'Style Profile', shortLabel: 'Profile', delay: '225ms', icon: 'profile' },
+  { href: '/history', label: 'History', shortLabel: 'History', delay: '300ms', icon: 'history' },
+  { href: '/pricing', label: 'Pricing', shortLabel: 'Plans', delay: '375ms', icon: 'pricing' },
 ]
 
-function NavIcon({ icon, color, size = 18 }: { icon: string; color: string; size?: number }) {
+function NavIcon({ icon, isActive, size = 18 }: { icon: string; isActive: boolean; size?: number }) {
+  const color = isActive ? '#54F2F2' : 'rgba(252,252,252,0.5)'
   const svgProps = {
     width: size,
     height: size,
     viewBox: '0 0 24 24',
     fill: 'none' as const,
-    stroke: 'currentColor',
+    stroke: color,
     strokeWidth: 2,
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
-    style: { color, flexShrink: 0 },
+    style: { flexShrink: 0 },
   }
 
   if (icon === 'dashboard') {
@@ -89,6 +90,15 @@ function NavIcon({ icon, color, size = 18 }: { icon: string; color: string; size
   return null
 }
 
+const gridBg = {
+  backgroundColor: '#042A2B',
+  backgroundImage: `
+    linear-gradient(rgba(94,177,191,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(94,177,191,0.06) 1px, transparent 1px)
+  `,
+  backgroundSize: '80px 80px',
+}
+
 export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   const pathname = usePathname()
   const router = useRouter()
@@ -106,12 +116,13 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen" style={{ backgroundColor: '#FCFCFC' }}>
-      {/* Sidebar — hidden on mobile, shown on md+ */}
+    <div className="flex h-screen" style={gridBg}>
+      {/* Sidebar */}
       <aside
-        className="hidden md:flex md:flex-col md:w-64 md:flex-shrink-0"
+        className="hidden md:flex md:flex-col md:flex-shrink-0"
         style={{
-          backgroundColor: '#042A2B',
+          backgroundColor: '#021E1F',
+          boxShadow: '2px 0 24px rgba(0,0,0,0.4)',
           position: 'fixed',
           top: 0,
           left: 0,
@@ -120,15 +131,16 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
           width: '240px',
         }}
       >
-        <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ padding: '28px 24px 20px' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontSize: '22px', color: '#FCFCFC' }}>
-              <span style={{ fontWeight: 700 }}>Verba</span><em style={{ fontStyle: 'italic', fontWeight: 'bold', color: '#54F2F2', fontSize: '110%' }}>ly</em>
+            <span style={{ fontSize: '22px', fontFamily: 'DM Sans, sans-serif' }}>
+              <span style={{ fontWeight: 700, color: '#FCFCFC' }}>Verbal</span>
+              <span style={{ fontWeight: 700, color: '#54F2F2' }}>y</span>
             </span>
           </Link>
         </div>
 
-        <nav style={{ flex: 1, padding: '16px 12px' }}>
+        <nav style={{ flex: 1, padding: '8px 12px' }}>
           {navItems.map((item) => {
             const isActive = pathname === item.href
             const isHovered = hoveredItem === item.href
@@ -143,61 +155,59 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
-                  padding: '10px 16px',
-                  borderRadius: '8px',
+                  padding: '10px 14px',
+                  borderRadius: '100px',
                   textDecoration: 'none',
                   fontSize: '14px',
-                  fontWeight: 500,
+                  fontWeight: isActive ? 600 : 400,
                   marginBottom: '4px',
-                  transition: 'all 200ms ease',
+                  transition: 'all 150ms ease',
                   transitionDelay: item.delay,
                   transform: mounted ? 'translateX(0)' : 'translateX(-20px)',
                   opacity: mounted ? 1 : 0,
                   ...(isActive
                     ? {
-                        backgroundColor: 'rgba(84,242,242,0.12)',
-                        borderLeft: '3px solid #54F2F2',
-                        color: '#FCFCFC',
+                        backgroundColor: 'rgba(84,242,242,0.1)',
+                        color: '#54F2F2',
                       }
                     : isHovered
                     ? {
-                        backgroundColor: 'rgba(94,177,191,0.15)',
-                        borderLeft: '3px solid transparent',
-                        color: '#FCFCFC',
+                        backgroundColor: 'rgba(94,177,191,0.1)',
+                        color: 'rgba(252,252,252,0.9)',
                       }
                     : {
                         backgroundColor: 'transparent',
-                        borderLeft: '3px solid transparent',
-                        color: 'rgba(252,252,252,0.7)',
+                        color: 'rgba(252,252,252,0.5)',
                       }),
                 }}
               >
-                <NavIcon icon={item.icon} color={isActive ? '#54F2F2' : item.color} />
+                <NavIcon icon={item.icon} isActive={isActive} />
                 {item.label}
               </Link>
             )
           })}
         </nav>
 
-        <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ padding: '16px 12px 24px' }}>
           <button
             onClick={handleSignOut}
             style={{
               width: '100%',
-              padding: '10px 12px',
+              padding: '10px 14px',
               backgroundColor: 'transparent',
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: '8px',
-              color: 'rgba(252,252,252,0.6)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '100px',
+              color: 'rgba(252,252,252,0.4)',
               cursor: 'pointer',
               fontSize: '14px',
               textAlign: 'left',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '10px',
+              transition: 'all 150ms ease',
             }}
           >
-            <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ color: 'rgba(252,252,252,0.6)', flexShrink: 0 }}>
+            <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
               <polyline points="16 17 21 12 16 7"/>
               <line x1="21" y1="12" x2="9" y2="12"/>
@@ -207,15 +217,20 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
         </div>
       </aside>
 
-      {/* Main content — offset by sidebar width on md+, pad bottom for mobile nav */}
-      <main className="flex-1 overflow-y-auto pb-16 md:pb-0" style={{ marginLeft: '0' }}>
+      {/* Main content */}
+      <main className="flex-1 overflow-y-auto pb-16 md:pb-0" style={{ marginLeft: '0', backgroundColor: 'transparent' }}>
         <div className="md:ml-60">
           {children}
         </div>
       </main>
 
-      {/* Mobile bottom nav bar — visible only on mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around bg-[#042A2B] border-t border-[#5EB1BF]/20 px-2 py-2">
+      {/* Mobile bottom nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-2 py-2"
+        style={{
+          backgroundColor: '#021E1F',
+          borderTop: '1px solid rgba(84,242,242,0.1)',
+        }}
+      >
         {navItems.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -225,12 +240,12 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
               className="flex flex-col items-center gap-1 min-w-[44px] min-h-[44px] justify-center px-1"
               style={{
                 textDecoration: 'none',
-                color: isActive ? '#FCFCFC' : 'rgba(252,252,252,0.6)',
-                backgroundColor: isActive ? 'rgba(84,242,242,0.12)' : 'transparent',
-                borderRadius: '8px',
+                color: isActive ? '#54F2F2' : 'rgba(252,252,252,0.45)',
+                backgroundColor: isActive ? 'rgba(84,242,242,0.08)' : 'transparent',
+                borderRadius: '12px',
               }}
             >
-              <NavIcon icon={item.icon} color={isActive ? '#54F2F2' : 'rgba(252,252,252,0.6)'} size={20} />
+              <NavIcon icon={item.icon} isActive={isActive} size={20} />
               <span style={{ fontSize: '10px', fontWeight: isActive ? 600 : 400, lineHeight: 1 }}>
                 {item.shortLabel}
               </span>

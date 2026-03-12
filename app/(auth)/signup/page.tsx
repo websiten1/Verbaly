@@ -48,11 +48,23 @@ export default function SignupPage() {
     setSuccess(true)
     setLoading(false)
 
-    // Auto-redirect after a short delay if email confirmation is disabled
     setTimeout(() => {
       router.push('/dashboard')
       router.refresh()
     }, 2000)
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '12px',
+    padding: '12px 16px',
+    color: '#FCFCFC',
+    fontSize: '15px',
+    outline: 'none',
+    boxSizing: 'border-box',
+    fontFamily: 'DM Sans, sans-serif',
   }
 
   if (success) {
@@ -61,22 +73,22 @@ export default function SignupPage() {
         <div style={{
           width: '56px',
           height: '56px',
-          backgroundColor: 'rgba(84,242,242,0.12)',
-          border: '1px solid rgba(84,242,242,0.35)',
+          backgroundColor: 'rgba(84,242,242,0.1)',
+          border: '1px solid rgba(84,242,242,0.25)',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 20px',
           fontSize: '24px',
-          color: '#042A2B',
+          color: '#54F2F2',
         }}>
           ✓
         </div>
-        <h2 style={{ color: '#0F172A', fontSize: '22px', fontWeight: '700', marginBottom: '12px' }}>
+        <h2 style={{ color: '#FCFCFC', fontSize: '22px', fontWeight: '700', marginBottom: '12px', fontFamily: 'Instrument Serif, serif' }}>
           Account created!
         </h2>
-        <p style={{ color: '#64748B', fontSize: '14px', lineHeight: '1.6' }}>
+        <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '14px', lineHeight: '1.6' }}>
           Check your email to confirm your account, or you&apos;ll be redirected shortly.
         </p>
       </div>
@@ -85,16 +97,16 @@ export default function SignupPage() {
 
   return (
     <>
-      <h1 style={{ color: '#0F172A', fontSize: '26px', fontWeight: '700', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+      <h1 style={{ color: '#FCFCFC', fontSize: '26px', fontWeight: '700', marginBottom: '8px', letterSpacing: '-0.3px', fontFamily: 'Instrument Serif, serif' }}>
         Create your account
       </h1>
-      <p style={{ color: '#64748B', fontSize: '14px', marginBottom: '32px' }}>
+      <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '14px', marginBottom: '32px' }}>
         Start writing like yourself in minutes
       </p>
 
       <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
-          <label style={{ display: 'block', color: '#0F172A', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+          <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
             Email
           </label>
           <input
@@ -103,22 +115,12 @@ export default function SignupPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="you@example.com"
-            style={{
-              width: '100%',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E2E8F0',
-              borderRadius: '8px',
-              padding: '12px 14px',
-              color: '#0F172A',
-              fontSize: '15px',
-              outline: 'none',
-              boxSizing: 'border-box',
-            }}
+            style={inputStyle}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', color: '#0F172A', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+          <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
             Password
           </label>
           <input
@@ -127,22 +129,12 @@ export default function SignupPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="••••••••"
-            style={{
-              width: '100%',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E2E8F0',
-              borderRadius: '8px',
-              padding: '12px 14px',
-              color: '#0F172A',
-              fontSize: '15px',
-              outline: 'none',
-              boxSizing: 'border-box',
-            }}
+            style={inputStyle}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', color: '#0F172A', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+          <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
             Confirm Password
           </label>
           <input
@@ -151,27 +143,17 @@ export default function SignupPage() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
             placeholder="••••••••"
-            style={{
-              width: '100%',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E2E8F0',
-              borderRadius: '8px',
-              padding: '12px 14px',
-              color: '#0F172A',
-              fontSize: '15px',
-              outline: 'none',
-              boxSizing: 'border-box',
-            }}
+            style={inputStyle}
           />
         </div>
 
         {error && (
           <div style={{
-            backgroundColor: 'rgba(239, 68, 68, 0.08)',
-            border: '1px solid rgba(239, 68, 68, 0.25)',
-            borderRadius: '8px',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            borderRadius: '10px',
             padding: '12px',
-            color: '#DC2626',
+            color: '#FCA5A5',
             fontSize: '14px',
           }}>
             {error}
@@ -182,25 +164,26 @@ export default function SignupPage() {
           type="submit"
           disabled={loading}
           style={{
-            backgroundColor: loading ? 'rgba(84,242,242,0.5)' : '#54F2F2',
+            backgroundColor: loading ? 'rgba(84,242,242,0.4)' : '#54F2F2',
             color: '#042A2B',
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '100px',
             padding: '13px 24px',
             fontSize: '15px',
-            fontWeight: '700',
+            fontWeight: '600',
             cursor: loading ? 'not-allowed' : 'pointer',
             marginTop: '8px',
             width: '100%',
+            fontFamily: 'DM Sans, sans-serif',
           }}
         >
           {loading ? 'Creating account...' : 'Create Account'}
         </button>
       </form>
 
-      <p style={{ textAlign: 'center', color: '#64748B', fontSize: '14px', marginTop: '24px' }}>
+      <p style={{ textAlign: 'center', color: 'rgba(252,252,252,0.45)', fontSize: '14px', marginTop: '24px' }}>
         Already have an account?{' '}
-        <Link href="/login" style={{ color: '#042A2B', textDecoration: 'none', fontWeight: '500' }}>
+        <Link href="/login" style={{ color: '#54F2F2', textDecoration: 'none', fontWeight: '500' }}>
           Sign in
         </Link>
       </p>
