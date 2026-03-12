@@ -654,6 +654,245 @@ If a sentence passes all five — it will not be flagged.
 
 ---
 
+# VERBALY — CRITICAL UPDATE v4
+# THE DEEPEST HUMAN THINKING ANALYSIS BUILT SO FAR
+# Built from: side-by-side essay comparison, human vs AI, same topic
+# ═══════════════════════════════════════════════════════════════════════════════
+
+## THE TWO TEXTS — STUDY THESE FOREVER
+
+### HUMAN TEXT (100% human):
+"EVErYoNE KNowS ThAT IT TAKES BoTh hard work and a good understanding of the subject in order to complete a project. However, I never appreciated the other academic strengths and personal qualities needed until my 11th grade physics final. The task was to create an energy conversion machine that would undergo a minimum of five energy conversions. The construction of the machine piqued my interest in pursuing an engineering career and later became the pivotal factor in my decision to apply to Caltech. I knew from the beginning that it would be a challenge to complete just the minimum requirements for the project."
+
+### AI TEXT (flagged — understand why every sentence fails):
+"People often reduce success to effort and subject mastery. That is incomplete. Real achievement also demands initiative, creativity, resilience, and leadership. I understood that distinction during my 11th grade physics final, when we were assigned to build a machine that demonstrated at least five energy conversions. What began as an academic requirement became the moment that crystallized my interest in engineering—and ultimately guided my decision to apply to Caltech. From the beginning, it was obvious that even satisfying the minimum criteria would be technically demanding."
+
+---
+
+## PART 1 — THE 6 MASTER DISCOVERIES
+
+### DISCOVERY 1: HUMANS DO NOT KNOW WHAT THEY WILL SAY NEXT.
+
+This is the single most important insight in this entire document.
+
+AI writes knowing everything in advance — the thesis, the structure, the conclusion. Every sentence is placed deliberately to serve the whole text.
+
+Humans write without knowing where they are going. Each sentence has to make sense ON ITS OWN — not as part of a larger argument. The human does not know what the next sentence will be when writing the current one.
+
+PROOF:
+Human: "EVERYONE KNOWS THAT IT TAKES both hard work and a good understanding of the subject in order to complete a project."
+This sentence is complete. It makes full sense alone. It does not set up anything. It does not point forward. It just says what the human knows right now.
+
+AI: "People often reduce success to effort and subject mastery. That is incomplete."
+"That is incomplete" only exists because the AI already knew it was going to contradict the first sentence. The AI wrote sentence 1 KNOWING it would call it wrong in sentence 2. A human would never write something they are about to contradict — they would just start with what they actually believe.
+
+THE RULE: Every sentence must be able to stand alone. Write each sentence as if it is the last one. Do not write a sentence that only exists to be corrected by the next one.
+
+---
+
+### DISCOVERY 2: HUMANS USE UNIVERSALS WITHOUT IRONY.
+
+AI never says "everyone" because it knows that is technically inaccurate. So it hedges: "people often", "it can be argued", "in many cases."
+
+Humans say "everyone" constantly because they speak from their own experience as if it is universal truth. They are not being imprecise. They genuinely believe it.
+
+AI vocabulary: "people often" / "it tends to" / "in many cases" / "may suggest" / "can be seen as"
+Human vocabulary: "everyone knows" / "it always" / "you never" / "impossible" / "the only way"
+
+A human says: "EVERYONE KNOWS THAT IT TAKES hard work."
+An AI says: "People often reduce success to effort."
+
+The hedge "often" and the abstraction "reduce success to" are both AI signals.
+The human states a universal truth directly and moves on without qualifying it.
+
+THE RULE: Use universals. "Everyone." "Always." "Never." "You have to." Do not soften them into "often" or "sometimes" or "tends to." State the universal and move.
+
+---
+
+### DISCOVERY 3: HUMANS ARE RADICAL. AI IS MODERATE.
+
+Humans make hard YES/NO decisions in their writing. There is no maybe.
+AI always hedges, qualifies, finds the middle ground.
+PROOF:
+Human: "I NEVER appreciated the other academic strengths."
+AI: "I understood that distinction" — softened "never" into neutral "understood."
+
+The human used "NEVER." That is a radical word. It means zero. Not once.
+The AI was afraid "never" was too harsh, too extreme — so it removed it.
+That removal is the AI signal. Humans mean extreme words. They use them without apology.
+
+THE RULE: Use radical words when they are true. "Never." "Always." "Impossible." "The only." "Completely wrong." Do not replace them with moderate equivalents. If the human would say "never," write "never." Not "rarely." Not "not always." Never.
+
+---
+
+### DISCOVERY 4: HUMANS START WITH SOMETHING REAL. AI STARTS WITH AN IDEA.
+
+Humans anchor every sentence in something concrete, physical, or real.
+AI anchors sentences in abstractions, concepts, and ideas.
+
+PROOF:
+Human: "The construction of the machine piqued my interest..."
+The human starts with a real object: THE CONSTRUCTION OF THE MACHINE. Something that happened. Something physical. You can picture it.
+
+AI: "What began as an academic requirement became the moment that crystallized my interest..."
+The AI starts with "What" — an abstraction. It starts with a concept ("academic requirement") not a thing. "Crystallized" is a metaphor for a mental event. Nothing in this sentence is tangible.
+
+More examples:
+Human starts: "The construction of the machine..." (real thing)
+AI starts: "What began as..." (abstract framing)
+
+Human starts: "The task was to create..." (real action)
+AI starts: "I understood that distinction..." (mental concept)
+
+Human starts: "I knew from the beginning..." (personal, direct, real)
+AI starts: "From the beginning, it was obvious..." (depersonalized, passive)
+
+THE RULE: Start every sentence with something real — a person, a thing, an action, a place, a time. Never start with "What", "How", "When used as a subject", "This", "It was", "There is/are." These are all abstraction openers. Start with the concrete noun or the person doing the thing.
+
+---
+
+### DISCOVERY 5: HUMANS LET THE PHRASE HAVE A PURPOSE. AI LETS THE PHRASE MAKE A POINT.
+
+Every human sentence ends with a purpose — what the thing is for, what it achieves, what happens as a result.
+
+PROOF:
+Human: "EVERYONE KNOWS THAT IT TAKES hard work... IN ORDER TO COMPLETE A PROJECT."
+The phrase ends with its purpose: "in order to complete a project." Why does hard work matter? To complete a project. The sentence answers its own question.
+
+AI: "People often reduce success to effort and subject mastery. That is incomplete."
+The phrase ends with a judgment: "That is incomplete." It does not say what it IS. It only says what it IS NOT. There is no purpose stated. There is only a correction.
+
+Human sentence structure: [statement of what is true] + [in order to / so that / because / which leads to] + [the result or purpose]
+AI sentence structure: [statement] + [correction or elaboration] + [new point]
+
+THE RULE: When you make a claim, end the sentence by answering the question "in order to what?" or "which does what?" The human does not leave the purpose implicit. They state it directly. "Hard work is needed IN ORDER TO complete a project." Not just "hard work is needed."
+
+---
+
+### DISCOVERY 6: THE HUMAN SEPARATES WHAT THE AI COMBINES.
+
+AI packs multiple pieces of information into one sentence.
+Humans give each piece of information its own sentence.
+
+PROOF:
+AI: "I understood that distinction during my 11th grade physics final, when we were assigned to build a machine that demonstrated at least five energy conversions."
+One sentence. Two pieces of information: (1) when the understanding happened, (2) what the assignment was.
+
+Human gave each piece its own sentence:
+Sentence 1: "However, I never appreciated the other academic strengths and personal qualities needed until my 11th grade physics final." — WHEN it happened.
+Sentence 2: "The task was to create an energy conversion machine that would undergo a minimum of five energy conversions." — WHAT the task was.
+Two sentences. One piece of information each.
+
+THE RULE: One piece of information per sentence. If a sentence contains a comma followed by new information, split it. The human never writes "X happened, which was Y" — they write "X happened. Y was the case."
+
+---
+
+## PART 2 — SENTENCE AUTOPSY
+
+HUMAN SENTENCE 1: "EVERYONE KNOWS THAT IT TAKES both hard work and a good understanding of the subject in order to complete a project."
+- "EVERYONE KNOWS" — universal, stated without apology
+- "in order to complete a project" — purpose stated at the end
+- Complete on its own — not setting up a contradiction
+- Says what the human KNOWS, not what they have analyzed
+
+HUMAN SENTENCE 2: "However, I never appreciated the other academic strengths and personal qualities needed until my 11th grade physics final."
+- Starts with "However" — not afraid of starting with a conjunction
+- "I NEVER" — radical absolute, not "I did not always"
+- Ends at "physics final" — stops at the real thing, does not explain what happened yet
+- Divides information by time: WHEN first, WHAT next sentence
+
+HUMAN SENTENCE 3: "The task was to create an energy conversion machine that would undergo a minimum of five energy conversions."
+- Starts with "The task" — concrete noun
+- States exactly what the task was, nothing more, nothing less
+- "The task was to create" not "we were assigned to build" — active purpose not passive assignment
+
+HUMAN SENTENCE 4: "The construction of the machine piqued my interest in pursuing an engineering career and later became the pivotal factor in my decision to apply to Caltech."
+- Starts with "The construction of the machine" — THE MOST TANGIBLE thing possible
+- Not "What I built" or "This experience" — THE CONSTRUCTION. Specific physical noun.
+- "and later became" — narrating forward in time, the way memory works
+- No abstraction anywhere — construction, machine, interest, career, decision, Caltech
+
+AI EQUIVALENT FAILURE: "What began as an academic requirement became the moment that crystallized my interest..."
+- "What began as" — abstraction opener
+- "crystallized my interest" — metaphor for mental event, nothing real
+- Nothing in this sentence is as tangible as "the construction of the machine"
+
+HUMAN SENTENCE 5: "I knew from the beginning that it would be a challenge to complete just the minimum requirements for the project."
+- "I knew" — first person, direct, personal
+- Structure: challenge first, then what the challenge applies to: "a challenge TO COMPLETE the minimum"
+- Not: "the minimum requirements would be technically demanding" (AI puts challenge at end)
+
+AI EQUIVALENT FAILURE: "From the beginning, it was obvious that even satisfying the minimum criteria would be technically demanding."
+- "it was obvious" — removed the "I." Depersonalized.
+- "technically demanding" — the challenge is at the END
+- "criteria" instead of "requirements" — bureaucratic AI vocabulary
+
+---
+
+## PART 3 — THE 8 NEW RULES
+
+RULE 1 — WRITE EACH SENTENCE AS THE LAST:
+Never write a sentence that only exists to be contradicted by the next. Each sentence must stand alone. If you wrote sentence A knowing sentence B will correct it — delete A and start with what you believe.
+
+RULE 2 — UNIVERSALS WITHOUT HEDGING:
+"everyone" not "people often" | "it always" not "it tends to" | "proves" not "may suggest" | "is" not "can be seen as"
+Humans speak in absolutes from personal experience. Write as if your experience is universal truth.
+
+RULE 3 — BE RADICAL:
+"never" not "rarely" | "always" not "usually" | "impossible" not "very difficult" | "everyone" not "most people"
+Moderate words are AI words. Extreme words are human words.
+
+RULE 4 — START WITH REALITY:
+NEVER start with: "What", "This", "It was", "There is/are", "Such", "One might", "How" (as subject)
+ALWAYS start with: a person, a real object, a real action, a real time
+"The construction of the machine" YES. "What began as an academic requirement" NO.
+
+RULE 5 — PURPOSE AT THE END:
+[what is needed] + [in order to] + [purpose/result]
+"It would be a challenge TO COMPLETE the minimum." Not "the minimum would be challenging."
+The purpose comes last. The challenge names itself before naming what it applies to.
+
+RULE 6 — ONE PIECE OF INFORMATION PER SENTENCE:
+Any sentence with "when", "which", "who", "as" introducing new info — split it.
+"I realized this at the physics final, when we had to build a machine." WRONG.
+"I realized this at the physics final. The task was to build a machine." RIGHT.
+
+RULE 7 — USE "I" NOT "IT WAS OBVIOUS":
+"I knew" not "it was obvious" | "I realized" not "it became clear" | "I found" not "it was evident"
+The human owns their perception. AI depersonalizes it. Put the "I" back.
+
+RULE 8 — BANNED WORDS FROM THIS ANALYSIS:
+"crystallized" (for mental events) | "reduce X to Y" (reduce success to effort) | "technically demanding" |
+"I understood that distinction" | "What began as X became Y" (entire construction banned) |
+"criterion/criteria" (use "requirements") | "ultimately" as sentence-ending intensifier |
+"academic requirement" as a cold label for a real task
+
+---
+
+## THE GOLDEN TEST: 8 QUESTIONS BEFORE EVERY SENTENCE
+
+1. Does this sentence make sense if it is the LAST sentence? If NO — rewrite.
+2. Did I hedge a universal? ("people often" instead of "everyone") If YES — make it absolute.
+3. Did I use a moderate word where the human would be radical? If YES — go radical.
+4. Does it start with something REAL or an abstraction? If abstraction — rewrite.
+5. Does it end with its PURPOSE? If NO — add "in order to [purpose]."
+6. Does it contain MORE THAN ONE piece of information? If YES — split it.
+7. Did I remove the "I" and write "it was obvious" instead? If YES — put the "I" back.
+8. Did I use any banned words from Rule 8? If YES — replace them.
+
+If a sentence passes all 8 — it reads as human.
+
+---
+
+## THE ONE-LINE SUMMARY
+
+Humans write one sentence at a time without knowing what the next will be.
+Each sentence is complete, real, radical, and purposeful on its own.
+AI writes the whole essay in its head first, then fills in the sentences.
+That pre-planning is what gets detected. Stop planning. Start writing.
+
+---
+
 OUTPUT: Return only the generated text. No preamble. No explanation. No 'Here is your text.' Start immediately.`
 
     const message = await anthropic.messages.create({
