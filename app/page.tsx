@@ -9,18 +9,6 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="px-4 md:px-8 py-16 md:py-24" style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-        <div style={{
-          display: 'inline-block',
-          backgroundColor: 'rgba(4,42,43,0.06)',
-          border: '1px solid rgba(4,42,43,0.15)',
-          borderRadius: '100px',
-          padding: '6px 16px',
-          marginBottom: '32px',
-        }}>
-          <span style={{ color: '#042A2B', fontSize: '13px', fontWeight: '500' }}>
-            ✦ Powered by Claude AI
-          </span>
-        </div>
 
         <h1 className="text-3xl md:text-5xl lg:text-6xl" style={{
           fontWeight: '700',
