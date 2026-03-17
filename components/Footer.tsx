@@ -2,38 +2,45 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid #E2E8F0', padding: '48px 24px' }}>
+    <footer style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid #E8ECF4', padding: '48px 24px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', marginBottom: '40px' }}>
           <div>
-            <span style={{ fontSize: '22px', fontWeight: '700', color: '#1E3A5F', display: 'block', marginBottom: '12px' }}>
-              Verbaly
-            </span>
-            <p style={{ color: '#64748B', fontSize: '14px', lineHeight: '1.6' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
+                <circle cx="10" cy="10" r="8.5" stroke="#1A6EFF" strokeWidth="1.5"/>
+                <circle cx="10" cy="10" r="5.5" stroke="#1A6EFF" strokeWidth="1.5" opacity="0.55"/>
+                <circle cx="10" cy="10" r="2.5" stroke="#1A6EFF" strokeWidth="1.5" opacity="0.25"/>
+              </svg>
+              <span style={{ fontSize: '18px', fontWeight: '700', color: '#1A2340', fontFamily: 'DM Sans, sans-serif' }}>
+                Verbaly
+              </span>
+            </div>
+            <p style={{ color: '#8A94A6', fontSize: '14px', lineHeight: '1.6' }}>
               AI-powered writing that sounds like you.
             </p>
           </div>
           <div>
-            <h4 style={{ color: '#0F172A', fontWeight: '600', marginBottom: '16px', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Product</h4>
+            <h4 style={{ color: '#1A2340', fontWeight: '600', marginBottom: '16px', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Product</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <Link href="/rewrite" style={{ color: '#64748B', textDecoration: 'none', fontSize: '14px' }}>Rewrite</Link>
-              <Link href="/profile" style={{ color: '#64748B', textDecoration: 'none', fontSize: '14px' }}>Style Profile</Link>
-              <Link href="/history" style={{ color: '#64748B', textDecoration: 'none', fontSize: '14px' }}>History</Link>
+              <Link href="/rewrite" style={{ color: '#4A5568', textDecoration: 'none', fontSize: '14px' }}>Rewrite</Link>
+              <Link href="/profile" style={{ color: '#4A5568', textDecoration: 'none', fontSize: '14px' }}>Style Profile</Link>
+              <Link href="/history" style={{ color: '#4A5568', textDecoration: 'none', fontSize: '14px' }}>History</Link>
             </div>
           </div>
           <div>
-            <h4 style={{ color: '#0F172A', fontWeight: '600', marginBottom: '16px', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Account</h4>
+            <h4 style={{ color: '#1A2340', fontWeight: '600', marginBottom: '16px', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Account</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <Link href="/login" style={{ color: '#64748B', textDecoration: 'none', fontSize: '14px' }}>Log In</Link>
-              <Link href="/signup" style={{ color: '#64748B', textDecoration: 'none', fontSize: '14px' }}>Sign Up</Link>
+              <Link href="/login" style={{ color: '#4A5568', textDecoration: 'none', fontSize: '14px' }}>Log In</Link>
+              <Link href="/signup" style={{ color: '#4A5568', textDecoration: 'none', fontSize: '14px' }}>Sign Up</Link>
             </div>
           </div>
         </div>
-        <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p style={{ color: '#64748B', fontSize: '13px', opacity: 0.7 }}>
+        <div style={{ borderTop: '1px solid #E8ECF4', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <p style={{ color: '#8A94A6', fontSize: '13px' }}>
             © {new Date().getFullYear()} Verbaly. All rights reserved.
           </p>
-          <p style={{ color: '#64748B', fontSize: '13px', opacity: 0.7 }}>
+          <p style={{ color: '#8A94A6', fontSize: '13px' }}>
             Write like yourself. Every single time.
           </p>
         </div>

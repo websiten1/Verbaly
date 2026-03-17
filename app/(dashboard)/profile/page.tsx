@@ -30,9 +30,10 @@ const PRESET_PROFILES: PresetProfile[] = [
 ]
 
 const card: React.CSSProperties = {
-  backgroundColor: 'rgba(255,255,255,0.04)',
-  border: '1px solid rgba(255,255,255,0.08)',
-  borderRadius: '20px',
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #E8ECF4',
+  borderRadius: '12px',
+  boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
 }
 
 export default function ProfilePage() {
@@ -199,11 +200,11 @@ export default function ProfilePage() {
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '12px',
+    backgroundColor: '#F8F9FC',
+    border: '1px solid #E8ECF4',
+    borderRadius: '10px',
     padding: '10px 14px',
-    color: '#FCFCFC',
+    color: '#1A2340',
     fontSize: '14px',
     outline: 'none',
     boxSizing: 'border-box',
@@ -214,10 +215,10 @@ export default function ProfilePage() {
   return (
     <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh' }}>
       <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ color: '#FCFCFC', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', fontFamily: 'Instrument Serif, serif' }}>
+        <h1 style={{ color: '#1A2340', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', fontFamily: 'Instrument Serif, serif' }}>
           Style Profile
         </h1>
-        <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '14px' }}>
+        <p style={{ color: '#8A94A6', fontSize: '14px' }}>
           Upload your writing so Verbaly can learn your voice
         </p>
       </div>
@@ -226,10 +227,10 @@ export default function ProfilePage() {
       <div style={{ ...card, padding: '24px', marginBottom: '24px' }}>
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-5">
           <div>
-            <h2 style={{ color: '#FCFCFC', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
+            <h2 style={{ color: '#1A2340', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
               Choose a Preset Profile
             </h2>
-            <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '13px' }}>
+            <p style={{ color: '#8A94A6', fontSize: '13px' }}>
               Use a preset writing persona instead of your personal style profile.
             </p>
           </div>
@@ -239,10 +240,10 @@ export default function ProfilePage() {
               disabled={presetSaving}
               style={{
                 backgroundColor: 'transparent',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '100px',
+                border: '1px solid #E8ECF4',
+                borderRadius: '8px',
                 padding: '7px 16px',
-                color: 'rgba(252,252,252,0.5)',
+                color: '#4A5568',
                 fontSize: '13px',
                 cursor: presetSaving ? 'not-allowed' : 'pointer',
                 whiteSpace: 'nowrap',
@@ -257,11 +258,11 @@ export default function ProfilePage() {
 
         {!activePreset && (
           <div style={{
-            backgroundColor: 'rgba(84,242,242,0.05)',
-            border: '1px solid rgba(84,242,242,0.15)',
-            borderRadius: '12px',
+            backgroundColor: 'rgba(26,110,255,0.04)',
+            border: '1px solid rgba(26,110,255,0.12)',
+            borderRadius: '10px',
             padding: '10px 14px',
-            color: 'rgba(84,242,242,0.8)',
+            color: '#1A6EFF',
             fontSize: '13px',
             marginBottom: '16px',
           }}>
@@ -276,36 +277,36 @@ export default function ProfilePage() {
               <div
                 key={preset.name}
                 style={{
-                  border: isActive ? '1px solid rgba(84,242,242,0.3)' : '1px solid rgba(255,255,255,0.07)',
-                  borderRadius: '16px',
+                  border: isActive ? '1px solid rgba(26,110,255,0.3)' : '1px solid #E8ECF4',
+                  borderRadius: '10px',
                   padding: '16px',
-                  backgroundColor: isActive ? 'rgba(84,242,242,0.05)' : 'rgba(255,255,255,0.03)',
+                  backgroundColor: isActive ? 'rgba(26,110,255,0.04)' : '#F8F9FC',
                   position: 'relative',
                 }}
               >
                 {isActive && (
                   <span style={{
                     position: 'absolute', top: '12px', right: '12px',
-                    backgroundColor: '#54F2F2', color: '#042A2B',
+                    backgroundColor: '#1A6EFF', color: '#FFFFFF',
                     fontSize: '11px', fontWeight: '700', padding: '2px 8px', borderRadius: '100px',
                   }}>
                     Active
                   </span>
                 )}
-                <div style={{ color: '#FCFCFC', fontSize: '14px', fontWeight: '600', marginBottom: '6px', paddingRight: isActive ? '52px' : '0' }}>
+                <div style={{ color: '#1A2340', fontSize: '14px', fontWeight: '600', marginBottom: '6px', paddingRight: isActive ? '52px' : '0' }}>
                   {preset.name}
                 </div>
-                <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '13px', lineHeight: '1.5', marginBottom: '14px' }}>
+                <p style={{ color: '#8A94A6', fontSize: '13px', lineHeight: '1.5', marginBottom: '14px' }}>
                   {preset.description}
                 </p>
                 <button
                   onClick={() => handleSelectPreset(preset.name)}
                   disabled={presetSaving || isActive}
                   style={{
-                    backgroundColor: isActive ? 'rgba(84,242,242,0.08)' : '#54F2F2',
-                    color: isActive ? '#54F2F2' : '#042A2B',
-                    border: isActive ? '1px solid rgba(84,242,242,0.2)' : 'none',
-                    borderRadius: '100px',
+                    backgroundColor: isActive ? 'rgba(26,110,255,0.08)' : '#1A6EFF',
+                    color: isActive ? '#1A6EFF' : '#FFFFFF',
+                    border: isActive ? '1px solid rgba(26,110,255,0.2)' : 'none',
+                    borderRadius: '8px',
                     padding: '7px 16px',
                     fontSize: '13px',
                     fontWeight: '600',
@@ -327,20 +328,19 @@ export default function ProfilePage() {
       {/* Profile strength */}
       <div style={{ ...card, padding: '24px', marginBottom: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <span style={{ color: 'rgba(252,252,252,0.7)', fontSize: '14px', fontWeight: '500' }}>Profile Strength</span>
-          <span style={{ color: '#54F2F2', fontSize: '14px', fontWeight: '700' }}>{profileStrength}%</span>
+          <span style={{ color: '#4A5568', fontSize: '14px', fontWeight: '500' }}>Profile Strength</span>
+          <span style={{ color: '#1A6EFF', fontSize: '14px', fontWeight: '700' }}>{profileStrength}%</span>
         </div>
-        <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '100px', height: '6px', overflow: 'hidden', width: '100%' }}>
+        <div style={{ backgroundColor: '#F8F9FC', borderRadius: '100px', height: '6px', overflow: 'hidden', width: '100%', border: '1px solid #E8ECF4' }}>
           <div style={{
-            backgroundColor: '#54F2F2',
+            backgroundColor: '#1A6EFF',
             height: '100%',
             width: `${profileStrength}%`,
             borderRadius: '100px',
             transition: 'width 0.5s ease',
-            boxShadow: '0 0 8px rgba(84,242,242,0.4)',
           }} />
         </div>
-        <p style={{ color: 'rgba(252,252,252,0.3)', fontSize: '12px', marginTop: '8px' }}>
+        <p style={{ color: '#8A94A6', fontSize: '12px', marginTop: '8px' }}>
           {profileStrength < 30
             ? 'Upload more samples to improve your style profile'
             : profileStrength < 70
@@ -354,12 +354,12 @@ export default function ProfilePage() {
         {/* Left: Upload */}
         <div>
           <div style={{ ...card, padding: '24px', marginBottom: '20px' }}>
-            <h2 style={{ color: '#FCFCFC', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>
+            <h2 style={{ color: '#1A2340', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>
               Upload Writing Sample
             </h2>
 
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+              <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
                 Filename / Title
               </label>
               <input
@@ -372,7 +372,7 @@ export default function ProfilePage() {
             </div>
 
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+              <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
                 Content
               </label>
               <textarea
@@ -389,7 +389,7 @@ export default function ProfilePage() {
                 }}
               />
               {content && (
-                <div style={{ color: 'rgba(252,252,252,0.3)', fontSize: '12px', marginTop: '6px', textAlign: 'right' }}>
+                <div style={{ color: '#8A94A6', fontSize: '12px', marginTop: '6px', textAlign: 'right' }}>
                   {content.split(/\s+/).filter(Boolean).length} words
                 </div>
               )}
@@ -397,11 +397,11 @@ export default function ProfilePage() {
 
             {error && (
               <div style={{
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                backgroundColor: 'rgba(239, 68, 68, 0.06)',
                 border: '1px solid rgba(239, 68, 68, 0.2)',
                 borderRadius: '10px',
                 padding: '10px 14px',
-                color: '#FCA5A5',
+                color: '#DC2626',
                 fontSize: '13px',
                 marginBottom: '12px',
               }}>{error}</div>
@@ -409,11 +409,11 @@ export default function ProfilePage() {
 
             {success && (
               <div style={{
-                backgroundColor: 'rgba(84,242,242,0.06)',
-                border: '1px solid rgba(84,242,242,0.15)',
+                backgroundColor: 'rgba(26,110,255,0.06)',
+                border: '1px solid rgba(26,110,255,0.15)',
                 borderRadius: '10px',
                 padding: '10px 14px',
-                color: 'rgba(84,242,242,0.8)',
+                color: '#1A6EFF',
                 fontSize: '13px',
                 marginBottom: '12px',
               }}>{success}</div>
@@ -423,10 +423,10 @@ export default function ProfilePage() {
               onClick={handleUpload}
               disabled={uploading}
               style={{
-                backgroundColor: uploading ? 'rgba(84,242,242,0.3)' : '#54F2F2',
-                color: '#042A2B',
+                backgroundColor: uploading ? 'rgba(26,110,255,0.35)' : '#1A6EFF',
+                color: '#FFFFFF',
                 border: 'none',
-                borderRadius: '100px',
+                borderRadius: '8px',
                 padding: '11px 20px',
                 fontSize: '14px',
                 fontWeight: '600',
@@ -444,8 +444,8 @@ export default function ProfilePage() {
           {/* Uploaded samples list */}
           {samples.length > 0 && (
             <div style={{ ...card, overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <h3 style={{ color: '#FCFCFC', fontSize: '14px', fontWeight: '600' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid #E8ECF4' }}>
+                <h3 style={{ color: '#1A2340', fontSize: '14px', fontWeight: '600' }}>
                   Uploaded Samples ({samples.length})
                 </h3>
               </div>
@@ -454,15 +454,15 @@ export default function ProfilePage() {
                   key={sample.id}
                   style={{
                     padding: '14px 20px',
-                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    borderBottom: '1px solid #F8F9FC',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                   }}
                 >
                   <div>
-                    <div style={{ color: '#FCFCFC', fontSize: '14px', fontWeight: '500' }}>{sample.filename}</div>
-                    <div style={{ color: 'rgba(252,252,252,0.35)', fontSize: '12px', marginTop: '2px' }}>
+                    <div style={{ color: '#1A2340', fontSize: '14px', fontWeight: '500' }}>{sample.filename}</div>
+                    <div style={{ color: '#8A94A6', fontSize: '12px', marginTop: '2px' }}>
                       {sample.word_count} words
                     </div>
                   </div>
@@ -471,7 +471,7 @@ export default function ProfilePage() {
                     style={{
                       backgroundColor: 'transparent',
                       border: 'none',
-                      color: 'rgba(252,252,252,0.3)',
+                      color: '#8A94A6',
                       cursor: 'pointer',
                       fontSize: '18px',
                       padding: '4px 8px',
@@ -493,23 +493,23 @@ export default function ProfilePage() {
           <div style={{ ...card, overflow: 'hidden' }}>
             <div style={{
               padding: '16px 20px',
-              borderBottom: '1px solid rgba(255,255,255,0.06)',
+              borderBottom: '1px solid #E8ECF4',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-              <h2 style={{ color: '#FCFCFC', fontSize: '16px', fontWeight: '600' }}>
+              <h2 style={{ color: '#1A2340', fontSize: '16px', fontWeight: '600' }}>
                 Detected Style Traits
               </h2>
               <button
                 onClick={handleAnalyze}
                 disabled={analyzing || samples.length === 0}
                 style={{
-                  backgroundColor: analyzing || samples.length === 0 ? 'rgba(84,242,242,0.15)' : '#54F2F2',
+                  backgroundColor: analyzing || samples.length === 0 ? 'rgba(26,110,255,0.15)' : '#1A6EFF',
                   border: 'none',
-                  color: analyzing || samples.length === 0 ? 'rgba(84,242,242,0.5)' : '#042A2B',
+                  color: analyzing || samples.length === 0 ? 'rgba(26,110,255,0.5)' : '#FFFFFF',
                   padding: '7px 16px',
-                  borderRadius: '100px',
+                  borderRadius: '8px',
                   cursor: analyzing || samples.length === 0 ? 'not-allowed' : 'pointer',
                   fontSize: '13px',
                   fontWeight: '600',
@@ -524,8 +524,8 @@ export default function ProfilePage() {
 
             {!hasStyleData ? (
               <div style={{ padding: '48px 24px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', color: 'rgba(255,255,255,0.1)', marginBottom: '16px' }}>◈</div>
-                <p style={{ color: 'rgba(252,252,252,0.35)', fontSize: '14px' }}>
+                <div style={{ fontSize: '32px', color: '#E8ECF4', marginBottom: '16px' }}>◈</div>
+                <p style={{ color: '#8A94A6', fontSize: '14px' }}>
                   Upload writing samples and click Analyze Style to see your writing fingerprint.
                 </p>
               </div>
@@ -534,19 +534,19 @@ export default function ProfilePage() {
                 {/* Vocab + Phrases */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ marginBottom: '16px' }}>
                   {vocabItems.length > 0 && (
-                    <div style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '16px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: 'rgba(84,242,242,0.7)', textTransform: 'uppercase', marginBottom: '12px' }}>
+                    <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1A6EFF', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Vocabulary Fingerprint
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {vocabItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: 'rgba(84,242,242,0.08)',
-                            border: '1px solid rgba(84,242,242,0.2)',
+                            backgroundColor: 'rgba(26,110,255,0.08)',
+                            border: '1px solid rgba(26,110,255,0.15)',
                             borderRadius: '100px',
                             padding: '4px 12px',
                             fontSize: '13px',
-                            color: 'rgba(84,242,242,0.9)',
+                            color: '#1A6EFF',
                             fontWeight: '500',
                           }}>{item}</span>
                         ))}
@@ -554,19 +554,19 @@ export default function ProfilePage() {
                     </div>
                   )}
                   {phraseItems.length > 0 && (
-                    <div style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '16px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: 'rgba(84,242,242,0.7)', textTransform: 'uppercase', marginBottom: '12px' }}>
+                    <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#1A6EFF', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Favorite Phrases
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {phraseItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: 'rgba(84,242,242,0.08)',
-                            border: '1px solid rgba(84,242,242,0.2)',
+                            backgroundColor: 'rgba(26,110,255,0.08)',
+                            border: '1px solid rgba(26,110,255,0.15)',
                             borderRadius: '100px',
                             padding: '4px 12px',
                             fontSize: '13px',
-                            color: 'rgba(84,242,242,0.9)',
+                            color: '#1A6EFF',
                             fontWeight: '500',
                           }}>{item}</span>
                         ))}
@@ -578,19 +578,19 @@ export default function ProfilePage() {
                 {/* Punctuation + Structure */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ marginBottom: '16px' }}>
                   {punctItems.length > 0 && (
-                    <div style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '16px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: 'rgba(252,252,252,0.4)', textTransform: 'uppercase', marginBottom: '12px' }}>
+                    <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#8A94A6', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Punctuation Patterns
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {punctItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF',
+                            border: '1px solid #E8ECF4',
                             borderRadius: '8px',
                             padding: '6px 12px',
                             fontSize: '13px',
-                            color: 'rgba(252,252,252,0.7)',
+                            color: '#4A5568',
                             lineHeight: '1.5',
                           }}>{item}</span>
                         ))}
@@ -598,19 +598,19 @@ export default function ProfilePage() {
                     </div>
                   )}
                   {structItems.length > 0 && (
-                    <div style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '16px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: 'rgba(252,252,252,0.4)', textTransform: 'uppercase', marginBottom: '12px' }}>
+                    <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#8A94A6', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Sentence Structure
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {structItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF',
+                            border: '1px solid #E8ECF4',
                             borderRadius: '8px',
                             padding: '6px 12px',
                             fontSize: '13px',
-                            color: 'rgba(252,252,252,0.7)',
+                            color: '#4A5568',
                             lineHeight: '1.5',
                           }}>{item}</span>
                         ))}
@@ -622,19 +622,19 @@ export default function ProfilePage() {
                 {/* Voice + Never Does */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {voiceItems.length > 0 && (
-                    <div style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '16px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: 'rgba(252,252,252,0.4)', textTransform: 'uppercase', marginBottom: '12px' }}>
+                    <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#8A94A6', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Voice Markers
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {voiceItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF',
+                            border: '1px solid #E8ECF4',
                             borderRadius: '8px',
                             padding: '6px 12px',
                             fontSize: '13px',
-                            color: 'rgba(252,252,252,0.7)',
+                            color: '#4A5568',
                             lineHeight: '1.5',
                           }}>{item}</span>
                         ))}
@@ -642,19 +642,19 @@ export default function ProfilePage() {
                     </div>
                   )}
                   {neverItems.length > 0 && (
-                    <div style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '16px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: 'rgba(252,252,252,0.4)', textTransform: 'uppercase', marginBottom: '12px' }}>
+                    <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.1em', color: '#8A94A6', textTransform: 'uppercase', marginBottom: '12px' }}>
                         Things They Never Do
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {neverItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: 'rgba(94,177,191,0.08)',
-                            border: '1px solid rgba(94,177,191,0.2)',
+                            backgroundColor: 'rgba(0,229,204,0.06)',
+                            border: '1px solid rgba(0,229,204,0.2)',
                             borderRadius: '100px',
                             padding: '4px 12px',
                             fontSize: '13px',
-                            color: '#5EB1BF',
+                            color: '#00A890',
                             fontWeight: '500',
                           }}>{item}</span>
                         ))}

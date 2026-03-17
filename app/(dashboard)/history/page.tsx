@@ -40,9 +40,10 @@ export default function HistoryPage() {
   }
 
   const card: React.CSSProperties = {
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.08)',
-    borderRadius: '20px',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E8ECF4',
+    borderRadius: '12px',
+    boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
   }
 
   if (loading) {
@@ -52,14 +53,14 @@ export default function HistoryPage() {
           <div style={{
             width: '40px',
             height: '40px',
-            border: '2px solid rgba(84,242,242,0.15)',
-            borderTop: '2px solid #54F2F2',
+            border: '2px solid rgba(26,110,255,0.15)',
+            borderTop: '2px solid #1A6EFF',
             borderRadius: '50%',
             margin: '0 auto 16px',
             animation: 'spin 1s linear infinite',
           }} />
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-          <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '14px' }}>Loading history...</p>
+          <p style={{ color: '#8A94A6', fontSize: '14px' }}>Loading history...</p>
         </div>
       </div>
     )
@@ -68,19 +69,19 @@ export default function HistoryPage() {
   return (
     <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh' }}>
       <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ color: '#FCFCFC', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', fontFamily: 'Instrument Serif, serif' }}>
+        <h1 style={{ color: '#1A2340', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', fontFamily: 'Instrument Serif, serif' }}>
           Rewrite History
         </h1>
-        <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '14px' }}>
+        <p style={{ color: '#8A94A6', fontSize: '14px' }}>
           {rewrites.length} total rewrite{rewrites.length !== 1 ? 's' : ''}
         </p>
       </div>
 
       {rewrites.length === 0 ? (
         <div style={{ ...card, padding: '64px 24px', textAlign: 'center' }}>
-          <div style={{ fontSize: '40px', color: 'rgba(255,255,255,0.1)', marginBottom: '16px' }}>◷</div>
-          <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '15px' }}>No rewrites yet.</p>
-          <p style={{ color: 'rgba(252,252,252,0.25)', fontSize: '14px', marginTop: '8px' }}>
+          <div style={{ fontSize: '40px', color: '#E8ECF4', marginBottom: '16px' }}>◷</div>
+          <p style={{ color: '#4A5568', fontSize: '15px' }}>No rewrites yet.</p>
+          <p style={{ color: '#8A94A6', fontSize: '14px', marginTop: '8px' }}>
             Your rewrite history will appear here.
           </p>
         </div>
@@ -94,11 +95,11 @@ export default function HistoryPage() {
                 style={{ ...card, padding: '16px', cursor: 'pointer' }}
                 onClick={() => toggleExpand(rewrite.id)}
               >
-                <div style={{ color: 'rgba(252,252,252,0.35)', fontSize: '12px', marginBottom: '8px' }}>
+                <div style={{ color: '#8A94A6', fontSize: '12px', marginBottom: '8px' }}>
                   {new Date(rewrite.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </div>
                 <p style={{
-                  color: 'rgba(252,252,252,0.8)',
+                  color: '#4A5568',
                   fontSize: '13px',
                   lineHeight: '1.5',
                   marginBottom: '10px',
@@ -110,34 +111,34 @@ export default function HistoryPage() {
                   {rewrite.original_text}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <span style={{ backgroundColor: '#54F2F2', color: '#042A2B', padding: '3px 8px', borderRadius: '100px', fontSize: '12px', fontWeight: '600' }}>
+                  <span style={{ backgroundColor: 'rgba(26,110,255,0.1)', color: '#1A6EFF', padding: '3px 8px', borderRadius: '100px', fontSize: '12px', fontWeight: '600' }}>
                     {rewrite.match_score}%
                   </span>
-                  <span style={{ color: 'rgba(252,252,252,0.35)', fontSize: '12px' }}>
+                  <span style={{ color: '#8A94A6', fontSize: '12px' }}>
                     {rewrite.rewritten_text?.split(/\s+/).filter(Boolean).length ?? 0} words
                   </span>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: 'rgba(252,252,252,0.6)', padding: '3px 8px', borderRadius: '100px', fontSize: '12px', fontWeight: '500' }}>
+                  <span style={{ backgroundColor: '#F8F9FC', color: '#4A5568', padding: '3px 8px', borderRadius: '100px', fontSize: '12px', fontWeight: '500', border: '1px solid #E8ECF4' }}>
                     Intensity {rewrite.intensity}/10
                   </span>
-                  <span style={{ marginLeft: 'auto', color: 'rgba(252,252,252,0.3)', fontSize: '14px' }}>
+                  <span style={{ marginLeft: 'auto', color: '#8A94A6', fontSize: '14px' }}>
                     {expandedId === rewrite.id ? '▲' : '▼'}
                   </span>
                 </div>
                 {expandedId === rewrite.id && (
                   <div className="grid grid-cols-1 gap-3 mt-4">
-                    <div style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px' }}>
-                      <div style={{ color: 'rgba(252,252,252,0.35)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
+                    <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
+                      <div style={{ color: '#8A94A6', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
                         Original
                       </div>
-                      <p style={{ color: 'rgba(252,252,252,0.7)', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
+                      <p style={{ color: '#4A5568', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
                         {rewrite.original_text}
                       </p>
                     </div>
-                    <div style={{ backgroundColor: 'rgba(84,242,242,0.03)', border: '1px solid rgba(84,242,242,0.15)', borderRadius: '12px', padding: '16px' }}>
-                      <div style={{ color: '#54F2F2', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', opacity: 0.7 }}>
+                    <div style={{ backgroundColor: 'rgba(26,110,255,0.02)', border: '1px solid rgba(26,110,255,0.15)', borderRadius: '10px', padding: '16px' }}>
+                      <div style={{ color: '#1A6EFF', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', opacity: 0.8 }}>
                         Rewritten
                       </div>
-                      <p style={{ color: '#FCFCFC', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
+                      <p style={{ color: '#1A2340', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
                         {rewrite.rewritten_text}
                       </p>
                     </div>
@@ -151,14 +152,14 @@ export default function HistoryPage() {
           <div className="hidden md:block" style={{ ...card, overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <tr style={{ borderBottom: '1px solid #E8ECF4' }}>
                   {['Date', 'Original (preview)', 'Match Score', 'Words', 'Intensity', ''].map((col) => (
                     <th
                       key={col}
                       style={{
                         padding: '13px 20px',
                         textAlign: 'left',
-                        color: 'rgba(252,252,252,0.35)',
+                        color: '#8A94A6',
                         fontSize: '11px',
                         fontWeight: '500',
                         textTransform: 'uppercase',
@@ -176,49 +177,49 @@ export default function HistoryPage() {
                   <React.Fragment key={rewrite.id}>
                     <tr
                       style={{
-                        borderBottom: expandedId === rewrite.id ? 'none' : '1px solid rgba(255,255,255,0.04)',
+                        borderBottom: expandedId === rewrite.id ? 'none' : '1px solid #F8F9FC',
                         cursor: 'pointer',
                       }}
                       onClick={() => toggleExpand(rewrite.id)}
                     >
-                      <td style={{ padding: '16px 20px', color: 'rgba(252,252,252,0.35)', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '16px 20px', color: '#8A94A6', fontSize: '13px', whiteSpace: 'nowrap' }}>
                         {new Date(rewrite.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </td>
-                      <td style={{ padding: '16px 20px', color: 'rgba(252,252,252,0.8)', fontSize: '13px', maxWidth: '300px' }}>
+                      <td style={{ padding: '16px 20px', color: '#4A5568', fontSize: '13px', maxWidth: '300px' }}>
                         {rewrite.original_text?.substring(0, 80)}{rewrite.original_text?.length > 80 ? '...' : ''}
                       </td>
                       <td style={{ padding: '16px 20px' }}>
-                        <span style={{ backgroundColor: '#54F2F2', color: '#042A2B', padding: '4px 10px', borderRadius: '100px', fontSize: '13px', fontWeight: '600' }}>
+                        <span style={{ backgroundColor: 'rgba(26,110,255,0.1)', color: '#1A6EFF', padding: '4px 10px', borderRadius: '100px', fontSize: '13px', fontWeight: '600' }}>
                           {rewrite.match_score}%
                         </span>
                       </td>
-                      <td style={{ padding: '16px 20px', color: 'rgba(252,252,252,0.45)', fontSize: '13px' }}>
+                      <td style={{ padding: '16px 20px', color: '#8A94A6', fontSize: '13px' }}>
                         {rewrite.rewritten_text?.split(/\s+/).filter(Boolean).length ?? 0}
                       </td>
-                      <td style={{ padding: '16px 20px', color: 'rgba(252,252,252,0.45)', fontSize: '13px' }}>
+                      <td style={{ padding: '16px 20px', color: '#8A94A6', fontSize: '13px' }}>
                         {rewrite.intensity}/10
                       </td>
-                      <td style={{ padding: '16px 20px', color: 'rgba(252,252,252,0.25)', fontSize: '18px', textAlign: 'center' }}>
+                      <td style={{ padding: '16px 20px', color: '#8A94A6', fontSize: '18px', textAlign: 'center' }}>
                         {expandedId === rewrite.id ? '▲' : '▼'}
                       </td>
                     </tr>
                     {expandedId === rewrite.id && (
-                      <tr key={`${rewrite.id}-expanded`} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                      <tr key={`${rewrite.id}-expanded`} style={{ borderBottom: '1px solid #F8F9FC' }}>
                         <td colSpan={6} style={{ padding: '0 20px 20px' }}>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', paddingTop: '16px' }}>
-                            <div style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px' }}>
-                              <div style={{ color: 'rgba(252,252,252,0.35)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
+                            <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
+                              <div style={{ color: '#8A94A6', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
                                 Original
                               </div>
-                              <p style={{ color: 'rgba(252,252,252,0.7)', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
+                              <p style={{ color: '#4A5568', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
                                 {rewrite.original_text}
                               </p>
                             </div>
-                            <div style={{ backgroundColor: 'rgba(84,242,242,0.03)', border: '1px solid rgba(84,242,242,0.15)', borderRadius: '12px', padding: '16px' }}>
-                              <div style={{ color: '#54F2F2', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', opacity: 0.7 }}>
+                            <div style={{ backgroundColor: 'rgba(26,110,255,0.02)', border: '1px solid rgba(26,110,255,0.15)', borderRadius: '10px', padding: '16px' }}>
+                              <div style={{ color: '#1A6EFF', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', opacity: 0.8 }}>
                                 Rewritten
                               </div>
-                              <p style={{ color: '#FCFCFC', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
+                              <p style={{ color: '#1A2340', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
                                 {rewrite.rewritten_text}
                               </p>
                             </div>

@@ -77,22 +77,23 @@ export default function GeneratePage() {
   ]
 
   const card: React.CSSProperties = {
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.08)',
-    borderRadius: '20px',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E8ECF4',
+    borderRadius: '12px',
+    boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
   }
 
   return (
-    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh', position: 'relative' }}>
+    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh' }}>
       <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ color: '#FCFCFC', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', fontFamily: 'Instrument Serif, serif', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <svg width={26} height={26} viewBox="0 0 24 24" fill="none" stroke="#54F2F2" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+        <h1 style={{ color: '#1A2340', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', fontFamily: 'Instrument Serif, serif', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <svg width={26} height={26} viewBox="0 0 24 24" fill="none" stroke="#1A6EFF" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
             <path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/>
           </svg>
           Generate
         </h1>
-        <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '14px' }}>
+        <p style={{ color: '#8A94A6', fontSize: '14px' }}>
           Write original content in your voice from a prompt.
         </p>
       </div>
@@ -101,13 +102,13 @@ export default function GeneratePage() {
         {/* Left: inputs */}
         <div>
           <div style={{ ...card, padding: '24px' }}>
-            <h2 style={{ color: '#FCFCFC', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>
+            <h2 style={{ color: '#1A2340', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>
               What do you want to write?
             </h2>
 
             {/* Prompt */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+              <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
                 Topic / Prompt
               </label>
               <textarea
@@ -117,11 +118,11 @@ export default function GeneratePage() {
                 rows={5}
                 style={{
                   width: '100%',
-                  backgroundColor: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '12px',
+                  backgroundColor: '#F8F9FC',
+                  border: '1px solid #E8ECF4',
+                  borderRadius: '10px',
                   padding: '12px 14px',
-                  color: '#FCFCFC',
+                  color: '#1A2340',
                   fontSize: '14px',
                   lineHeight: '1.6',
                   resize: 'vertical',
@@ -135,7 +136,7 @@ export default function GeneratePage() {
 
             {/* Length selector */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '10px', fontWeight: '500' }}>
+              <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '10px', fontWeight: '500' }}>
                 Length
               </label>
               <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -147,10 +148,10 @@ export default function GeneratePage() {
                       onClick={() => setLength(btn.value)}
                       className="flex-1 min-w-[80px]"
                       style={{
-                        backgroundColor: isActive ? '#54F2F2' : 'rgba(255,255,255,0.06)',
-                        color: isActive ? '#042A2B' : 'rgba(252,252,252,0.7)',
-                        border: isActive ? 'none' : '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '12px',
+                        backgroundColor: isActive ? '#1A6EFF' : '#F8F9FC',
+                        color: isActive ? '#FFFFFF' : '#4A5568',
+                        border: isActive ? 'none' : '1px solid #E8ECF4',
+                        borderRadius: '8px',
                         padding: '10px 8px',
                         fontSize: '13px',
                         fontWeight: '600',
@@ -171,15 +172,15 @@ export default function GeneratePage() {
             {/* Tone slider */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <label style={{ color: 'rgba(252,252,252,0.7)', fontSize: '13px', fontWeight: '500' }}>
+                <label style={{ color: '#4A5568', fontSize: '13px', fontWeight: '500' }}>
                   Tone
                 </label>
-                <span style={{ backgroundColor: 'rgba(84,242,242,0.1)', color: '#54F2F2', fontSize: '12px', fontWeight: '600', padding: '2px 10px', borderRadius: '100px' }}>
+                <span style={{ backgroundColor: 'rgba(26,110,255,0.08)', color: '#1A6EFF', fontSize: '12px', fontWeight: '600', padding: '2px 10px', borderRadius: '100px' }}>
                   {toneLabel}
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ color: 'rgba(252,252,252,0.35)', fontSize: '12px', whiteSpace: 'nowrap' }}>Formal</span>
+                <span style={{ color: '#8A94A6', fontSize: '12px', whiteSpace: 'nowrap' }}>Formal</span>
                 <input
                   type="range"
                   min={0}
@@ -188,17 +189,17 @@ export default function GeneratePage() {
                   onChange={(e) => setTone(Number(e.target.value))}
                   style={{ flex: 1, width: '100%' }}
                 />
-                <span style={{ color: 'rgba(252,252,252,0.35)', fontSize: '12px', whiteSpace: 'nowrap' }}>Casual</span>
+                <span style={{ color: '#8A94A6', fontSize: '12px', whiteSpace: 'nowrap' }}>Casual</span>
               </div>
             </div>
 
             {error && (
               <div style={{
-                backgroundColor: 'rgba(239,68,68,0.1)',
+                backgroundColor: 'rgba(239,68,68,0.06)',
                 border: '1px solid rgba(239,68,68,0.2)',
                 borderRadius: '10px',
                 padding: '10px 14px',
-                color: '#FCA5A5',
+                color: '#DC2626',
                 fontSize: '13px',
                 marginBottom: '12px',
               }}>
@@ -210,10 +211,10 @@ export default function GeneratePage() {
               onClick={handleGenerate}
               disabled={loading}
               style={{
-                backgroundColor: loading ? 'rgba(84,242,242,0.35)' : '#54F2F2',
-                color: '#042A2B',
+                backgroundColor: loading ? 'rgba(26,110,255,0.35)' : '#1A6EFF',
+                color: '#FFFFFF',
                 border: 'none',
-                borderRadius: '100px',
+                borderRadius: '8px',
                 padding: '12px 20px',
                 fontSize: '14px',
                 fontWeight: '600',
@@ -229,7 +230,7 @@ export default function GeneratePage() {
             >
               {loading ? (
                 <>
-                  <span style={{ display: 'inline-block', width: '14px', height: '14px', border: '2px solid rgba(4,42,43,0.3)', borderTopColor: '#042A2B', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
+                  <span style={{ display: 'inline-block', width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#FFFFFF', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
                   Generating...
                 </>
               ) : (
@@ -248,9 +249,10 @@ export default function GeneratePage() {
         {/* Right: output */}
         <div>
           <div style={{
-            backgroundColor: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '20px',
+            backgroundColor: '#FFFFFF',
+            border: '1px solid #E8ECF4',
+            borderRadius: '12px',
+            boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
             overflow: 'hidden',
             minHeight: '360px',
             display: 'flex',
@@ -258,21 +260,21 @@ export default function GeneratePage() {
           }}>
             <div style={{
               padding: '16px 20px',
-              borderBottom: '1px solid rgba(255,255,255,0.06)',
+              borderBottom: '1px solid #E8ECF4',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-              <h2 style={{ color: '#FCFCFC', fontSize: '16px', fontWeight: '600' }}>Generated Text</h2>
+              <h2 style={{ color: '#1A2340', fontSize: '16px', fontWeight: '600' }}>Generated Text</h2>
               {generatedText && (
                 <button
                   onClick={handleCopy}
                   style={{
-                    backgroundColor: copied ? 'rgba(84,242,242,0.12)' : 'rgba(255,255,255,0.06)',
-                    border: `1px solid ${copied ? 'rgba(84,242,242,0.3)' : 'rgba(255,255,255,0.1)'}`,
-                    borderRadius: '100px',
+                    backgroundColor: copied ? 'rgba(26,110,255,0.08)' : '#F8F9FC',
+                    border: `1px solid ${copied ? 'rgba(26,110,255,0.2)' : '#E8ECF4'}`,
+                    borderRadius: '8px',
                     padding: '6px 14px',
-                    color: copied ? '#54F2F2' : 'rgba(252,252,252,0.7)',
+                    color: copied ? '#1A6EFF' : '#4A5568',
                     fontSize: '13px',
                     fontWeight: '600',
                     cursor: 'pointer',
@@ -288,12 +290,12 @@ export default function GeneratePage() {
               {!generatedText && !loading && (
                 <div style={{ textAlign: 'center', paddingTop: '60px' }}>
                   <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
-                    <svg width={40} height={40} viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                    <svg width={40} height={40} viewBox="0 0 24 24" fill="none" stroke="#E8ECF4" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
                       <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
                       <path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/>
                     </svg>
                   </div>
-                  <p style={{ color: 'rgba(252,252,252,0.25)', fontSize: '14px' }}>
+                  <p style={{ color: '#8A94A6', fontSize: '14px' }}>
                     Your generated content will appear here.
                   </p>
                 </div>
@@ -305,18 +307,18 @@ export default function GeneratePage() {
                     display: 'inline-block',
                     width: '32px',
                     height: '32px',
-                    border: '2px solid rgba(84,242,242,0.15)',
-                    borderTopColor: '#54F2F2',
+                    border: '2px solid rgba(26,110,255,0.15)',
+                    borderTopColor: '#1A6EFF',
                     borderRadius: '50%',
                     animation: 'spin 0.7s linear infinite',
                     marginBottom: '16px',
                   }} />
-                  <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '14px' }}>Writing in your voice...</p>
+                  <p style={{ color: '#8A94A6', fontSize: '14px' }}>Writing in your voice...</p>
                 </div>
               )}
 
               {generatedText && !loading && (
-                <p style={{ color: '#FCFCFC', fontSize: '15px', lineHeight: '1.75', whiteSpace: 'pre-wrap' }}>
+                <p style={{ color: '#1A2340', fontSize: '15px', lineHeight: '1.75', whiteSpace: 'pre-wrap' }}>
                   {generatedText}
                 </p>
               )}

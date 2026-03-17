@@ -56,11 +56,11 @@ export default function SignupPage() {
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '12px',
+    backgroundColor: '#F8F9FC',
+    border: '1px solid #E8ECF4',
+    borderRadius: '10px',
     padding: '12px 16px',
-    color: '#FCFCFC',
+    color: '#1A2340',
     fontSize: '15px',
     outline: 'none',
     boxSizing: 'border-box',
@@ -73,22 +73,22 @@ export default function SignupPage() {
         <div style={{
           width: '56px',
           height: '56px',
-          backgroundColor: 'rgba(84,242,242,0.1)',
-          border: '1px solid rgba(84,242,242,0.25)',
+          backgroundColor: 'rgba(26,110,255,0.08)',
+          border: '1px solid rgba(26,110,255,0.2)',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 20px',
           fontSize: '24px',
-          color: '#54F2F2',
+          color: '#1A6EFF',
         }}>
           ✓
         </div>
-        <h2 style={{ color: '#FCFCFC', fontSize: '22px', fontWeight: '700', marginBottom: '12px', fontFamily: 'Instrument Serif, serif' }}>
+        <h2 style={{ color: '#1A2340', fontSize: '22px', fontWeight: '700', marginBottom: '12px', fontFamily: 'Instrument Serif, serif' }}>
           Account created!
         </h2>
-        <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '14px', lineHeight: '1.6' }}>
+        <p style={{ color: '#8A94A6', fontSize: '14px', lineHeight: '1.6' }}>
           Check your email to confirm your account, or you&apos;ll be redirected shortly.
         </p>
       </div>
@@ -97,16 +97,16 @@ export default function SignupPage() {
 
   return (
     <>
-      <h1 style={{ color: '#FCFCFC', fontSize: '26px', fontWeight: '700', marginBottom: '8px', letterSpacing: '-0.3px', fontFamily: 'Instrument Serif, serif' }}>
+      <h1 style={{ color: '#1A2340', fontSize: '26px', fontWeight: '700', marginBottom: '8px', letterSpacing: '-0.3px', fontFamily: 'Instrument Serif, serif' }}>
         Create your account
       </h1>
-      <p style={{ color: 'rgba(252,252,252,0.45)', fontSize: '14px', marginBottom: '32px' }}>
+      <p style={{ color: '#8A94A6', fontSize: '14px', marginBottom: '32px' }}>
         Start writing like yourself in minutes
       </p>
 
       <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
-          <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+          <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
             Email
           </label>
           <input
@@ -120,7 +120,7 @@ export default function SignupPage() {
         </div>
 
         <div>
-          <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+          <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
             Password
           </label>
           <input
@@ -134,7 +134,7 @@ export default function SignupPage() {
         </div>
 
         <div>
-          <label style={{ display: 'block', color: 'rgba(252,252,252,0.7)', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+          <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
             Confirm Password
           </label>
           <input
@@ -149,11 +149,11 @@ export default function SignupPage() {
 
         {error && (
           <div style={{
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            backgroundColor: 'rgba(239, 68, 68, 0.06)',
             border: '1px solid rgba(239, 68, 68, 0.2)',
             borderRadius: '10px',
             padding: '12px',
-            color: '#FCA5A5',
+            color: '#DC2626',
             fontSize: '14px',
           }}>
             {error}
@@ -164,10 +164,10 @@ export default function SignupPage() {
           type="submit"
           disabled={loading}
           style={{
-            backgroundColor: loading ? 'rgba(84,242,242,0.4)' : '#54F2F2',
-            color: '#042A2B',
+            backgroundColor: loading ? 'rgba(26,110,255,0.5)' : '#1A6EFF',
+            color: '#FFFFFF',
             border: 'none',
-            borderRadius: '100px',
+            borderRadius: '8px',
             padding: '13px 24px',
             fontSize: '15px',
             fontWeight: '600',
@@ -181,9 +181,9 @@ export default function SignupPage() {
         </button>
       </form>
 
-      <p style={{ textAlign: 'center', color: 'rgba(252,252,252,0.45)', fontSize: '14px', marginTop: '24px' }}>
+      <p style={{ textAlign: 'center', color: '#8A94A6', fontSize: '14px', marginTop: '24px' }}>
         Already have an account?{' '}
-        <Link href="/login" style={{ color: '#54F2F2', textDecoration: 'none', fontWeight: '500' }}>
+        <Link href="/login" style={{ color: '#1A6EFF', textDecoration: 'none', fontWeight: '500' }}>
           Sign in
         </Link>
       </p>

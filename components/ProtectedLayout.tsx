@@ -19,7 +19,7 @@ const navItems = [
 ]
 
 function NavIcon({ icon, isActive, size = 18 }: { icon: string; isActive: boolean; size?: number }) {
-  const color = isActive ? '#54F2F2' : 'rgba(252,252,252,0.5)'
+  const color = isActive ? '#1A6EFF' : '#8A94A6'
   const svgProps = {
     width: size,
     height: size,
@@ -90,15 +90,6 @@ function NavIcon({ icon, isActive, size = 18 }: { icon: string; isActive: boolea
   return null
 }
 
-const gridBg = {
-  backgroundColor: '#042A2B',
-  backgroundImage: `
-    linear-gradient(rgba(94,177,191,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(94,177,191,0.06) 1px, transparent 1px)
-  `,
-  backgroundSize: '80px 80px',
-}
-
 export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   const pathname = usePathname()
   const router = useRouter()
@@ -116,13 +107,14 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen" style={gridBg}>
+    <div className="flex h-screen" style={{ backgroundColor: '#F8F9FC' }}>
       {/* Sidebar */}
       <aside
         className="hidden md:flex md:flex-col md:flex-shrink-0"
         style={{
-          backgroundColor: '#021E1F',
-          boxShadow: '2px 0 24px rgba(0,0,0,0.4)',
+          backgroundColor: '#FFFFFF',
+          borderRight: '1px solid #E8ECF4',
+          boxShadow: '2px 0 12px rgba(26,110,255,0.04)',
           position: 'fixed',
           top: 0,
           left: 0,
@@ -132,11 +124,18 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
         }}
       >
         <div style={{ padding: '28px 24px 20px' }}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontSize: '22px', fontFamily: 'DM Sans, sans-serif' }}>
-              <span style={{ fontWeight: 700, color: '#FCFCFC' }}>Verbal</span>
-              <span style={{ fontWeight: 700, color: '#54F2F2' }}>y</span>
-            </span>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
+              <circle cx="10" cy="10" r="8.5" stroke="#1A6EFF" strokeWidth="1.5"/>
+              <circle cx="10" cy="10" r="5.5" stroke="#1A6EFF" strokeWidth="1.5" opacity="0.55"/>
+              <circle cx="10" cy="10" r="2.5" stroke="#1A6EFF" strokeWidth="1.5" opacity="0.25"/>
+            </svg>
+            <div style={{ position: 'relative' }}>
+              <span style={{ fontSize: '20px', fontWeight: '700', color: '#1A2340', fontFamily: 'DM Sans, sans-serif' }}>
+                Verbaly
+              </span>
+              <div style={{ position: 'absolute', bottom: '-1px', left: 0, right: 0, height: '2px', backgroundColor: '#1A6EFF', borderRadius: '1px' }} />
+            </div>
           </Link>
         </div>
 
@@ -156,28 +155,28 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
                   alignItems: 'center',
                   gap: '10px',
                   padding: '10px 14px',
-                  borderRadius: '100px',
+                  borderRadius: '8px',
                   textDecoration: 'none',
                   fontSize: '14px',
                   fontWeight: isActive ? 600 : 400,
-                  marginBottom: '4px',
+                  marginBottom: '2px',
                   transition: 'all 150ms ease',
                   transitionDelay: item.delay,
                   transform: mounted ? 'translateX(0)' : 'translateX(-20px)',
                   opacity: mounted ? 1 : 0,
                   ...(isActive
                     ? {
-                        backgroundColor: 'rgba(84,242,242,0.1)',
-                        color: '#54F2F2',
+                        backgroundColor: 'rgba(26,110,255,0.08)',
+                        color: '#1A6EFF',
                       }
                     : isHovered
                     ? {
-                        backgroundColor: 'rgba(94,177,191,0.1)',
-                        color: 'rgba(252,252,252,0.9)',
+                        backgroundColor: '#F8F9FC',
+                        color: '#1A2340',
                       }
                     : {
                         backgroundColor: 'transparent',
-                        color: 'rgba(252,252,252,0.5)',
+                        color: '#8A94A6',
                       }),
                 }}
               >
@@ -195,9 +194,9 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
               width: '100%',
               padding: '10px 14px',
               backgroundColor: 'transparent',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '100px',
-              color: 'rgba(252,252,252,0.4)',
+              border: '1px solid #E8ECF4',
+              borderRadius: '8px',
+              color: '#8A94A6',
               cursor: 'pointer',
               fontSize: '14px',
               textAlign: 'left',
@@ -227,8 +226,8 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-2 py-2"
         style={{
-          backgroundColor: '#021E1F',
-          borderTop: '1px solid rgba(84,242,242,0.1)',
+          backgroundColor: '#FFFFFF',
+          borderTop: '1px solid #E8ECF4',
         }}
       >
         {navItems.map((item) => {
@@ -240,9 +239,9 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
               className="flex flex-col items-center gap-1 min-w-[44px] min-h-[44px] justify-center px-1"
               style={{
                 textDecoration: 'none',
-                color: isActive ? '#54F2F2' : 'rgba(252,252,252,0.45)',
-                backgroundColor: isActive ? 'rgba(84,242,242,0.08)' : 'transparent',
-                borderRadius: '12px',
+                color: isActive ? '#1A6EFF' : '#8A94A6',
+                backgroundColor: isActive ? 'rgba(26,110,255,0.06)' : 'transparent',
+                borderRadius: '10px',
               }}
             >
               <NavIcon icon={item.icon} isActive={isActive} size={20} />
