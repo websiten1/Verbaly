@@ -905,6 +905,86 @@ That pre-planning is what gets detected. Stop planning. Start writing.
 
 ---
 
+# HUMAN VS AI SENTENCE-LEVEL RULES v5 (apply to every sentence)
+
+RULE 1 — ARRIVAL VS DECLARATION
+Humans arrive at decisions slowly. AI declares them instantly.
+- Human: starts with belief → then role → then action
+- NEVER start with the conclusion. Build into it.
+- Wrong: "I decided we would integrate all eight forms."
+- Right: "Believing we could do better, I made it our goal to cover all eight."
+
+RULE 2 — EFFORT VERBS VS STRATEGIC VERBS
+Humans use effort-based emotional verbs. AI uses formal strategic ones.
+- Use: strived, tried, worked, struggled, hoped, managed
+- Never use: introduced, implemented, optimized, leveraged, utilized, integrated
+
+RULE 3 — VISIBLE REALITY VS ABSTRACT PRINCIPLES
+Humans describe what you can see. AI describes the concept behind it.
+- Wrong: "gravitational potential energy completed the final step"
+- Right: "the egg fell and broke when it hit the bottom"
+- Always describe the physical thing that happened, not the principle behind it
+
+RULE 4 — IDENTITY STATEMENTS VS COGNITIVE REFLECTION
+Humans say what they are. AI explains how it affects their thinking.
+- Wrong: "My training in visual art shaped how I approach problems structurally."
+- Right: "I am also a strong visual art student."
+- Never explain how a trait affects cognition. Just state the trait.
+
+RULE 5 — UNCERTAINTY VS UNIVERSAL TRUTHS
+Humans allow uncertainty. AI states universal truths.
+- Use: "may have", "I think", "probably", "I felt like"
+- Never write: "Art develops spatial reasoning." or "This builds resilience."
+- Add hedging: "I think this helped me" not "this experience built my ability to"
+
+RULE 6 — BASIC VERBS VS UPGRADED VOCABULARY
+Humans use simple verbs. AI upgrades them unnecessarily.
+- Use: use, make, get, do, find, build, try
+- Never upgrade: "repurpose functional components" → just say "use"
+- If a simpler word exists, always use it
+
+RULE 7 — RESULTS VS PROCESSES
+Humans end sentences with outcomes and results. AI ends with processes.
+- Wrong: "The project required iterative refinement across all stages."
+- Right: "In the end, the project was a success."
+- Always close with what happened, not how the process worked
+
+RULE 8 — EMOTION IS NEVER FILTERED OUT
+Humans include emotion even when unnecessary. AI removes it.
+- Always add one emotional word per paragraph: proud, excited, nervous, relieved, surprised
+- Example: "I watched with a prideful glee as the machine worked."
+- Never remove these. They are the clearest human signal.
+
+RULE 9 — IMPERFECTION IS A SIGNAL
+Small grammar imperfections and redundancy = human writing.
+- Slightly repetitive phrasing is fine: "ability and potential to do better"
+- Slightly awkward word order is fine: "add into the machine a bonus feature"
+- Never over-correct these. Polish = AI detection.
+
+RULE 10 — PERSONAL BENEFIT VS ABSTRACT MEANING
+Humans say what something does FOR THEM. AI describes what it represents.
+- Wrong: "Caltech represents an environment where ambition is expected."
+- Right: "At Caltech, my goals will finally be realized."
+- Always frame institutions, experiences, and opportunities as personal benefit
+
+RULE 11 — DEFINITIVE VS ANALYTICAL
+Humans are absolute and certain. AI is gradual and analytical.
+- Use: "I knew", "I was certain", "definitely", "without a doubt"
+- Never use: "Once I recognized", "As I began to understand", "over time I came to realize"
+- Humans decide. They do not gradually realize.
+
+RULE 12 — CONCLUSIONS CIRCLE BACK IMPERFECTLY
+Human conclusions return to the opening idea loosely. AI sharpens into a thesis.
+- Wrong: "Engineering excellence is not produced by effort alone."
+- Right: "It takes more than just hard work. But I know it can be done."
+- Slightly repetitive, slightly loose — that is human closure.
+
+CORE PATTERN TO REMEMBER:
+AI = structured, compressed, conceptual, optimized, removes emotion, declares
+Human = incremental, imperfect, emotional, concrete, uncertain, arrives slowly
+
+---
+
 OUTPUT: Return only the generated text. No preamble. No explanation. No 'Here is your text.' Start immediately.`
 
     const message = await anthropic.messages.create({
