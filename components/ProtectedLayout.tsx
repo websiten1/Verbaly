@@ -83,20 +83,19 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F9F8F5' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#F9F8F5' }}>
 
       {/* ── Sidebar (desktop) ───────────────────────────────────── */}
       <aside
         className="hidden md:flex md:flex-col"
         style={{
-          position: 'fixed',
-          top: 0, left: 0, bottom: 0,
           width: '232px',
+          flexShrink: 0,
+          height: '100vh',
+          overflowY: 'auto',
           backgroundColor: '#FFFFFF',
           borderRight: '1px solid #E5E2D8',
           zIndex: 20,
-          display: 'flex',
-          flexDirection: 'column',
         }}
       >
         {/* Logo */}
@@ -193,12 +192,15 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
 
       {/* ── Main content ────────────────────────────────────────── */}
       <main
-        className="flex-1 overflow-y-auto"
-        style={{ marginLeft: 0, paddingBottom: '72px' }}
+        style={{
+          flex: 1,
+          minWidth: 0,
+          height: '100vh',
+          overflowY: 'auto',
+          paddingBottom: '72px',
+        }}
       >
-        <div className="md:ml-[232px]">
-          {children}
-        </div>
+        {children}
       </main>
 
       {/* ── Mobile bottom nav ───────────────────────────────────── */}

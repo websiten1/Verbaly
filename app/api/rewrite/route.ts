@@ -1190,11 +1190,43 @@ Start the rewritten text immediately.`
       return NextResponse.json({ error: 'Failed to generate rewrite' }, { status: 500 })
     }
 
-    // ── Calculate match score ─────────────────────────────────────────────────
-    const hasTraits = traitList.length > 0
-    const baseScore = hasTraits ? 78 : 65
+    // ── Calculate dynamic match score ────────────────────────────────────────
+    // Base: scales with how many of the 6 style dimensions are populated
+    const STYLE_DIMS = ['vocabulary', 'phrases', 'punctuation', 'structure', 'voice', 'never_does']
+    const populatedDims = STYLE_DIMS.filter(k => traitList.find(t => t.trait_name === k)).length
+    const profileBase = traitList.length > 0 ? 52 + Math.round((populatedDims / 6) * 18) : 48
+
+    // Vocabulary hits: how many of the user's distinctive words appear in the rewrite
+    let vocabBonus = 0
+    const vocabTrait = traitList.find(t => t.trait_name === 'vocabulary')
+    if (vocabTrait) {
+      const vocabWords: string[] = safeParseJson<string[]>(vocabTrait.trait_value) ?? []
+      if (vocabWords.length > 0) {
+        const textLower = rewrittenText.toLowerCase()
+        const hits = vocabWords.filter(w => textLower.includes(w.toLowerCase())).length
+        vocabBonus = Math.round((hits / vocabWords.length) * 14)
+      }
+    }
+
+    // Phrase hits: how many of the user's recurring phrases appear in the rewrite
+    let phraseBonus = 0
+    const phrasesTrait = traitList.find(t => t.trait_name === 'phrases')
+    if (phrasesTrait) {
+      const phrases: string[] = safeParseJson<string[]>(phrasesTrait.trait_value) ?? []
+      if (phrases.length > 0) {
+        const textLower = rewrittenText.toLowerCase()
+        const hits = phrases.filter(p => textLower.includes(p.toLowerCase())).length
+        phraseBonus = Math.round((hits / phrases.length) * 9)
+      }
+    }
+
+    // Intensity contribution: higher intensity = more aggressively rewritten = higher potential match
     const intensityBonus = Math.round((intensity / 10) * 12)
-    const matchScore = Math.min(95, baseScore + intensityBonus)
+
+    // Small random jitter for realism (±2 points)
+    const jitter = Math.round(Math.random() * 4) - 2
+
+    const matchScore = Math.min(97, Math.max(48, profileBase + vocabBonus + phraseBonus + intensityBonus + jitter))
 
     // ── Save to rewrites table ────────────────────────────────────────────────
     const { error: insertError } = await supabase.from('rewrites').insert({

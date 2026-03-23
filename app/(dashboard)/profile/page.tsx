@@ -139,8 +139,12 @@ export default function ProfilePage() {
     finally { setAnalyzing(false) }
   }
 
-  const hasStyleData = Object.values(traitMap).some((v) => v.length > 0)
-  const profileStrength = hasStyleData ? 75 : samples.length > 0 ? 15 : 0
+  const STYLE_DIMENSIONS = ['vocabulary', 'phrases', 'punctuation', 'structure', 'voice', 'never_does']
+  const populatedDimensions = STYLE_DIMENSIONS.filter(k => (traitMap[k] ?? []).length > 0).length
+  const hasStyleData = populatedDimensions > 0
+  const profileStrength = populatedDimensions > 0
+    ? Math.round((populatedDimensions / 6) * 100)
+    : samples.length > 0 ? 12 : 0
 
   const INPUT: React.CSSProperties = {
     width: '100%', backgroundColor: '#F9F8F5', border: '1px solid #E5E2D8',
@@ -189,9 +193,13 @@ export default function ProfilePage() {
           }} />
         </div>
         <p style={{ color: '#A09D95', fontSize: '12px', marginTop: '8px' }}>
-          {profileStrength < 20 ? 'Upload writing samples to train your profile'
-            : profileStrength < 70 ? 'Getting there! Add more samples for better results'
-            : 'Your style profile is well-established'}
+          {populatedDimensions === 0 && samples.length === 0
+            ? 'Upload writing samples to train your profile'
+            : populatedDimensions === 0
+            ? 'Click "Analyze style" to extract your writing fingerprint'
+            : populatedDimensions < 6
+            ? `${populatedDimensions}/6 dimensions analyzed — click Analyze Style to complete your profile`
+            : 'All 6 style dimensions analyzed — your profile is complete'}
         </p>
       </div>
 

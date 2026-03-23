@@ -36,7 +36,7 @@ export default async function DashboardPage() {
   const [rewritesResult, samplesResult, traitsResult] = await Promise.all([
     supabase.from('rewrites').select('match_score').eq('user_id', user.id),
     supabase.from('writing_samples').select('id').eq('user_id', user.id),
-    supabase.from('style_traits').select('score').eq('user_id', user.id),
+    supabase.from('style_traits').select('trait_name, trait_value').eq('user_id', user.id),
   ])
 
   const rewrites  = rewritesResult.data  ?? []
@@ -47,8 +47,15 @@ export default async function DashboardPage() {
   const avgMatchScore  = rewrites.length > 0
     ? Math.round(rewrites.reduce((s, r) => s + (r.match_score ?? 0), 0) / rewrites.length) : 0
   const writingSamples = samples.length
-  const styleStrength  = traits.length > 0
-    ? Math.round(traits.reduce((s, t) => s + (t.score ?? 0), 0) / traits.length) : 0
+
+  // Style Strength: % of the 6 style dimensions that have been analyzed and populated
+  const STYLE_DIMENSIONS = ['vocabulary', 'phrases', 'punctuation', 'structure', 'voice', 'never_does']
+  const populatedDimensions = STYLE_DIMENSIONS.filter(dim => {
+    const trait = traits.find((t: { trait_name: string; trait_value: string }) => t.trait_name === dim)
+    if (!trait) return false
+    try { const v = JSON.parse(trait.trait_value); return Array.isArray(v) && v.length > 0 } catch { return false }
+  }).length
+  const styleStrength = Math.round((populatedDimensions / 6) * 100)
 
   const { data: recentRewrites } = await supabase
     .from('rewrites').select('*').eq('user_id', user.id)
