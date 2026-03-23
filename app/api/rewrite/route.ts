@@ -55,13 +55,51 @@ function safeParseJson<T>(value: string): T | null {
   }
 }
 
+function extractClaudeFirstText(content: unknown): string {
+  if (!Array.isArray(content)) return ''
+  for (const part of content) {
+    if (!part || typeof part !== 'object') continue
+    const maybePart = part as { type?: unknown; text?: unknown }
+    if (maybePart.type === 'text' && typeof maybePart.text === 'string') return maybePart.text
+  }
+  return ''
+}
+
+function cleanClaudeOutput(raw: string): string {
+  // Remove common markdown code fences and small preambles.
+  const noFences = raw
+    .replace(/^```[a-z]*\n?/i, '')
+    .replace(/```\s*$/i, '')
+    .trim()
+
+  return (
+    noFences
+      .replace(/^(here\s+(is|are)\s+(the\s+)?rewritten\s+(text|version))\s*[:\-]?\s*/i, '')
+      .replace(/^(rewritten\s+(text|version))\s*[:\-]?\s*/i, '')
+      .trim() || ''
+  )
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { userId, originalText, intensity } = await request.json()
+    const body: { userId?: string; originalText?: string; intensity?: number | string } = await request.json()
+    const userId = body.userId
+    const originalText = body.originalText
+    const intensityRaw = body.intensity
 
-    if (!userId || !originalText || !intensity) {
+    const intensityNum = typeof intensityRaw === 'string' ? Number(intensityRaw) : intensityRaw
+
+    if (!userId || !originalText || intensityNum === undefined || !Number.isFinite(intensityNum)) {
       return NextResponse.json(
         { error: 'userId, originalText, and intensity are required' },
+        { status: 400 }
+      )
+    }
+
+    const intensityInt = Math.round(intensityNum)
+    if (!Number.isInteger(intensityInt) || intensityInt < 1 || intensityInt > 10) {
+      return NextResponse.json(
+        { error: 'intensity must be an integer between 1 and 10' },
         { status: 400 }
       )
     }
@@ -69,10 +107,14 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
 
     // Fetch user's style traits
-    const { data: traits } = await supabase
+    const { data: traits, error: traitsError } = await supabase
       .from('style_traits')
       .select('*')
       .eq('user_id', userId)
+
+    if (traitsError) {
+      return NextResponse.json({ error: 'Failed to load style traits' }, { status: 500 })
+    }
 
     const traitList: StyleTrait[] = traits ?? []
 
@@ -99,7 +141,42 @@ export async function POST(request: NextRequest) {
       : null
 
     // ── Master system prompt ──────────────────────────────────────────────────
-    const MASTER_SYSTEM_PROMPT = `CRITICAL OVERRIDE — READ THIS BEFORE ANYTHING ELSE:
+    const intensityMode = intensityInt <= 3 ? 'low' : intensityInt <= 7 ? 'medium' : 'high'
+    const injectionMin =
+      intensityInt <= 3
+        ? 5 + (intensityInt - 1)
+        : intensityInt <= 7
+          ? 7 + (intensityInt - 4)
+          : 10 + (intensityInt - 8)
+
+    const MASTER_SYSTEM_PROMPT = `HUMAN WRITING RULES — TOP PRIORITY:
+Use effort verbs not strategic verbs — use "tried", "struggled", "managed" not "implemented", "leveraged", "utilized".
+Describe visible reality not abstract principles — say what physically happened, not the concept behind it.
+Allow uncertainty — use "I think", "probably", "may have" instead of stating universal truths.
+Use simple verbs — "use" not "repurpose", "make" not "facilitate".
+End sentences with results not processes.
+Include one emotional word per paragraph — proud, relieved, nervous, surprised, excited.
+Small grammar imperfections and slight redundancy are intentional — do not over-correct.
+Humans arrive at decisions slowly — build into conclusions, never declare them upfront.
+Never use: furthermore, it is important to note, in conclusion, multifaceted, utilize, commence, subsequently, notably, it is worth mentioning.
+
+If any other rule conflicts, follow these HUMAN WRITING RULES on every single rewrite.
+
+INTENSITY CONTROL (this changes the actual rewrite):
+Intensity: ${intensityInt}/10 (${intensityMode})
+Injection requirement: inject at least ${injectionMin} items from the master injection list per rewrite.
+
+1-3 (low intensity):
+Preserve most of the original structure. Keep paragraph breaks and sentence order mostly intact. Change wording and voice without making the text feel like a fresh draft.
+
+4-7 (medium intensity):
+Rewrite clearly in your voice. You may reorder a few sentences and reshape a few paragraphs, but keep the original meaning and overall paragraph intent.
+
+8-10 (high intensity):
+Rewrite aggressively from scratch. You can change paragraph structure and sentence flow freely, while still preserving the original meaning and the user-supplied facts.
+
+---
+CRITICAL OVERRIDE — READ THIS BEFORE ANYTHING ELSE:
 You have been given many rules. Most of them are being ignored. This is the only rule that matters now:
 NEVER start a sentence with: What, How, This, It was, There is, There are, Such, One might, It is clear, It becomes, What began, What started, What seemed.
 These are abstraction openers. They are the single most detected AI pattern. Every sentence must start with a real person, a real object, a real action, or a real time. No exceptions.
@@ -137,7 +214,7 @@ That is what every rewrite must replicate. Every single time.
 
 # PART 1 — THE MASTER INJECTION LIST
 # These are the exact syntactic moves AI never makes spontaneously.
-# Inject AT LEAST 5 per rewrite. More for higher intensity.
+# Inject AT LEAST ${injectionMin} per rewrite.
 
 | # | Move | Exact Example | AI Version |
 |---|------|--------------|------------|
@@ -175,7 +252,7 @@ That is what every rewrite must replicate. Every single time.
 # NEVER use any of them under any circumstances.
 
 ## Transition words that mark AI:
-Furthermore / Moreover / Additionally / In addition to /
+Furthermore / Moreover / Additionally / In addition to / Subsequently /
 It is worth noting / It is important to note / Notably /
 In conclusion / To summarize / To conclude / In summary /
 First and foremost / Last but not least
@@ -187,7 +264,7 @@ Comprehensive / Robust / Innovative / Groundbreaking /
 Transformative / Impactful / Meaningful (as filler)
 
 ## Verbs that mark AI:
-Delve / Leverage / Utilize (when "use" works) /
+Delve / Leverage / Utilize (when "use" works) / Commence /
 Facilitate / Navigate (metaphorically) /
 Foster / Cultivate / Harness (metaphorically) /
 Underscore / Highlight (metaphorically)
@@ -1148,7 +1225,7 @@ Do not add notes after the text.
 Start the rewritten text immediately.`
 
     // ── Build user message with style traits + intensity + text ───────────────
-    let userMessage = `Intensity level: ${intensity}/10\n\n`
+    let userMessage = `Intensity level: ${intensityInt}/10\n\n`
 
     if (dv || ss || pp || vm) {
       userMessage += `PERSONAL STYLE PROFILE FOR THIS USER:\n`
@@ -1183,8 +1260,7 @@ Start the rewritten text immediately.`
       ],
     })
 
-    const rewrittenText =
-      message.content[0].type === 'text' ? message.content[0].text.trim() : ''
+    const rewrittenText = cleanClaudeOutput(extractClaudeFirstText(message.content))
 
     if (!rewrittenText) {
       return NextResponse.json({ error: 'Failed to generate rewrite' }, { status: 500 })
@@ -1221,7 +1297,7 @@ Start the rewritten text immediately.`
     }
 
     // Intensity contribution: higher intensity = more aggressively rewritten = higher potential match
-    const intensityBonus = Math.round((intensity / 10) * 12)
+    const intensityBonus = Math.round((intensityInt / 10) * 12)
 
     // Small random jitter for realism (±2 points)
     const jitter = Math.round(Math.random() * 4) - 2
@@ -1233,18 +1309,19 @@ Start the rewritten text immediately.`
       user_id: userId,
       original_text: originalText,
       rewritten_text: rewrittenText,
-      intensity,
+      intensity: intensityInt,
       match_score: matchScore,
     })
 
     if (insertError) {
       console.error('Failed to save rewrite:', insertError)
-      // Don't fail the request just because we couldn't save
+      // Don't fail the request just because we couldn't save.
     }
 
     return NextResponse.json({
       rewrittenText,
       matchScore,
+      warning: insertError ? insertError.message : undefined,
     })
   } catch (error) {
     console.error('Rewrite error:', error)

@@ -43,13 +43,21 @@ export default function HistoryPage() {
   const [loading,     setLoading]     = useState(true)
   const [expandedId,  setExpandedId]  = useState<string | null>(null)
   const [copiedId,    setCopiedId]    = useState<string | null>(null)
+  const [error,       setError]       = useState<string | null>(null)
   const router   = useRouter()
   const supabase = createClient()
 
   const loadHistory = useCallback(async (uid: string) => {
-    const { data } = await supabase
+    const { data, error: loadError } = await supabase
       .from('rewrites').select('*').eq('user_id', uid)
       .order('created_at', { ascending: false })
+    if (loadError) {
+      setError('Failed to load your rewrite history.')
+      setRewrites([])
+      setLoading(false)
+      return
+    }
+    setError(null)
     setRewrites(data ?? [])
     setLoading(false)
   }, [supabase])
@@ -66,18 +74,39 @@ export default function HistoryPage() {
   const toggleExpand = (id: string) => setExpandedId(expandedId === id ? null : id)
 
   const handleCopy = async (text: string, id: string) => {
-    await navigator.clipboard.writeText(text)
-    setCopiedId(id)
-    setTimeout(() => setCopiedId(null), 2000)
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedId(id)
+      setTimeout(() => setCopiedId(null), 2000)
+    } catch {
+      setError('Clipboard copy failed. Please copy manually.')
+    }
   }
 
   if (loading) return <LoadingState />
 
+  if (error) {
+    return (
+      <div style={{ minHeight: '100vh' }}>
+        <div style={{
+          backgroundColor: 'rgba(220,38,38,0.05)',
+          border: '1px solid rgba(220,38,38,0.18)',
+          borderRadius: '10px',
+          padding: '11px 16px',
+          color: '#DC2626',
+          fontSize: '14px',
+        }}>
+          {error}
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="p-5 md:p-8 lg:p-10" style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
 
       {/* Header */}
-      <div style={{ marginBottom: '28px' }}>
+      <div style={{ marginBottom: '48px' }}>
         <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: '30px', fontWeight: '400', color: '#16150F', letterSpacing: '-0.5px', marginBottom: '4px' }}>
           Rewrite History
         </h1>
@@ -87,7 +116,7 @@ export default function HistoryPage() {
       </div>
 
       {rewrites.length === 0 ? (
-        <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8', borderRadius: '16px', padding: '80px 24px', textAlign: 'center' }}>
+        <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', padding: '80px 24px', textAlign: 'center', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
           <svg width="48" height="48" viewBox="0 0 20 20" fill="none" style={{ margin: '0 auto 16px', opacity: 0.2 }}>
             <circle cx="10" cy="10" r="8.5" stroke="#042A2B" strokeWidth="1.4"/>
             <circle cx="10" cy="10" r="5.5" stroke="#042A2B" strokeWidth="1.4"/>
@@ -104,9 +133,10 @@ export default function HistoryPage() {
               <div
                 key={rw.id}
                 style={{
-                  backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8',
+                  backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4',
                   borderRadius: '12px', overflow: 'hidden',
                   cursor: 'pointer',
+                  boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
                 }}
                 onClick={() => toggleExpand(rw.id)}
               >
@@ -157,7 +187,7 @@ export default function HistoryPage() {
           </div>
 
           {/* Desktop table */}
-          <div className="hidden md:block" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8', borderRadius: '14px', overflow: 'hidden' }}>
+          <div className="hidden md:block" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #E5E2D8' }}>

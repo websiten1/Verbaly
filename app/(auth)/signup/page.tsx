@@ -10,7 +10,7 @@ const INPUT: React.CSSProperties = {
   backgroundColor: '#F9F8F5',
   border: '1px solid #E5E2D8',
   borderRadius: '10px',
-  padding: '12px 16px',
+  padding: '16px',
   color: '#16150F',
   fontSize: '15px',
   fontFamily: 'DM Sans, sans-serif',

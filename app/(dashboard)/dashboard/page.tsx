@@ -4,29 +4,6 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-/* ── Circular match score ring ────────────────────────────── */
-function RingScore({ value, size = 56 }: { value: number; size?: number }) {
-  const r = (size / 2) - 5
-  const circ = 2 * Math.PI * r
-  const offset = circ * (1 - value / 100)
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(84,242,242,0.1)" strokeWidth="4"/>
-      <circle
-        cx={size/2} cy={size/2} r={r}
-        fill="none" stroke="#54F2F2" strokeWidth="4"
-        strokeLinecap="round"
-        strokeDasharray={circ} strokeDashoffset={offset}
-        style={{ transform: 'rotate(-90deg)', transformOrigin: 'center' }}
-      />
-      <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle"
-        style={{ fontSize: size * 0.24, fontWeight: 700, fontFamily: 'DM Sans, sans-serif', fill: '#16150F' }}>
-        {value}%
-      </text>
-    </svg>
-  )
-}
-
 export default async function DashboardPage() {
   const supabase = await createClient()
 
@@ -64,10 +41,10 @@ export default async function DashboardPage() {
   const firstNameOrEmail = user.email?.split('@')[0] ?? 'there'
 
   return (
-    <div className="p-5 md:p-8 lg:p-10" style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
 
       {/* ── Header ──────────────────────────────────────────── */}
-      <div style={{ marginBottom: '32px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+      <div style={{ marginBottom: '48px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
         <div>
           <h1 style={{
             fontFamily: 'Instrument Serif, serif',
@@ -99,7 +76,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Stats ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
         {[
           {
             label: 'Total Rewrites',
@@ -146,9 +123,10 @@ export default async function DashboardPage() {
         ].map((stat) => (
           <div key={stat.label} style={{
             backgroundColor: '#FFFFFF',
-            border: '1px solid #E5E2D8',
-            borderRadius: '14px',
+            border: '1px solid #E8ECF4',
+            borderRadius: '12px',
             padding: '20px 22px',
+            boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
               <span style={{ color: '#A09D95', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -172,7 +150,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Quick actions ─────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
         {[
           { href: '/rewrite',  label: 'Rewrite text',    desc: 'Paste AI text, get your voice back', emoji: '↺' },
           { href: '/generate', label: 'Generate content', desc: 'Write something new in your style',   emoji: '✦' },
@@ -183,9 +161,10 @@ export default async function DashboardPage() {
             href={action.href}
             style={{
               backgroundColor: '#FFFFFF',
-              border: '1px solid #E5E2D8',
+              border: '1px solid #E8ECF4',
               borderRadius: '12px',
               padding: '20px',
+              boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
               textDecoration: 'none',
               display: 'flex', alignItems: 'center', gap: '14px',
               transition: 'border-color 150ms, box-shadow 150ms',
@@ -216,9 +195,10 @@ export default async function DashboardPage() {
       {/* ── Recent rewrites ───────────────────────────────────── */}
       <div style={{
         backgroundColor: '#FFFFFF',
-        border: '1px solid #E5E2D8',
-        borderRadius: '14px',
+        border: '1px solid #E8ECF4',
+        borderRadius: '12px',
         overflow: 'hidden',
+        boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
       }}>
         <div style={{
           padding: '18px 24px',

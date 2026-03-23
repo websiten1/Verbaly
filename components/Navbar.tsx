@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -10,7 +10,7 @@ export default function Navbar() {
   const [loading, setLoading] = useState(true)
   const [scrolled, setScrolled] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     const getUser = async () => {
@@ -31,7 +31,7 @@ export default function Navbar() {
       subscription.unsubscribe()
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [supabase])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()

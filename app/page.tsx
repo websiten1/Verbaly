@@ -54,9 +54,10 @@ function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: stri
   return (
     <div style={{
       backgroundColor: '#FFFFFF',
-      border: '1px solid #E5E2D8',
-      borderRadius: '14px',
+      border: '1px solid #E8ECF4',
+      borderRadius: '12px',
       padding: '28px',
+      boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
       transition: 'box-shadow 200ms ease',
     }}>
       <div style={{
@@ -310,10 +311,11 @@ export default function LandingPage() {
               key={step.n}
               style={{
                 backgroundColor: '#FFFFFF',
-                border: '1px solid #E5E2D8',
-                borderRadius: '16px',
+                border: '1px solid #E8ECF4',
+                borderRadius: '12px',
                 padding: '36px',
                 position: 'relative',
+                boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
               }}
             >
               <div style={{

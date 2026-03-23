@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 interface ProtectedLayoutProps {
@@ -75,9 +75,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   const pathname = usePathname()
   const router   = useRouter()
   const supabase = createClient()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => { setMounted(true) }, [])
+  const [mounted] = useState(true)
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -89,6 +87,14 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
       {/* ── Global layout styles ─────────────────────────────────────────── */}
       <style>{`
         html, body { overflow-x: hidden; }
+
+        /* Main content spacing (gap to sidebar + top breathing room) */
+        #vb-main {
+          padding-left: 32px;
+          padding-right: 32px;
+          padding-top: 32px;
+          box-sizing: border-box;
+        }
 
         /* Sidebar: hidden on mobile, fixed on desktop */
         #vb-sidebar {

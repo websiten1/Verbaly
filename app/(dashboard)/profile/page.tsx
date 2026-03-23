@@ -69,6 +69,11 @@ export default function ProfilePage() {
       supabase.from('style_traits').select('*').eq('user_id', uid).order('score', { ascending: false }),
       supabase.from('profiles').select('preset_type').eq('user_id', uid).maybeSingle(),
     ])
+    if (samplesRes.error || traitsRes.error || profileRes.error) {
+      setError('Failed to load your style profile. Please try again.')
+      return
+    }
+    setError(null)
     setSamples(samplesRes.data ?? [])
     parseTraits(traitsRes.data ?? [])
     setActivePreset(profileRes.data?.preset_type ?? null)
@@ -87,19 +92,37 @@ export default function ProfilePage() {
   const handleSelectPreset = async (name: string) => {
     if (!userId) return
     setPresetSaving(true)
-    await supabase.from('profiles').upsert({ user_id: userId, preset_type: name }, { onConflict: 'user_id' })
-    setActivePreset(name)
-    setPresetSaving(false)
-    flash(`Now using "${name}" profile.`)
+    try {
+      const { error: e } = await supabase.from('profiles').upsert(
+        { user_id: userId, preset_type: name },
+        { onConflict: 'user_id' },
+      )
+      if (e) throw e
+      setActivePreset(name)
+      flash(`Now using "${name}" profile.`)
+    } catch {
+      setError('Failed to save preset. Please try again.')
+    } finally {
+      setPresetSaving(false)
+    }
   }
 
   const handleClearPreset = async () => {
     if (!userId) return
     setPresetSaving(true)
-    await supabase.from('profiles').upsert({ user_id: userId, preset_type: null }, { onConflict: 'user_id' })
-    setActivePreset(null)
-    setPresetSaving(false)
-    flash('Switched to personal profile.')
+    try {
+      const { error: e } = await supabase.from('profiles').upsert(
+        { user_id: userId, preset_type: null },
+        { onConflict: 'user_id' },
+      )
+      if (e) throw e
+      setActivePreset(null)
+      flash('Switched to personal profile.')
+    } catch {
+      setError('Failed to switch back to personal profile. Please try again.')
+    } finally {
+      setPresetSaving(false)
+    }
   }
 
   const handleUpload = async () => {
@@ -119,8 +142,13 @@ export default function ProfilePage() {
 
   const handleDeleteSample = async (id: string) => {
     if (!userId) return
-    await supabase.from('writing_samples').delete().eq('id', id).eq('user_id', userId)
-    await loadData(userId)
+    try {
+      const { error: e } = await supabase.from('writing_samples').delete().eq('id', id).eq('user_id', userId)
+      if (e) throw e
+      await loadData(userId)
+    } catch {
+      setError('Failed to delete sample. Please try again.')
+    }
   }
 
   const handleAnalyze = async () => {
@@ -148,15 +176,15 @@ export default function ProfilePage() {
 
   const INPUT: React.CSSProperties = {
     width: '100%', backgroundColor: '#F9F8F5', border: '1px solid #E5E2D8',
-    borderRadius: '10px', padding: '10px 14px', color: '#16150F',
+    borderRadius: '10px', padding: '16px', color: '#16150F',
     fontSize: '14px', outline: 'none', fontFamily: 'DM Sans, sans-serif',
   }
 
   return (
-    <div className="p-5 md:p-8 lg:p-10" style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
 
       {/* Header */}
-      <div style={{ marginBottom: '28px' }}>
+      <div style={{ marginBottom: '48px' }}>
         <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: '30px', fontWeight: '400', color: '#16150F', letterSpacing: '-0.5px', marginBottom: '4px' }}>
           Style Profile
         </h1>
@@ -178,8 +206,9 @@ export default function ProfilePage() {
 
       {/* Profile strength */}
       <div style={{
-        backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8',
-        borderRadius: '14px', padding: '20px 24px', marginBottom: '20px',
+        backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4',
+        borderRadius: '12px', padding: '20px 24px', marginBottom: '48px',
+        boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <span style={{ color: '#16150F', fontSize: '14px', fontWeight: '600' }}>Profile strength</span>
@@ -204,7 +233,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Preset profiles */}
-      <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8', borderRadius: '14px', padding: '24px', marginBottom: '24px' }}>
+      <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', padding: '24px', marginBottom: '48px', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
           <div>
             <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>Preset Profiles</h2>
@@ -275,7 +304,7 @@ export default function ProfilePage() {
 
         {/* Upload */}
         <div>
-          <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8', borderRadius: '14px', padding: '24px', marginBottom: '16px' }}>
+          <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', padding: '24px', marginBottom: '16px', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
             <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '20px' }}>
               Upload writing sample
             </h2>
@@ -294,7 +323,7 @@ export default function ProfilePage() {
               </label>
               <textarea value={content} onChange={(e) => setContent(e.target.value)}
                 placeholder="Paste your writing here — emails, essays, blog posts. The more authentic the better."
-                rows={8} style={{ ...INPUT, lineHeight: '1.6', resize: 'vertical', minHeight: '120px', padding: '12px 14px' }}
+                rows={8} style={{ ...INPUT, lineHeight: '1.6', resize: 'vertical', minHeight: '120px', padding: '16px' }}
               />
               {content && (
                 <div style={{ color: '#A09D95', fontSize: '12px', textAlign: 'right', marginTop: '4px' }}>
@@ -324,7 +353,7 @@ export default function ProfilePage() {
 
           {/* Samples list */}
           {samples.length > 0 && (
-            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8', borderRadius: '14px', overflow: 'hidden' }}>
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
               <div style={{ padding: '14px 20px', borderBottom: '1px solid #E5E2D8' }}>
                 <span style={{ color: '#16150F', fontSize: '14px', fontWeight: '600' }}>
                   Samples ({samples.length})
@@ -351,7 +380,7 @@ export default function ProfilePage() {
 
         {/* Style traits */}
         <div>
-          <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8', borderRadius: '14px', overflow: 'hidden' }}>
+          <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
             <div style={{
               padding: '16px 20px', borderBottom: '1px solid #E5E2D8',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',

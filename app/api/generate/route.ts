@@ -55,6 +55,30 @@ function safeParseJson<T>(value: string): T | null {
   }
 }
 
+function extractClaudeFirstText(content: unknown): string {
+  if (!Array.isArray(content)) return ''
+  for (const part of content) {
+    if (!part || typeof part !== 'object') continue
+    const maybePart = part as { type?: unknown; text?: unknown }
+    if (maybePart.type === 'text' && typeof maybePart.text === 'string') return maybePart.text
+  }
+  return ''
+}
+
+function cleanClaudeOutput(raw: string): string {
+  const noFences = raw
+    .replace(/^```[a-z]*\n?/i, '')
+    .replace(/```\s*$/i, '')
+    .trim()
+
+  return (
+    noFences
+      .replace(/^(here\s+(is|are)\s+(the\s+)?generated\s+(text|version))\s*[:\-]?\s*/i, '')
+      .replace(/^(generated\s+(text|version))\s*[:\-]?\s*/i, '')
+      .trim() || ''
+  )
+}
+
 const PRESET_STYLE_GUIDES: Record<string, string> = {
   'The Academic':
     'Write in a formal academic voice. Use passive constructions where natural. Include hedging language such as "it could be argued", "research suggests", "evidence indicates". Construct long, complex sentences with multiple subordinate clauses. Use discipline-specific vocabulary and formal register. Reference ideas as if citing sources (e.g. "as scholars have noted"). Avoid contractions entirely.',
@@ -90,6 +114,13 @@ export async function POST(request: NextRequest) {
       supabase.from('profiles').select('preset_type').eq('user_id', userId).maybeSingle(),
       supabase.from('style_traits').select('*').eq('user_id', userId),
     ])
+
+    if (profileResult.error) {
+      return NextResponse.json({ error: 'Failed to load profile' }, { status: 500 })
+    }
+    if (traitsResult.error) {
+      return NextResponse.json({ error: 'Failed to load style traits' }, { status: 500 })
+    }
 
     const presetType: string | null = profileResult.data?.preset_type ?? null
     const traitList: StyleTrait[] = traitsResult.data ?? []
@@ -999,8 +1030,7 @@ OUTPUT: Return only the generated text. No preamble. No explanation. No 'Here is
       ],
     })
 
-    const generatedText =
-      message.content[0].type === 'text' ? message.content[0].text.trim() : ''
+    const generatedText = cleanClaudeOutput(extractClaudeFirstText(message.content))
 
     if (!generatedText) {
       return NextResponse.json({ error: 'Failed to generate content' }, { status: 500 })

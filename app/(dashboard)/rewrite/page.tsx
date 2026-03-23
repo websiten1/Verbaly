@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -70,10 +70,11 @@ export default function RewritePage() {
   const [matchScore,    setMatchScore]    = useState<number | null>(null)
   const [loading,       setLoading]       = useState(false)
   const [error,         setError]         = useState<string | null>(null)
+  const [warning,       setWarning]       = useState<string | null>(null)
   const [copied,        setCopied]        = useState(false)
   const [userId,        setUserId]        = useState<string | null>(null)
   const router   = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     const getUser = async () => {
@@ -82,12 +83,12 @@ export default function RewritePage() {
       setUserId(user.id)
     }
     getUser()
-  }, [])
+  }, [router, supabase])
 
   const handleRewrite = async () => {
     if (!originalText.trim()) { setError('Please enter some text to rewrite'); return }
     if (!userId)               { setError('You must be logged in'); return }
-    setError(null); setLoading(true); setRewrittenText(''); setMatchScore(null)
+    setError(null); setWarning(null); setLoading(true); setRewrittenText(''); setMatchScore(null)
 
     try {
       const res = await fetch('/api/rewrite', {
@@ -99,6 +100,7 @@ export default function RewritePage() {
       if (!res.ok) { setError(data.error || 'Failed to rewrite text'); return }
       setRewrittenText(data.rewrittenText)
       setMatchScore(data.matchScore)
+      if (data.warning) setWarning(data.warning)
     } catch {
       setError('Something went wrong. Please try again.')
     } finally {
@@ -108,19 +110,23 @@ export default function RewritePage() {
 
   const handleCopy = async () => {
     if (!rewrittenText) return
-    await navigator.clipboard.writeText(rewrittenText)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      await navigator.clipboard.writeText(rewrittenText)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setError('Clipboard copy failed. Please copy manually.')
+    }
   }
 
   const wordCount = originalText.trim() ? originalText.split(/\s+/).filter(Boolean).length : 0
   const canSubmit = !loading && !!originalText.trim()
 
   return (
-    <div className="p-5 md:p-8 lg:p-10" style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
 
       {/* Header */}
-      <div style={{ marginBottom: '28px' }}>
+      <div style={{ marginBottom: '48px' }}>
         <h1 style={{
           fontFamily: 'Instrument Serif, serif',
           fontSize: '30px', fontWeight: '400',
@@ -136,10 +142,11 @@ export default function RewritePage() {
       {/* Intensity control */}
       <div style={{
         backgroundColor: '#FFFFFF',
-        border: '1px solid #E5E2D8',
+        border: '1px solid #E8ECF4',
         borderRadius: '12px',
         padding: '20px 24px',
-        marginBottom: '20px',
+        marginBottom: '48px',
+        boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
       }}>
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <div style={{ minWidth: '200px' }}>
@@ -175,14 +182,15 @@ export default function RewritePage() {
       </div>
 
       {/* Split panels */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
 
         {/* Input */}
         <div style={{
           backgroundColor: '#FFFFFF',
-          border: '1px solid #E5E2D8',
+          border: '1px solid #E8ECF4',
           borderRadius: '12px', overflow: 'hidden',
           display: 'flex', flexDirection: 'column',
+          boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
         }}>
           <div style={{
             padding: '13px 18px', borderBottom: '1px solid #E5E2D8',
@@ -212,10 +220,11 @@ export default function RewritePage() {
         {/* Output */}
         <div style={{
           backgroundColor: rewrittenText ? 'rgba(84,242,242,0.03)' : '#FFFFFF',
-          border: rewrittenText ? '1px solid rgba(84,242,242,0.2)' : '1px solid #E5E2D8',
+          border: '1px solid #E8ECF4',
           borderRadius: '12px', overflow: 'hidden',
           display: 'flex', flexDirection: 'column',
           transition: 'border-color 400ms ease, background-color 400ms ease',
+          boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
         }}>
           <div style={{
             padding: '13px 18px', borderBottom: '1px solid rgba(84,242,242,0.12)',
@@ -282,6 +291,21 @@ export default function RewritePage() {
           color: '#DC2626', fontSize: '14px', marginBottom: '16px',
         }}>
           {error}
+        </div>
+      )}
+
+      {/* Warning */}
+      {warning && (
+        <div style={{
+          backgroundColor: 'rgba(84,242,242,0.06)',
+          border: '1px solid rgba(84,242,242,0.22)',
+          borderRadius: '10px',
+          padding: '11px 16px',
+          color: '#042A2B',
+          fontSize: '14px',
+          marginBottom: '16px',
+        }}>
+          {warning}
         </div>
       )}
 

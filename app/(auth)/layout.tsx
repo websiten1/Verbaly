@@ -116,10 +116,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div style={{ width: '100%', maxWidth: '400px' }}>
           <div style={{
             backgroundColor: '#FFFFFF',
-            border: '1px solid #E5E2D8',
-            borderRadius: '20px',
+            border: '1px solid #E8ECF4',
+            borderRadius: '12px',
             padding: '40px 36px',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+            boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
           }}>
             {children}
           </div>

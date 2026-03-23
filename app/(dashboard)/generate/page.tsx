@@ -52,7 +52,6 @@ export default function GeneratePage() {
   }, [router, supabase])
 
   const toneLabel = tone < 33 ? 'Formal' : tone < 66 ? 'Balanced' : 'Casual'
-  const toneDotPos = `${tone}%`
 
   const handleGenerate = async () => {
     if (!prompt.trim() || !userId) { setError('Please enter a prompt'); return }
@@ -76,16 +75,20 @@ export default function GeneratePage() {
 
   const handleCopy = async () => {
     if (!generatedText) return
-    await navigator.clipboard.writeText(generatedText)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      await navigator.clipboard.writeText(generatedText)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setError('Clipboard copy failed. Please copy manually.')
+    }
   }
 
   return (
-    <div className="p-5 md:p-8 lg:p-10" style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
 
       {/* Header */}
-      <div style={{ marginBottom: '28px' }}>
+      <div style={{ marginBottom: '48px' }}>
         <h1 style={{
           fontFamily: 'Instrument Serif, serif',
           fontSize: '30px', fontWeight: '400',
@@ -103,9 +106,10 @@ export default function GeneratePage() {
         {/* ── LEFT: Controls ──────────────────────────────────── */}
         <div style={{
           backgroundColor: '#FFFFFF',
-          border: '1px solid #E5E2D8',
-          borderRadius: '14px',
+          border: '1px solid #E8ECF4',
+          borderRadius: '12px',
           padding: '28px',
+          boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
         }}>
           <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '22px' }}>
             What do you want to write?
@@ -124,7 +128,7 @@ export default function GeneratePage() {
               style={{
                 width: '100%', backgroundColor: '#F9F8F5',
                 border: '1px solid #E5E2D8', borderRadius: '10px',
-                padding: '12px 14px', color: '#16150F',
+                padding: '16px', color: '#16150F',
                 fontSize: '14px', lineHeight: '1.65',
                 resize: 'vertical', outline: 'none',
                 minHeight: '110px', fontFamily: 'DM Sans, sans-serif',
@@ -240,11 +244,12 @@ export default function GeneratePage() {
         {/* ── RIGHT: Output ────────────────────────────────────── */}
         <div style={{
           backgroundColor: '#FFFFFF',
-          border: generatedText ? '1px solid rgba(84,242,242,0.2)' : '1px solid #E5E2D8',
-          borderRadius: '14px', overflow: 'hidden',
+          border: '1px solid #E8ECF4',
+          borderRadius: '12px', overflow: 'hidden',
           display: 'flex', flexDirection: 'column',
           minHeight: '360px',
           transition: 'border-color 400ms',
+          boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
         }}>
           <div style={{
             padding: '16px 20px', borderBottom: '1px solid #E5E2D8',

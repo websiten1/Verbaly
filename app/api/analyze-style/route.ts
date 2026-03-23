@@ -15,6 +15,16 @@ interface StyleAnalysis {
   never_does: string[]
 }
 
+function extractClaudeFirstText(content: unknown): string {
+  if (!Array.isArray(content)) return ''
+  for (const part of content) {
+    if (!part || typeof part !== 'object') continue
+    const maybePart = part as { type?: unknown; text?: unknown }
+    if (maybePart.type === 'text' && typeof maybePart.text === 'string') return maybePart.text
+  }
+  return ''
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { userId, samples } = await request.json()
@@ -51,16 +61,38 @@ ${combinedSamples}`,
       ],
     })
 
-    const responseText =
-      message.content[0].type === 'text' ? message.content[0].text : ''
+    const responseText = extractClaudeFirstText(message.content)
 
     let analysis: StyleAnalysis
     try {
       // Strip optional markdown fences before parsing
-      const cleaned = responseText.replace(/^```[a-z]*\n?/i, '').replace(/```$/, '').trim()
+      const cleaned = responseText
+        .replace(/^```[a-z]*\n?/i, '')
+        .replace(/```\s*$/i, '')
+        .trim()
       analysis = JSON.parse(cleaned)
     } catch {
       return NextResponse.json({ error: 'Failed to parse style analysis' }, { status: 500 })
+    }
+
+    const analysisRecord = analysis as unknown as Record<string, unknown>
+    const requiredKeys: (keyof StyleAnalysis)[] = [
+      'vocabulary',
+      'phrases',
+      'punctuation',
+      'structure',
+      'voice',
+      'never_does',
+    ]
+
+    for (const key of requiredKeys) {
+      const value = analysisRecord[key]
+      if (!Array.isArray(value) || !value.every((v) => typeof v === 'string')) {
+        return NextResponse.json(
+          { error: `Invalid style analysis shape: "${String(key)}" must be an array of strings` },
+          { status: 500 }
+        )
+      }
     }
 
     // ── Build rows to upsert ─────────────────────────────────────────────────

@@ -64,6 +64,7 @@ export default function PricingPage() {
   const [currentPlan, setCurrentPlan] = useState<string>('free')
   const [userId,      setUserId]      = useState<string | null>(null)
   const [loading,     setLoading]     = useState<string | null>(null)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
   const [mounted,     setMounted]     = useState(false)
 
   useEffect(() => {
@@ -84,6 +85,7 @@ export default function PricingPage() {
   async function handleSubscribe(plan: Plan) {
     if (!userId || plan.key === 'free') return
     const priceId = annual ? PLANS[plan.key].annual : PLANS[plan.key].monthly
+    setCheckoutError(null)
     setLoading(plan.key)
     try {
       const res = await fetch('/api/stripe/create-checkout', {
@@ -92,16 +94,22 @@ export default function PricingPage() {
         body: JSON.stringify({ priceId, userId }),
       })
       const data = await res.json()
+      if (!res.ok) {
+        setCheckoutError(data.error || 'Checkout failed. Please try again.')
+        return
+      }
       if (data.url) window.location.href = data.url
+      else setCheckoutError('Checkout failed. Missing redirect URL.')
     } catch (err) {
       console.error('Checkout error:', err)
+      setCheckoutError('Checkout failed. Please try again.')
     } finally {
       setLoading(null)
     }
   }
 
   return (
-    <div className="p-5 md:p-8 lg:p-10" style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
 
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '52px' }}>
@@ -160,6 +168,20 @@ export default function PricingPage() {
 
       {/* Plan cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ maxWidth: '960px', margin: '0 auto' }}>
+        {checkoutError && (
+          <div style={{
+            gridColumn: '1 / -1',
+            backgroundColor: 'rgba(220,38,38,0.05)',
+            border: '1px solid rgba(220,38,38,0.18)',
+            borderRadius: '10px',
+            padding: '12px 16px',
+            color: '#DC2626',
+            fontSize: '14px',
+            marginBottom: '-6px',
+          }}>
+            {checkoutError}
+          </div>
+        )}
         {PLAN_DATA.map((plan, i) => {
           const isCurrent = currentPlan === plan.key
           const price     = annual ? plan.annualMonthlyPrice : plan.monthlyPrice
@@ -170,14 +192,14 @@ export default function PricingPage() {
               key={plan.key}
               style={{
                 backgroundColor: isDark ? '#042A2B' : '#FFFFFF',
-                border: isDark ? '1px solid #1E3B3F' : isCurrent ? '1px solid rgba(84,242,242,0.3)' : '1px solid #E5E2D8',
-                borderRadius: '18px',
+                border: '1px solid #E8ECF4',
+                borderRadius: '12px',
                 padding: '32px',
                 position: 'relative',
                 opacity:    mounted ? 1 : 0,
                 transform:  mounted ? 'translateY(0)' : 'translateY(16px)',
                 transition: `opacity 400ms ease ${i * 80}ms, transform 400ms ease ${i * 80}ms`,
-                boxShadow: isDark ? '0 8px 40px rgba(4,42,43,0.25)' : 'none',
+                boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
               }}
             >
               {plan.popular && (
