@@ -9,13 +9,15 @@ interface ProtectedLayoutProps {
   children: React.ReactNode
 }
 
+const SIDEBAR_W = 240 // px — single source of truth
+
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', shortLabel: 'Home',    icon: 'dashboard' },
-  { href: '/rewrite',   label: 'Rewrite',   shortLabel: 'Rewrite', icon: 'rewrite'   },
-  { href: '/generate',  label: 'Generate',  shortLabel: 'Generate',icon: 'generate'  },
-  { href: '/profile',   label: 'Style Profile', shortLabel: 'Profile', icon: 'profile' },
-  { href: '/history',   label: 'History',   shortLabel: 'History', icon: 'history'   },
-  { href: '/pricing',   label: 'Pricing',   shortLabel: 'Plans',   icon: 'pricing'   },
+  { href: '/dashboard', label: 'Dashboard',    shortLabel: 'Home',    icon: 'dashboard' },
+  { href: '/rewrite',   label: 'Rewrite',      shortLabel: 'Rewrite', icon: 'rewrite'   },
+  { href: '/generate',  label: 'Generate',     shortLabel: 'Generate',icon: 'generate'  },
+  { href: '/profile',   label: 'Style Profile',shortLabel: 'Profile', icon: 'profile'   },
+  { href: '/history',   label: 'History',      shortLabel: 'History', icon: 'history'   },
+  { href: '/pricing',   label: 'Pricing',      shortLabel: 'Plans',   icon: 'pricing'   },
 ]
 
 function NavIcon({ icon, active, size = 18 }: { icon: string; active: boolean; size?: number }) {
@@ -83,42 +85,165 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#F9F8F5' }}>
+    <>
+      {/* ── Global layout styles ─────────────────────────────────────────── */}
+      <style>{`
+        html, body { overflow-x: hidden; }
 
-      {/* ── Sidebar (desktop) ───────────────────────────────────── */}
-      <aside
-        className="hidden md:flex md:flex-col"
-        style={{
-          width: '232px',
-          flexShrink: 0,
-          height: '100vh',
-          overflowY: 'auto',
-          backgroundColor: '#FFFFFF',
-          borderRight: '1px solid #E5E2D8',
-          zIndex: 20,
-        }}
-      >
-        {/* Logo */}
-        <div style={{ padding: '28px 20px 20px' }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '9px' }}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="10" r="8.5" stroke="#54F2F2" strokeWidth="1.4"/>
-              <circle cx="10" cy="10" r="5.5" stroke="#54F2F2" strokeWidth="1.4" opacity="0.6"/>
-              <circle cx="10" cy="10" r="2.5" stroke="#54F2F2" strokeWidth="1.4" opacity="0.3"/>
-            </svg>
-            <span style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'DM Sans, sans-serif', letterSpacing: '-0.3px' }}>
-              <span style={{ color: '#16150F' }}>Verba</span>
-              <span style={{ color: '#54F2F2' }}>ly</span>
-            </span>
-          </Link>
-        </div>
+        /* Sidebar: hidden on mobile, fixed on desktop */
+        #vb-sidebar {
+          display: none;
+        }
+        @media (min-width: 768px) {
+          #vb-sidebar {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            width: ${SIDEBAR_W}px;
+            background: #ffffff;
+            border-right: 1px solid #E5E2D8;
+            z-index: 30;
+            overflow-y: auto;
+          }
+          #vb-main {
+            margin-left: ${SIDEBAR_W}px;
+            width: calc(100% - ${SIDEBAR_W}px);
+          }
+        }
 
-        {/* Divider */}
-        <div style={{ height: '1px', backgroundColor: '#F0EDE4', margin: '0 16px' }} />
+        /* Mobile bottom nav */
+        #vb-mobile-nav {
+          display: flex;
+        }
+        @media (min-width: 768px) {
+          #vb-mobile-nav {
+            display: none;
+          }
+        }
+      `}</style>
 
-        {/* Nav items */}
-        <nav style={{ flex: 1, padding: '12px 10px', overflowY: 'auto' }}>
-          {navItems.map((item, i) => {
+      {/* ── Root ─────────────────────────────────────────────────────────── */}
+      <div style={{ minHeight: '100vh', backgroundColor: '#F9F8F5', overflowX: 'hidden' }}>
+
+        {/* ── Sidebar ──────────────────────────────────────────────────────── */}
+        <aside id="vb-sidebar">
+          {/* Logo */}
+          <div style={{ padding: '28px 20px 20px', flexShrink: 0 }}>
+            <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '9px' }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="8.5" stroke="#54F2F2" strokeWidth="1.4"/>
+                <circle cx="10" cy="10" r="5.5" stroke="#54F2F2" strokeWidth="1.4" opacity="0.6"/>
+                <circle cx="10" cy="10" r="2.5" stroke="#54F2F2" strokeWidth="1.4" opacity="0.3"/>
+              </svg>
+              <span style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'DM Sans, sans-serif', letterSpacing: '-0.3px' }}>
+                <span style={{ color: '#16150F' }}>Verba</span>
+                <span style={{ color: '#54F2F2' }}>ly</span>
+              </span>
+            </Link>
+          </div>
+
+          {/* Divider */}
+          <div style={{ height: '1px', backgroundColor: '#F0EDE4', margin: '0 16px', flexShrink: 0 }} />
+
+          {/* Nav items */}
+          <nav style={{ flex: 1, padding: '12px 10px', overflowY: 'auto' }}>
+            {navItems.map((item, i) => {
+              const active = pathname === item.href
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '9px 12px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontSize: '14px',
+                    fontWeight: active ? '600' : '400',
+                    marginBottom: '2px',
+                    transition: 'all 200ms ease',
+                    transitionDelay: mounted ? '0ms' : `${i * 40}ms`,
+                    transform: mounted ? 'translateX(0)' : 'translateX(-10px)',
+                    opacity: mounted ? 1 : 0,
+                    backgroundColor: active ? 'rgba(84,242,242,0.12)' : 'transparent',
+                    color: active ? '#042A2B' : '#A09D95',
+                  }}
+                >
+                  <NavIcon icon={item.icon} active={active} />
+                  {item.label}
+                  {active && (
+                    <div style={{
+                      marginLeft: 'auto',
+                      width: '5px', height: '5px',
+                      borderRadius: '50%',
+                      backgroundColor: '#54F2F2',
+                      flexShrink: 0,
+                    }} />
+                  )}
+                </Link>
+              )
+            })}
+          </nav>
+
+          {/* Sign out */}
+          <div style={{ padding: '12px 10px 24px', flexShrink: 0 }}>
+            <div style={{ height: '1px', backgroundColor: '#F0EDE4', marginBottom: '12px' }} />
+            <button
+              onClick={handleSignOut}
+              style={{
+                width: '100%',
+                padding: '9px 12px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                borderRadius: '8px',
+                color: '#A09D95',
+                cursor: 'pointer',
+                fontSize: '14px',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                fontFamily: 'DM Sans, sans-serif',
+              }}
+            >
+              <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              Sign out
+            </button>
+          </div>
+        </aside>
+
+        {/* ── Main content ─────────────────────────────────────────────────── */}
+        {/* margin-left and width are injected by the <style> block above */}
+        <main
+          id="vb-main"
+          style={{ paddingBottom: '80px', minHeight: '100vh', boxSizing: 'border-box' }}
+        >
+          {children}
+        </main>
+
+        {/* ── Mobile bottom nav ────────────────────────────────────────────── */}
+        <nav
+          id="vb-mobile-nav"
+          style={{
+            position: 'fixed',
+            bottom: 0, left: 0, right: 0,
+            zIndex: 50,
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            backgroundColor: '#FFFFFF',
+            borderTop: '1px solid #E5E2D8',
+            padding: '6px 4px',
+            paddingBottom: 'calc(6px + env(safe-area-inset-bottom))',
+          }}
+        >
+          {navItems.map((item) => {
             const active = pathname === item.href
             return (
               <Link
@@ -126,123 +251,28 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
                 href={item.href}
                 style={{
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '10px',
-                  padding: '9px 12px',
-                  borderRadius: '8px',
+                  gap: '3px',
+                  minWidth: '44px',
+                  minHeight: '44px',
+                  justifyContent: 'center',
                   textDecoration: 'none',
-                  fontSize: '14px',
-                  fontWeight: active ? '600' : '400',
-                  marginBottom: '2px',
-                  transition: 'all 200ms ease',
-                  transitionDelay: mounted ? '0ms' : `${i * 40}ms`,
-                  transform: mounted ? 'translateX(0)' : 'translateX(-10px)',
-                  opacity: mounted ? 1 : 0,
-                  backgroundColor: active ? 'rgba(84,242,242,0.12)' : 'transparent',
                   color: active ? '#042A2B' : '#A09D95',
+                  backgroundColor: active ? 'rgba(84,242,242,0.1)' : 'transparent',
+                  borderRadius: '10px',
+                  padding: '4px 8px',
                 }}
               >
-                <NavIcon icon={item.icon} active={active} />
-                {item.label}
-                {active && (
-                  <div style={{
-                    marginLeft: 'auto',
-                    width: '5px', height: '5px',
-                    borderRadius: '50%',
-                    backgroundColor: '#54F2F2',
-                    flexShrink: 0,
-                  }} />
-                )}
+                <NavIcon icon={item.icon} active={active} size={19} />
+                <span style={{ fontSize: '10px', fontWeight: active ? '600' : '400', lineHeight: 1 }}>
+                  {item.shortLabel}
+                </span>
               </Link>
             )
           })}
         </nav>
-
-        {/* Sign out */}
-        <div style={{ padding: '12px 10px 24px' }}>
-          <div style={{ height: '1px', backgroundColor: '#F0EDE4', marginBottom: '12px' }} />
-          <button
-            onClick={handleSignOut}
-            style={{
-              width: '100%',
-              padding: '9px 12px',
-              backgroundColor: 'transparent',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#A09D95',
-              cursor: 'pointer',
-              fontSize: '14px',
-              textAlign: 'left',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              fontFamily: 'DM Sans, sans-serif',
-              transition: 'color 150ms, background-color 150ms',
-            }}
-          >
-            <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-              <polyline points="16 17 21 12 16 7"/>
-              <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-            Sign out
-          </button>
-        </div>
-      </aside>
-
-      {/* ── Main content ────────────────────────────────────────── */}
-      <main
-        style={{
-          flex: 1,
-          minWidth: 0,
-          height: '100vh',
-          overflowY: 'auto',
-          paddingBottom: '72px',
-        }}
-      >
-        {children}
-      </main>
-
-      {/* ── Mobile bottom nav ───────────────────────────────────── */}
-      <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around"
-        style={{
-          backgroundColor: '#FFFFFF',
-          borderTop: '1px solid #E5E2D8',
-          padding: '6px 4px',
-          paddingBottom: 'calc(6px + env(safe-area-inset-bottom))',
-        }}
-      >
-        {navItems.map((item) => {
-          const active = pathname === item.href
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '3px',
-                minWidth: '44px',
-                minHeight: '44px',
-                justifyContent: 'center',
-                textDecoration: 'none',
-                color: active ? '#042A2B' : '#A09D95',
-                backgroundColor: active ? 'rgba(84,242,242,0.1)' : 'transparent',
-                borderRadius: '10px',
-                padding: '4px 8px',
-                transition: 'all 150ms',
-              }}
-            >
-              <NavIcon icon={item.icon} active={active} size={19} />
-              <span style={{ fontSize: '10px', fontWeight: active ? '600' : '400', lineHeight: 1 }}>
-                {item.shortLabel}
-              </span>
-            </Link>
-          )
-        })}
-      </nav>
-    </div>
+      </div>
+    </>
   )
 }
