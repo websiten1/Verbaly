@@ -5,12 +5,24 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
+const INPUT: React.CSSProperties = {
+  width: '100%',
+  backgroundColor: '#F9F8F5',
+  border: '1px solid #E5E2D8',
+  borderRadius: '10px',
+  padding: '12px 16px',
+  color: '#16150F',
+  fontSize: '15px',
+  fontFamily: 'DM Sans, sans-serif',
+  outline: 'none',
+}
+
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
+  const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [error,    setError]    = useState<string | null>(null)
+  const [loading,  setLoading]  = useState(false)
+  const router   = useRouter()
   const supabase = createClient()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -30,33 +42,26 @@ export default function LoginPage() {
     router.refresh()
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    backgroundColor: '#F8F9FC',
-    border: '1px solid #E8ECF4',
-    borderRadius: '10px',
-    padding: '12px 16px',
-    color: '#1A2340',
-    fontSize: '15px',
-    outline: 'none',
-    boxSizing: 'border-box',
-    fontFamily: 'DM Sans, sans-serif',
-  }
-
   return (
     <>
-      <h1 style={{ color: '#1A2340', fontSize: '26px', fontWeight: '700', marginBottom: '8px', letterSpacing: '-0.3px', fontFamily: 'Instrument Serif, serif' }}>
-        Welcome back
-      </h1>
-      <p style={{ color: '#8A94A6', fontSize: '14px', marginBottom: '32px' }}>
-        Sign in to your{' '}
-        <span style={{ color: '#1A2340', fontWeight: 600 }}>Verbaly</span>
-        {' '}account
-      </p>
+      {/* Header */}
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{
+          fontFamily: 'Instrument Serif, serif',
+          fontSize: '28px', fontWeight: '400',
+          color: '#16150F', letterSpacing: '-0.5px',
+          marginBottom: '6px',
+        }}>
+          Welcome back
+        </h1>
+        <p style={{ color: '#A09D95', fontSize: '14px' }}>
+          Sign in to your Verbaly account
+        </p>
+      </div>
 
       <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
-          <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+          <label style={{ display: 'block', color: '#6B6960', fontSize: '13px', fontWeight: '500', marginBottom: '7px' }}>
             Email
           </label>
           <input
@@ -65,12 +70,12 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="you@example.com"
-            style={inputStyle}
+            style={INPUT}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
+          <label style={{ display: 'block', color: '#6B6960', fontSize: '13px', fontWeight: '500', marginBottom: '7px' }}>
             Password
           </label>
           <input
@@ -79,18 +84,18 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="••••••••"
-            style={inputStyle}
+            style={INPUT}
           />
         </div>
 
         {error && (
           <div style={{
-            backgroundColor: 'rgba(239, 68, 68, 0.06)',
-            border: '1px solid rgba(239, 68, 68, 0.2)',
+            backgroundColor: 'rgba(220,38,38,0.05)',
+            border: '1px solid rgba(220,38,38,0.18)',
             borderRadius: '10px',
-            padding: '12px',
+            padding: '11px 14px',
             color: '#DC2626',
-            fontSize: '14px',
+            fontSize: '13px',
           }}>
             {error}
           </div>
@@ -100,30 +105,44 @@ export default function LoginPage() {
           type="submit"
           disabled={loading}
           style={{
-            backgroundColor: loading ? 'rgba(26,110,255,0.5)' : '#1A6EFF',
+            backgroundColor: loading ? 'rgba(4,42,43,0.5)' : '#042A2B',
             color: '#FFFFFF',
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '10px',
             padding: '13px 24px',
-            fontSize: '15px',
-            fontWeight: '600',
+            fontSize: '15px', fontWeight: '600',
             cursor: loading ? 'not-allowed' : 'pointer',
-            marginTop: '8px',
-            transition: 'all 150ms ease',
-            width: '100%',
+            marginTop: '4px',
             fontFamily: 'DM Sans, sans-serif',
+            transition: 'background-color 150ms',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
           }}
         >
-          {loading ? 'Signing in...' : 'Sign In'}
+          {loading && (
+            <span style={{
+              width: '15px', height: '15px',
+              border: '2px solid rgba(255,255,255,0.3)',
+              borderTopColor: '#FFFFFF',
+              borderRadius: '50%',
+              animation: 'spin 0.8s linear infinite',
+              display: 'inline-block',
+            }} />
+          )}
+          {loading ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
 
-      <p style={{ textAlign: 'center', color: '#8A94A6', fontSize: '14px', marginTop: '24px' }}>
-        Don&apos;t have an account?{' '}
-        <Link href="/signup" style={{ color: '#1A6EFF', textDecoration: 'none', fontWeight: '500' }}>
-          Sign up
+      <p style={{ textAlign: 'center', color: '#A09D95', fontSize: '14px', marginTop: '24px' }}>
+        No account?{' '}
+        <Link href="/signup" style={{ color: '#042A2B', textDecoration: 'none', fontWeight: '600' }}>
+          Sign up free
         </Link>
       </p>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </>
   )
 }

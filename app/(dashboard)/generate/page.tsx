@@ -6,55 +6,66 @@ import { useRouter } from 'next/navigation'
 
 type LengthOption = 'short' | 'medium' | 'long'
 
+function Spinner() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '14px', padding: '60px 0' }}>
+      <div style={{ position: 'relative', width: '48px', height: '48px' }}>
+        <svg width="48" height="48" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="18" fill="none" stroke="rgba(84,242,242,0.1)" strokeWidth="4"/>
+          <circle cx="24" cy="24" r="18" fill="none" stroke="#54F2F2" strokeWidth="4"
+            strokeLinecap="round" strokeDasharray="72 41"
+            style={{ animation: 'spin 0.85s linear infinite', transformOrigin: 'center' }}
+          />
+        </svg>
+      </div>
+      <p style={{ color: '#6B6960', fontSize: '14px' }}>Writing in your voice…</p>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  )
+}
+
+const LENGTHS: { label: string; value: LengthOption; desc: string }[] = [
+  { label: 'Short',  value: 'short',  desc: '~150 words' },
+  { label: 'Medium', value: 'medium', desc: '~350 words' },
+  { label: 'Long',   value: 'long',   desc: '~600 words' },
+]
+
 export default function GeneratePage() {
-  const [prompt, setPrompt] = useState('')
-  const [length, setLength] = useState<LengthOption>('medium')
-  const [tone, setTone] = useState(50)
-  const [loading, setLoading] = useState(false)
+  const [prompt,        setPrompt]        = useState('')
+  const [length,        setLength]        = useState<LengthOption>('medium')
+  const [tone,          setTone]          = useState(50)
+  const [loading,       setLoading]       = useState(false)
   const [generatedText, setGeneratedText] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
-  const [userId, setUserId] = useState<string | null>(null)
-  const router = useRouter()
+  const [error,         setError]         = useState<string | null>(null)
+  const [copied,        setCopied]        = useState(false)
+  const [userId,        setUserId]        = useState<string | null>(null)
+  const router   = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/login')
-        return
-      }
+      if (!user) { router.push('/login'); return }
       setUserId(user.id)
     }
     getUser()
   }, [router, supabase])
 
   const toneLabel = tone < 33 ? 'Formal' : tone < 66 ? 'Balanced' : 'Casual'
+  const toneDotPos = `${tone}%`
 
   const handleGenerate = async () => {
-    if (!prompt.trim() || !userId) {
-      setError('Please enter a prompt before generating.')
-      return
-    }
-    setError(null)
-    setGeneratedText(null)
-    setLoading(true)
+    if (!prompt.trim() || !userId) { setError('Please enter a prompt'); return }
+    setError(null); setGeneratedText(null); setLoading(true)
 
     try {
-      const response = await fetch('/api/generate', {
+      const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, prompt: prompt.trim(), length, tone }),
       })
-
-      const data: { generatedText?: string; error?: string } = await response.json()
-
-      if (!response.ok) {
-        setError(data.error ?? 'Generation failed. Please try again.')
-        return
-      }
-
+      const data: { generatedText?: string; error?: string } = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Generation failed.'); return }
       setGeneratedText(data.generatedText ?? '')
     } catch {
       setError('Something went wrong. Please try again.')
@@ -70,259 +81,212 @@ export default function GeneratePage() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const lengthButtons: { label: string; value: LengthOption; desc: string }[] = [
-    { label: 'Short', value: 'short', desc: '~150 words' },
-    { label: 'Medium', value: 'medium', desc: '~350 words' },
-    { label: 'Long', value: 'long', desc: '~600 words' },
-  ]
-
-  const card: React.CSSProperties = {
-    backgroundColor: '#FFFFFF',
-    border: '1px solid #E8ECF4',
-    borderRadius: '12px',
-    boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-  }
-
   return (
-    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh' }}>
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ color: '#1A2340', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', fontFamily: 'Instrument Serif, serif', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <svg width={26} height={26} viewBox="0 0 24 24" fill="none" stroke="#1A6EFF" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-            <path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/>
-          </svg>
+    <div className="p-5 md:p-8 lg:p-10" style={{ minHeight: '100vh' }}>
+
+      {/* Header */}
+      <div style={{ marginBottom: '28px' }}>
+        <h1 style={{
+          fontFamily: 'Instrument Serif, serif',
+          fontSize: '30px', fontWeight: '400',
+          color: '#16150F', letterSpacing: '-0.5px', marginBottom: '4px',
+        }}>
           Generate
         </h1>
-        <p style={{ color: '#8A94A6', fontSize: '14px' }}>
-          Write original content in your voice from a prompt.
+        <p style={{ color: '#A09D95', fontSize: '14px' }}>
+          Write original content from scratch, in your voice.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Left: inputs */}
-        <div>
-          <div style={{ ...card, padding: '24px' }}>
-            <h2 style={{ color: '#1A2340', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>
-              What do you want to write?
-            </h2>
 
-            {/* Prompt */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
-                Topic / Prompt
-              </label>
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g. Write a 300 word essay intro about climate change"
-                rows={5}
-                style={{
-                  width: '100%',
-                  backgroundColor: '#F8F9FC',
-                  border: '1px solid #E8ECF4',
-                  borderRadius: '10px',
-                  padding: '12px 14px',
-                  color: '#1A2340',
-                  fontSize: '14px',
-                  lineHeight: '1.6',
-                  resize: 'vertical',
-                  outline: 'none',
-                  boxSizing: 'border-box',
-                  minHeight: '120px',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
-              />
-            </div>
+        {/* ── LEFT: Controls ──────────────────────────────────── */}
+        <div style={{
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #E5E2D8',
+          borderRadius: '14px',
+          padding: '28px',
+        }}>
+          <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '22px' }}>
+            What do you want to write?
+          </h2>
 
-            {/* Length selector */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', color: '#4A5568', fontSize: '13px', marginBottom: '10px', fontWeight: '500' }}>
-                Length
-              </label>
-              <div className="flex flex-wrap gap-2 sm:gap-3">
-                {lengthButtons.map((btn) => {
-                  const isActive = length === btn.value
-                  return (
-                    <button
-                      key={btn.value}
-                      onClick={() => setLength(btn.value)}
-                      className="flex-1 min-w-[80px]"
-                      style={{
-                        backgroundColor: isActive ? '#1A6EFF' : '#F8F9FC',
-                        color: isActive ? '#FFFFFF' : '#4A5568',
-                        border: isActive ? 'none' : '1px solid #E8ECF4',
-                        borderRadius: '8px',
-                        padding: '10px 8px',
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        textAlign: 'center',
-                        fontFamily: 'DM Sans, sans-serif',
-                        transition: 'all 150ms ease',
-                      }}
-                    >
-                      <div>{btn.label}</div>
-                      <div style={{ fontSize: '11px', fontWeight: '400', marginTop: '2px', opacity: 0.7 }}>{btn.desc}</div>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Tone slider */}
-            <div style={{ marginBottom: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <label style={{ color: '#4A5568', fontSize: '13px', fontWeight: '500' }}>
-                  Tone
-                </label>
-                <span style={{ backgroundColor: 'rgba(26,110,255,0.08)', color: '#1A6EFF', fontSize: '12px', fontWeight: '600', padding: '2px 10px', borderRadius: '100px' }}>
-                  {toneLabel}
-                </span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ color: '#8A94A6', fontSize: '12px', whiteSpace: 'nowrap' }}>Formal</span>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={tone}
-                  onChange={(e) => setTone(Number(e.target.value))}
-                  style={{ flex: 1, width: '100%' }}
-                />
-                <span style={{ color: '#8A94A6', fontSize: '12px', whiteSpace: 'nowrap' }}>Casual</span>
-              </div>
-            </div>
-
-            {error && (
-              <div style={{
-                backgroundColor: 'rgba(239,68,68,0.06)',
-                border: '1px solid rgba(239,68,68,0.2)',
-                borderRadius: '10px',
-                padding: '10px 14px',
-                color: '#DC2626',
-                fontSize: '13px',
-                marginBottom: '12px',
-              }}>
-                {error}
-              </div>
-            )}
-
-            <button
-              onClick={handleGenerate}
-              disabled={loading}
+          {/* Prompt */}
+          <div style={{ marginBottom: '22px' }}>
+            <label style={{ display: 'block', color: '#6B6960', fontSize: '13px', fontWeight: '500', marginBottom: '8px' }}>
+              Topic / Prompt
+            </label>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="e.g. Write an essay intro about why remote work is here to stay"
+              rows={5}
               style={{
-                backgroundColor: loading ? 'rgba(26,110,255,0.35)' : '#1A6EFF',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '12px 20px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                fontFamily: 'DM Sans, sans-serif',
-                transition: 'all 150ms ease',
+                width: '100%', backgroundColor: '#F9F8F5',
+                border: '1px solid #E5E2D8', borderRadius: '10px',
+                padding: '12px 14px', color: '#16150F',
+                fontSize: '14px', lineHeight: '1.65',
+                resize: 'vertical', outline: 'none',
+                minHeight: '110px', fontFamily: 'DM Sans, sans-serif',
               }}
-            >
-              {loading ? (
-                <>
-                  <span style={{ display: 'inline-block', width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#FFFFFF', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-                    <path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/>
-                  </svg>
-                  Generate in My Voice
-                </>
-              )}
-            </button>
+            />
           </div>
+
+          {/* Length */}
+          <div style={{ marginBottom: '22px' }}>
+            <label style={{ display: 'block', color: '#6B6960', fontSize: '13px', fontWeight: '500', marginBottom: '10px' }}>
+              Length
+            </label>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {LENGTHS.map((btn) => {
+                const active = length === btn.value
+                return (
+                  <button
+                    key={btn.value}
+                    onClick={() => setLength(btn.value)}
+                    style={{
+                      flex: 1,
+                      backgroundColor: active ? '#042A2B' : '#F9F8F5',
+                      color: active ? '#FFFFFF' : '#6B6960',
+                      border: active ? 'none' : '1px solid #E5E2D8',
+                      borderRadius: '9px', padding: '10px 6px',
+                      fontSize: '13px', fontWeight: '600',
+                      cursor: 'pointer', textAlign: 'center',
+                      fontFamily: 'DM Sans, sans-serif',
+                      transition: 'all 150ms',
+                    }}
+                  >
+                    <div>{btn.label}</div>
+                    <div style={{ fontSize: '11px', fontWeight: '400', marginTop: '2px', opacity: 0.7 }}>
+                      {btn.desc}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Tone */}
+          <div style={{ marginBottom: '26px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <label style={{ color: '#6B6960', fontSize: '13px', fontWeight: '500' }}>Tone</label>
+              <span style={{
+                backgroundColor: 'rgba(84,242,242,0.1)',
+                border: '1px solid rgba(84,242,242,0.2)',
+                color: '#042A2B', fontSize: '12px', fontWeight: '600',
+                padding: '2px 10px', borderRadius: '100px',
+              }}>
+                {toneLabel}
+              </span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ color: '#A09D95', fontSize: '12px', whiteSpace: 'nowrap' }}>Formal</span>
+              <input
+                type="range" min={0} max={100} value={tone}
+                onChange={(e) => setTone(Number(e.target.value))}
+                style={{ flex: 1 }}
+              />
+              <span style={{ color: '#A09D95', fontSize: '12px', whiteSpace: 'nowrap' }}>Casual</span>
+            </div>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div style={{
+              backgroundColor: 'rgba(220,38,38,0.05)',
+              border: '1px solid rgba(220,38,38,0.18)',
+              borderRadius: '10px', padding: '10px 14px',
+              color: '#DC2626', fontSize: '13px', marginBottom: '14px',
+            }}>
+              {error}
+            </div>
+          )}
+
+          <button
+            onClick={handleGenerate}
+            disabled={loading || !prompt.trim()}
+            style={{
+              backgroundColor: loading || !prompt.trim() ? 'rgba(4,42,43,0.3)' : '#042A2B',
+              color: '#FFFFFF', border: 'none',
+              borderRadius: '10px', padding: '12px 20px',
+              fontSize: '14px', fontWeight: '600',
+              cursor: loading || !prompt.trim() ? 'not-allowed' : 'pointer',
+              width: '100%', fontFamily: 'DM Sans, sans-serif',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              transition: 'background-color 200ms',
+            }}
+          >
+            {loading ? (
+              <>
+                <span style={{
+                  width: '14px', height: '14px',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  borderTopColor: '#FFF', borderRadius: '50%',
+                  animation: 'spin 0.8s linear infinite',
+                }} />
+                Generating…
+              </>
+            ) : (
+              <>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                </svg>
+                Generate in my voice
+              </>
+            )}
+          </button>
         </div>
 
-        {/* Right: output */}
-        <div>
+        {/* ── RIGHT: Output ────────────────────────────────────── */}
+        <div style={{
+          backgroundColor: '#FFFFFF',
+          border: generatedText ? '1px solid rgba(84,242,242,0.2)' : '1px solid #E5E2D8',
+          borderRadius: '14px', overflow: 'hidden',
+          display: 'flex', flexDirection: 'column',
+          minHeight: '360px',
+          transition: 'border-color 400ms',
+        }}>
           <div style={{
-            backgroundColor: '#FFFFFF',
-            border: '1px solid #E8ECF4',
-            borderRadius: '12px',
-            boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-            overflow: 'hidden',
-            minHeight: '360px',
-            display: 'flex',
-            flexDirection: 'column',
+            padding: '16px 20px', borderBottom: '1px solid #E5E2D8',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
-            <div style={{
-              padding: '16px 20px',
-              borderBottom: '1px solid #E8ECF4',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-              <h2 style={{ color: '#1A2340', fontSize: '16px', fontWeight: '600' }}>Generated Text</h2>
-              {generatedText && (
-                <button
-                  onClick={handleCopy}
-                  style={{
-                    backgroundColor: copied ? 'rgba(26,110,255,0.08)' : '#F8F9FC',
-                    border: `1px solid ${copied ? 'rgba(26,110,255,0.2)' : '#E8ECF4'}`,
-                    borderRadius: '8px',
-                    padding: '6px 14px',
-                    color: copied ? '#1A6EFF' : '#4A5568',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    fontFamily: 'DM Sans, sans-serif',
-                  }}
-                >
-                  {copied ? '✓ Copied' : 'Copy'}
-                </button>
-              )}
-            </div>
+            <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600' }}>Generated text</h2>
+            {generatedText && (
+              <button
+                onClick={handleCopy}
+                style={{
+                  backgroundColor: copied ? 'rgba(84,242,242,0.1)' : '#F9F8F5',
+                  border: `1px solid ${copied ? 'rgba(84,242,242,0.25)' : '#E5E2D8'}`,
+                  borderRadius: '7px', padding: '5px 12px',
+                  color: copied ? '#042A2B' : '#6B6960',
+                  fontSize: '13px', fontWeight: '500',
+                  cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+                }}
+              >
+                {copied ? '✓ Copied' : 'Copy'}
+              </button>
+            )}
+          </div>
 
-            <div style={{ flex: 1, padding: '24px' }}>
-              {!generatedText && !loading && (
-                <div style={{ textAlign: 'center', paddingTop: '60px' }}>
-                  <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
-                    <svg width={40} height={40} viewBox="0 0 24 24" fill="none" stroke="#E8ECF4" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-                      <path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/>
-                    </svg>
-                  </div>
-                  <p style={{ color: '#8A94A6', fontSize: '14px' }}>
-                    Your generated content will appear here.
-                  </p>
-                </div>
-              )}
-
-              {loading && (
-                <div style={{ textAlign: 'center', paddingTop: '60px' }}>
-                  <div style={{
-                    display: 'inline-block',
-                    width: '32px',
-                    height: '32px',
-                    border: '2px solid rgba(26,110,255,0.15)',
-                    borderTopColor: '#1A6EFF',
-                    borderRadius: '50%',
-                    animation: 'spin 0.7s linear infinite',
-                    marginBottom: '16px',
-                  }} />
-                  <p style={{ color: '#8A94A6', fontSize: '14px' }}>Writing in your voice...</p>
-                </div>
-              )}
-
-              {generatedText && !loading && (
-                <p style={{ color: '#1A2340', fontSize: '15px', lineHeight: '1.75', whiteSpace: 'pre-wrap' }}>
-                  {generatedText}
+          <div style={{ flex: 1, padding: '24px' }}>
+            {loading ? (
+              <Spinner />
+            ) : generatedText ? (
+              <p style={{ color: '#16150F', fontSize: '15px', lineHeight: '1.8', whiteSpace: 'pre-wrap' }}>
+                {generatedText}
+              </p>
+            ) : (
+              <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}>
+                <svg width="40" height="40" viewBox="0 0 20 20" fill="none" style={{ marginBottom: '12px', opacity: 0.3 }}>
+                  <circle cx="10" cy="10" r="8.5" stroke="#042A2B" strokeWidth="1.4"/>
+                  <circle cx="10" cy="10" r="5.5" stroke="#042A2B" strokeWidth="1.4"/>
+                  <circle cx="10" cy="10" r="2.5" stroke="#042A2B" strokeWidth="1.4"/>
+                </svg>
+                <p style={{ color: '#A09D95', fontSize: '14px', textAlign: 'center' }}>
+                  Your generated content will appear here.
                 </p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

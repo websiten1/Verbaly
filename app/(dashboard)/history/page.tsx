@@ -5,20 +5,51 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import type { Rewrite } from '@/lib/types'
 
+function MatchBadge({ score }: { score: number }) {
+  const color = score >= 80 ? '#042A2B' : score >= 60 ? '#6B6960' : '#A09D95'
+  const bg    = score >= 80 ? 'rgba(84,242,242,0.12)' : 'rgba(4,42,43,0.06)'
+  const bdCol = score >= 80 ? 'rgba(84,242,242,0.3)' : 'rgba(4,42,43,0.12)'
+  return (
+    <span style={{
+      backgroundColor: bg, border: `1px solid ${bdCol}`,
+      color, padding: '4px 10px', borderRadius: '100px',
+      fontSize: '13px', fontWeight: '700', whiteSpace: 'nowrap',
+    }}>
+      {score}%
+    </span>
+  )
+}
+
+function LoadingState() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '16px' }}>
+      <div style={{ position: 'relative', width: '48px', height: '48px' }}>
+        <svg width="48" height="48" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="18" fill="none" stroke="rgba(84,242,242,0.1)" strokeWidth="4"/>
+          <circle cx="24" cy="24" r="18" fill="none" stroke="#54F2F2" strokeWidth="4"
+            strokeLinecap="round" strokeDasharray="72 41"
+            style={{ animation: 'spin 0.85s linear infinite', transformOrigin: 'center' }}
+          />
+        </svg>
+      </div>
+      <p style={{ color: '#A09D95', fontSize: '14px' }}>Loading history…</p>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  )
+}
+
 export default function HistoryPage() {
-  const [rewrites, setRewrites] = useState<Rewrite[]>([])
-  const [loading, setLoading] = useState(true)
-  const [expandedId, setExpandedId] = useState<string | null>(null)
-  const router = useRouter()
+  const [rewrites,    setRewrites]    = useState<Rewrite[]>([])
+  const [loading,     setLoading]     = useState(true)
+  const [expandedId,  setExpandedId]  = useState<string | null>(null)
+  const [copiedId,    setCopiedId]    = useState<string | null>(null)
+  const router   = useRouter()
   const supabase = createClient()
 
   const loadHistory = useCallback(async (uid: string) => {
     const { data } = await supabase
-      .from('rewrites')
-      .select('*')
-      .eq('user_id', uid)
+      .from('rewrites').select('*').eq('user_id', uid)
       .order('created_at', { ascending: false })
-
     setRewrites(data ?? [])
     setLoading(false)
   }, [supabase])
@@ -26,121 +57,98 @@ export default function HistoryPage() {
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/login')
-        return
-      }
+      if (!user) { router.push('/login'); return }
       await loadHistory(user.id)
     }
     getUser()
   }, [loadHistory, router, supabase])
 
-  const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id)
+  const toggleExpand = (id: string) => setExpandedId(expandedId === id ? null : id)
+
+  const handleCopy = async (text: string, id: string) => {
+    await navigator.clipboard.writeText(text)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000)
   }
 
-  const card: React.CSSProperties = {
-    backgroundColor: '#FFFFFF',
-    border: '1px solid #E8ECF4',
-    borderRadius: '12px',
-    boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-  }
-
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            border: '2px solid rgba(26,110,255,0.15)',
-            borderTop: '2px solid #1A6EFF',
-            borderRadius: '50%',
-            margin: '0 auto 16px',
-            animation: 'spin 1s linear infinite',
-          }} />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-          <p style={{ color: '#8A94A6', fontSize: '14px' }}>Loading history...</p>
-        </div>
-      </div>
-    )
-  }
+  if (loading) return <LoadingState />
 
   return (
-    <div className="p-4 md:p-8 lg:p-12" style={{ minHeight: '100vh' }}>
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ color: '#1A2340', fontSize: '28px', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '6px', fontFamily: 'Instrument Serif, serif' }}>
+    <div className="p-5 md:p-8 lg:p-10" style={{ minHeight: '100vh' }}>
+
+      {/* Header */}
+      <div style={{ marginBottom: '28px' }}>
+        <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: '30px', fontWeight: '400', color: '#16150F', letterSpacing: '-0.5px', marginBottom: '4px' }}>
           Rewrite History
         </h1>
-        <p style={{ color: '#8A94A6', fontSize: '14px' }}>
+        <p style={{ color: '#A09D95', fontSize: '14px' }}>
           {rewrites.length} total rewrite{rewrites.length !== 1 ? 's' : ''}
         </p>
       </div>
 
       {rewrites.length === 0 ? (
-        <div style={{ ...card, padding: '64px 24px', textAlign: 'center' }}>
-          <div style={{ fontSize: '40px', color: '#E8ECF4', marginBottom: '16px' }}>◷</div>
-          <p style={{ color: '#4A5568', fontSize: '15px' }}>No rewrites yet.</p>
-          <p style={{ color: '#8A94A6', fontSize: '14px', marginTop: '8px' }}>
-            Your rewrite history will appear here.
-          </p>
+        <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8', borderRadius: '16px', padding: '80px 24px', textAlign: 'center' }}>
+          <svg width="48" height="48" viewBox="0 0 20 20" fill="none" style={{ margin: '0 auto 16px', opacity: 0.2 }}>
+            <circle cx="10" cy="10" r="8.5" stroke="#042A2B" strokeWidth="1.4"/>
+            <circle cx="10" cy="10" r="5.5" stroke="#042A2B" strokeWidth="1.4"/>
+            <circle cx="10" cy="10" r="2.5" stroke="#042A2B" strokeWidth="1.4"/>
+          </svg>
+          <p style={{ color: '#6B6960', fontSize: '16px', fontWeight: '500', marginBottom: '6px' }}>No rewrites yet</p>
+          <p style={{ color: '#A09D95', fontSize: '14px' }}>Your rewrite history will appear here.</p>
         </div>
       ) : (
         <>
-          {/* Mobile cards view */}
-          <div className="block md:hidden space-y-3">
-            {rewrites.map((rewrite) => (
+          {/* Mobile cards */}
+          <div className="block md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {rewrites.map((rw) => (
               <div
-                key={rewrite.id}
-                style={{ ...card, padding: '16px', cursor: 'pointer' }}
-                onClick={() => toggleExpand(rewrite.id)}
+                key={rw.id}
+                style={{
+                  backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8',
+                  borderRadius: '12px', overflow: 'hidden',
+                  cursor: 'pointer',
+                }}
+                onClick={() => toggleExpand(rw.id)}
               >
-                <div style={{ color: '#8A94A6', fontSize: '12px', marginBottom: '8px' }}>
-                  {new Date(rewrite.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                <div style={{ padding: '16px 18px' }}>
+                  <div style={{ color: '#A09D95', fontSize: '12px', marginBottom: '6px' }}>
+                    {new Date(rw.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </div>
+                  <p style={{
+                    color: '#6B6960', fontSize: '13px', lineHeight: '1.55', marginBottom: '10px',
+                    overflow: 'hidden', display: '-webkit-box',
+                    WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const,
+                  }}>
+                    {rw.original_text}
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <MatchBadge score={rw.match_score} />
+                    <span style={{ color: '#A09D95', fontSize: '12px' }}>Intensity {rw.intensity}/10</span>
+                    <span style={{ marginLeft: 'auto', color: '#A09D95', fontSize: '12px' }}>
+                      {expandedId === rw.id ? '▲' : '▼'}
+                    </span>
+                  </div>
                 </div>
-                <p style={{
-                  color: '#4A5568',
-                  fontSize: '13px',
-                  lineHeight: '1.5',
-                  marginBottom: '10px',
-                  overflow: 'hidden',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical' as const,
-                }}>
-                  {rewrite.original_text}
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <span style={{ backgroundColor: 'rgba(26,110,255,0.1)', color: '#1A6EFF', padding: '3px 8px', borderRadius: '100px', fontSize: '12px', fontWeight: '600' }}>
-                    {rewrite.match_score}%
-                  </span>
-                  <span style={{ color: '#8A94A6', fontSize: '12px' }}>
-                    {rewrite.rewritten_text?.split(/\s+/).filter(Boolean).length ?? 0} words
-                  </span>
-                  <span style={{ backgroundColor: '#F8F9FC', color: '#4A5568', padding: '3px 8px', borderRadius: '100px', fontSize: '12px', fontWeight: '500', border: '1px solid #E8ECF4' }}>
-                    Intensity {rewrite.intensity}/10
-                  </span>
-                  <span style={{ marginLeft: 'auto', color: '#8A94A6', fontSize: '14px' }}>
-                    {expandedId === rewrite.id ? '▲' : '▼'}
-                  </span>
-                </div>
-                {expandedId === rewrite.id && (
-                  <div className="grid grid-cols-1 gap-3 mt-4">
-                    <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
-                      <div style={{ color: '#8A94A6', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
+
+                {expandedId === rw.id && (
+                  <div style={{ borderTop: '1px solid #E5E2D8', padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ backgroundColor: '#F9F8F5', border: '1px solid #E5E2D8', borderRadius: '10px', padding: '14px' }}>
+                      <div style={{ color: '#A09D95', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px', fontWeight: '600' }}>
                         Original
                       </div>
-                      <p style={{ color: '#4A5568', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
-                        {rewrite.original_text}
-                      </p>
+                      <p style={{ color: '#6B6960', fontSize: '13px', lineHeight: '1.7' }}>{rw.original_text}</p>
                     </div>
-                    <div style={{ backgroundColor: 'rgba(26,110,255,0.02)', border: '1px solid rgba(26,110,255,0.15)', borderRadius: '10px', padding: '16px' }}>
-                      <div style={{ color: '#1A6EFF', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', opacity: 0.8 }}>
-                        Rewritten
+                    <div style={{ backgroundColor: 'rgba(84,242,242,0.04)', border: '1px solid rgba(84,242,242,0.2)', borderRadius: '10px', padding: '14px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <div style={{ color: '#042A2B', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '600' }}>
+                          Rewritten
+                        </div>
+                        <button onClick={(e) => { e.stopPropagation(); handleCopy(rw.rewritten_text, rw.id) }}
+                          style={{ background: 'transparent', border: 'none', color: '#54F2F2', fontSize: '12px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                          {copiedId === rw.id ? '✓ Copied' : 'Copy'}
+                        </button>
                       </div>
-                      <p style={{ color: '#1A2340', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
-                        {rewrite.rewritten_text}
-                      </p>
+                      <p style={{ color: '#16150F', fontSize: '13px', lineHeight: '1.7' }}>{rw.rewritten_text}</p>
                     </div>
                   </div>
                 )}
@@ -148,80 +156,79 @@ export default function HistoryPage() {
             ))}
           </div>
 
-          {/* Desktop table view */}
-          <div className="hidden md:block" style={{ ...card, overflow: 'hidden' }}>
+          {/* Desktop table */}
+          <div className="hidden md:block" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8', borderRadius: '14px', overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid #E8ECF4' }}>
-                  {['Date', 'Original (preview)', 'Match Score', 'Words', 'Intensity', ''].map((col) => (
-                    <th
-                      key={col}
-                      style={{
-                        padding: '13px 20px',
-                        textAlign: 'left',
-                        color: '#8A94A6',
-                        fontSize: '11px',
-                        fontWeight: '500',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.08em',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {col}
-                    </th>
+                <tr style={{ borderBottom: '1px solid #E5E2D8' }}>
+                  {['Date', 'Original text', 'Match', 'Words', 'Intensity', ''].map((col) => (
+                    <th key={col} style={{
+                      padding: '12px 20px', textAlign: 'left',
+                      color: '#A09D95', fontSize: '11px', fontWeight: '600',
+                      textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap',
+                    }}>{col}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {rewrites.map((rewrite) => (
-                  <React.Fragment key={rewrite.id}>
+                {rewrites.map((rw) => (
+                  <React.Fragment key={rw.id}>
                     <tr
                       style={{
-                        borderBottom: expandedId === rewrite.id ? 'none' : '1px solid #F8F9FC',
+                        borderBottom: expandedId === rw.id ? 'none' : '1px solid #F0EDE4',
                         cursor: 'pointer',
+                        backgroundColor: expandedId === rw.id ? 'rgba(84,242,242,0.02)' : 'transparent',
+                        transition: 'background-color 150ms',
                       }}
-                      onClick={() => toggleExpand(rewrite.id)}
+                      onClick={() => toggleExpand(rw.id)}
                     >
-                      <td style={{ padding: '16px 20px', color: '#8A94A6', fontSize: '13px', whiteSpace: 'nowrap' }}>
-                        {new Date(rewrite.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      <td style={{ padding: '15px 20px', color: '#A09D95', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                        {new Date(rw.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </td>
-                      <td style={{ padding: '16px 20px', color: '#4A5568', fontSize: '13px', maxWidth: '300px' }}>
-                        {rewrite.original_text?.substring(0, 80)}{rewrite.original_text?.length > 80 ? '...' : ''}
+                      <td style={{ padding: '15px 20px', color: '#6B6960', fontSize: '13px', maxWidth: '300px' }}>
+                        {rw.original_text?.substring(0, 80)}{rw.original_text?.length > 80 ? '…' : ''}
                       </td>
-                      <td style={{ padding: '16px 20px' }}>
-                        <span style={{ backgroundColor: 'rgba(26,110,255,0.1)', color: '#1A6EFF', padding: '4px 10px', borderRadius: '100px', fontSize: '13px', fontWeight: '600' }}>
-                          {rewrite.match_score}%
-                        </span>
+                      <td style={{ padding: '15px 20px' }}>
+                        <MatchBadge score={rw.match_score} />
                       </td>
-                      <td style={{ padding: '16px 20px', color: '#8A94A6', fontSize: '13px' }}>
-                        {rewrite.rewritten_text?.split(/\s+/).filter(Boolean).length ?? 0}
+                      <td style={{ padding: '15px 20px', color: '#A09D95', fontSize: '13px' }}>
+                        {rw.rewritten_text?.split(/\s+/).filter(Boolean).length ?? 0}
                       </td>
-                      <td style={{ padding: '16px 20px', color: '#8A94A6', fontSize: '13px' }}>
-                        {rewrite.intensity}/10
+                      <td style={{ padding: '15px 20px', color: '#A09D95', fontSize: '13px' }}>
+                        {rw.intensity}/10
                       </td>
-                      <td style={{ padding: '16px 20px', color: '#8A94A6', fontSize: '18px', textAlign: 'center' }}>
-                        {expandedId === rewrite.id ? '▲' : '▼'}
+                      <td style={{ padding: '15px 20px', textAlign: 'center', color: '#A09D95', fontSize: '14px' }}>
+                        {expandedId === rw.id ? '▲' : '▼'}
                       </td>
                     </tr>
-                    {expandedId === rewrite.id && (
-                      <tr key={`${rewrite.id}-expanded`} style={{ borderBottom: '1px solid #F8F9FC' }}>
+                    {expandedId === rw.id && (
+                      <tr key={`${rw.id}-expanded`} style={{ borderBottom: '1px solid #F0EDE4' }}>
                         <td colSpan={6} style={{ padding: '0 20px 20px' }}>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', paddingTop: '16px' }}>
-                            <div style={{ backgroundColor: '#F8F9FC', border: '1px solid #E8ECF4', borderRadius: '10px', padding: '16px' }}>
-                              <div style={{ color: '#8A94A6', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
+                            <div style={{ backgroundColor: '#F9F8F5', border: '1px solid #E5E2D8', borderRadius: '10px', padding: '16px' }}>
+                              <div style={{ color: '#A09D95', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', fontWeight: '600' }}>
                                 Original
                               </div>
-                              <p style={{ color: '#4A5568', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
-                                {rewrite.original_text}
-                              </p>
+                              <p style={{ color: '#6B6960', fontSize: '13px', lineHeight: '1.75' }}>{rw.original_text}</p>
                             </div>
-                            <div style={{ backgroundColor: 'rgba(26,110,255,0.02)', border: '1px solid rgba(26,110,255,0.15)', borderRadius: '10px', padding: '16px' }}>
-                              <div style={{ color: '#1A6EFF', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', opacity: 0.8 }}>
-                                Rewritten
+                            <div style={{ backgroundColor: 'rgba(84,242,242,0.04)', border: '1px solid rgba(84,242,242,0.2)', borderRadius: '10px', padding: '16px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                <div style={{ color: '#042A2B', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '600' }}>
+                                  Rewritten
+                                </div>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleCopy(rw.rewritten_text, rw.id) }}
+                                  style={{
+                                    backgroundColor: copiedId === rw.id ? 'rgba(84,242,242,0.12)' : 'transparent',
+                                    border: '1px solid rgba(84,242,242,0.25)', borderRadius: '6px',
+                                    padding: '3px 10px', color: '#042A2B', fontSize: '12px',
+                                    cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+                                  }}
+                                >
+                                  {copiedId === rw.id ? '✓ Copied' : 'Copy'}
+                                </button>
                               </div>
-                              <p style={{ color: '#1A2340', fontSize: '13px', lineHeight: '1.7', margin: 0 }}>
-                                {rewrite.rewritten_text}
-                              </p>
+                              <p style={{ color: '#16150F', fontSize: '13px', lineHeight: '1.75' }}>{rw.rewritten_text}</p>
                             </div>
                           </div>
                         </td>
