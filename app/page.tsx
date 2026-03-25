@@ -324,8 +324,7 @@ export default function LandingPage() {
   const cyclerTxt = useRef<HTMLSpanElement>(null)
   const emailRef  = useRef<HTMLInputElement>(null)
 
-  const [joinState, setJoinState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [joinError, setJoinError] = useState<string | null>(null)
+  const [joinState, setJoinState] = useState<'idle' | 'success'>('idle')
   const [count,     setCount]     = useState(247)
 
   /* canvas favicon */
@@ -448,26 +447,19 @@ export default function LandingPage() {
     return () => io.disconnect()
   }, [])
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const input = emailRef.current
     if (!input) return
     const email = input.value.trim()
     if (!email) return
-    setJoinState('loading')
-    setJoinError(null)
-    try {
-      const iframe = document.createElement('iframe')
-      iframe.style.display = 'none'
-      iframe.src = `https://magic.beehiiv.com/v1/5dbf8d69-9f54-4ee0-9658-260b88b823cb?email=${encodeURIComponent(email)}`
-      document.body.appendChild(iframe)
-      setTimeout(() => iframe.remove(), 3000)
-      setJoinState('success')
-      setCount(c => c + 1)
-    } catch {
-      setJoinState('error')
-      setJoinError("Something went wrong. Please try again.")
-    }
+    const iframe = document.createElement('iframe')
+    iframe.style.cssText = 'display:none;width:0;height:0;border:none;position:absolute;'
+    iframe.src = `https://magic.beehiiv.com/v1/5dbf8d69-9f54-4ee0-9658-260b88b823cb?email=${encodeURIComponent(email)}`
+    document.body.appendChild(iframe)
+    setTimeout(() => document.body.removeChild(iframe), 5000)
+    setJoinState('success')
+    setCount(c => c + 1)
   }
 
   return (
@@ -527,25 +519,11 @@ export default function LandingPage() {
                   ref={emailRef} className="lp-input" type="email"
                   placeholder="Your email address" autoComplete="email"
                   required aria-label="Email address"
-                  disabled={joinState === 'loading'}
                 />
-                <button
-                  className="lp-btn" type="submit"
-                  disabled={joinState === 'loading'}
-                  style={{ opacity: joinState === 'loading' ? 0.6 : 1, cursor: joinState === 'loading' ? 'not-allowed' : 'pointer' }}
-                >
-                  {joinState === 'loading' ? '…' : 'Join →'}
+                <button className="lp-btn" type="submit">
+                  Join →
                 </button>
               </form>
-              {joinError && (
-                <p style={{
-                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                  fontSize: '10px', textTransform: 'uppercase' as const, letterSpacing: '.1em',
-                  color: '#FF4444', marginBottom: '10px',
-                }}>
-                  {joinError}
-                </p>
-              )}
             </>
           )}
 
