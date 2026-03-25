@@ -12,10 +12,10 @@ const CSS = `
   }
 
   /* ── base ───────────────────────────────── */
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
   html, body { background: #F0EDE6; }
   body {
-    margin: 0; padding: 0;
+    margin: 0; padding: 0; overflow-x: hidden;
     color: #0E0E0E;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     -webkit-font-smoothing: antialiased;
@@ -50,7 +50,8 @@ const CSS = `
   /* ── nav ────────────────────────────────── */
   .lp-nav {
     position: fixed; top: 0; left: 0; right: 0;
-    z-index: 200; height: 56px; padding: 0 40px;
+    z-index: 200; height: 56px;
+    padding: 0 clamp(16px, 4vw, 40px);
     display: flex; align-items: center; justify-content: space-between;
     background: #F0EDE6;
     border-bottom: 1px solid transparent;
@@ -80,7 +81,7 @@ const CSS = `
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     text-align: center;
-    padding: 56px 24px 0;
+    padding: 56px clamp(16px, 4vw, 24px) 0;
   }
 
   .lp-eyebrow {
@@ -93,10 +94,11 @@ const CSS = `
 
   .lp-title {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(72px, 13vw, 180px);
+    font-size: clamp(56px, 13vw, 180px);
     font-weight: 700; text-transform: uppercase;
     letter-spacing: -.025em; line-height: .9;
     color: #0E0E0E; margin-bottom: 24px;
+    max-width: 100%;
   }
   .lp-title .lp-c {
     display: inline-block; opacity: 0; transform: translateY(-10px);
@@ -171,17 +173,156 @@ const CSS = `
     color: #6B1FFF; text-align: center;
   }
 
+  /* ── demo section ───────────────────────── */
+  .lp-demo {
+    background: #F0EDE6;
+    padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 48px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lp-demo-label {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: 11px; font-weight: 400;
+    text-transform: uppercase; letter-spacing: .3em;
+    color: #888880;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .lp-demo-rule {
+    width: 60px; height: 1px;
+    background: #6B1FFF;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+  }
+
+  /* browser chrome */
+  .lp-browser {
+    width: 100%; max-width: 860px;
+    border: 1px solid #D0CCC4;
+  }
+
+  .lp-browser-bar {
+    background: #E8E4DC;
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #D0CCC4;
+  }
+
+  .lp-browser-dots {
+    display: flex; gap: 5px; flex-shrink: 0;
+  }
+  .lp-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .lp-dot-r { background: #FF5F57; }
+  .lp-dot-y { background: #FFBD2E; }
+  .lp-dot-g { background: #28C840; }
+
+  .lp-url-bar {
+    flex: 1; min-width: 0;
+    background: #D8D4CC;
+    border-radius: 3px;
+    height: 22px;
+  }
+
+  /* browser body: two columns */
+  .lp-browser-body {
+    display: flex;
+  }
+
+  .lp-col {
+    flex: 1; min-width: 0;
+    padding: clamp(16px, 2.5vw, 28px);
+  }
+  .lp-col + .lp-col {
+    border-left: 1px solid #D0CCC4;
+  }
+
+  /* column header row */
+  .lp-col-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 8px;
+  }
+  .lp-col-hdr-left {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .lp-col-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+  .lp-col-dot-gray  { background: #888880; }
+  .lp-col-dot-vi    { background: #6B1FFF; }
+
+  .lp-col-lbl {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: 10px; font-weight: 400;
+    text-transform: uppercase; letter-spacing: .2em;
+    color: #888880;
+  }
+  .lp-col-lbl-dark { color: #0E0E0E; }
+
+  .lp-match-badge {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: 10px; font-weight: 400;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: #FFFFFF;
+    background: #6B1FFF;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .lp-col-text-ai {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: clamp(11px, 1.4vw, 13px); line-height: 1.75;
+    color: #999990;
+  }
+  .lp-col-text-you {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: clamp(11px, 1.4vw, 13px); line-height: 1.75;
+    color: #0E0E0E;
+  }
+
+  /* scroll reveal */
+  #lp-col-ai {
+    opacity: 0;
+    transition: opacity .5s ease;
+  }
+  #lp-col-ai.in { opacity: 1; }
+
+  #lp-col-you {
+    opacity: 0;
+    transform: translateX(10px);
+    transition: opacity .5s ease .3s, transform .5s ease .3s;
+  }
+  #lp-col-you.in { opacity: 1; transform: translateX(0); }
+
+  .lp-demo-caption {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: 10px; font-weight: 400;
+    text-transform: uppercase; letter-spacing: .2em;
+    color: #888880;
+    margin-top: 20px;
+    text-align: center;
+  }
+
   /* ── dark section ───────────────────────── */
   .lp-dark {
     background: #0E0E0E;
-    padding: 56px 40px 60px;
+    padding: clamp(40px, 6vw, 80px) clamp(16px, 4vw, 48px);
     overflow: hidden;
   }
 
-  /* yellow headline — slides in from left */
   .lp-dark-yellow {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(80px, 12vw, 160px);
+    font-size: clamp(48px, 10vw, 160px);
     font-weight: 700; text-transform: uppercase;
     letter-spacing: -.02em; line-height: .88;
     color: #C8F400; white-space: nowrap;
@@ -190,9 +331,8 @@ const CSS = `
   }
   .lp-dark-yellow.in { opacity: 1; transform: translateX(0); }
 
-  /* ghost row — fades in 300ms after yellow */
   .lp-dark-ghosts {
-    display: flex; gap: 48px; flex-wrap: wrap;
+    display: flex; gap: clamp(16px, 4vw, 48px); flex-wrap: wrap;
     opacity: 0;
     transition: opacity .5s ease .3s;
   }
@@ -200,7 +340,7 @@ const CSS = `
 
   .lp-ghost-1 {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(80px, 12vw, 160px);
+    font-size: clamp(48px, 10vw, 160px);
     font-weight: 700; text-transform: uppercase;
     letter-spacing: -.02em; line-height: .88;
     color: transparent; white-space: nowrap;
@@ -208,14 +348,13 @@ const CSS = `
   }
   .lp-ghost-2 {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(80px, 12vw, 160px);
+    font-size: clamp(48px, 10vw, 160px);
     font-weight: 700; text-transform: uppercase;
     letter-spacing: -.02em; line-height: .88;
     color: transparent; white-space: nowrap;
     -webkit-text-stroke: 1.5px #3a3a3a;
   }
 
-  /* bottom tagline bar */
   .lp-dark-bar {
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: wrap; gap: 12px;
@@ -233,7 +372,7 @@ const CSS = `
   /* ── footer (static) ────────────────────── */
   .lp-footer {
     background: #F0EDE6;
-    height: 44px; padding: 0 40px;
+    height: 44px; padding: 0 clamp(16px, 4vw, 40px);
     display: flex; align-items: center; justify-content: space-between;
     border-top: 1px solid #0E0E0E;
   }
@@ -253,18 +392,23 @@ const CSS = `
     to   { opacity: 1; }
   }
 
-  /* ── mobile ─────────────────────────────── */
-  @media (max-width: 560px) {
-    .lp-nav     { padding: 0 20px; }
-    .lp-main    { padding: 56px 20px 0; }
-    .lp-dark    { padding: 40px 20px 48px; }
-    .lp-footer  { padding: 0 20px; }
-    .lp-dark-ghosts { gap: 24px; }
+  /* ── responsive ─────────────────────────── */
+  @media (max-width: 640px) {
+    .lp-browser-body { flex-direction: column; }
+    .lp-col + .lp-col { border-left: none; border-top: 1px solid #D0CCC4; }
+    #lp-col-you { transform: translateX(0); }
+  }
+
+  @media (max-width: 480px) {
     .lp-form-row { flex-direction: column; }
     .lp-btn {
       border-left: none; border-top: 1px solid #0E0E0E;
       padding: 14px; width: 100%;
     }
+  }
+
+  @media (max-width: 560px) {
+    .lp-dark-ghosts { gap: 16px; }
   }
 `
 
@@ -360,6 +504,22 @@ export default function LandingPage() {
     }
   }, [])
 
+  /* demo section scroll reveal */
+  useEffect(() => {
+    const ai  = document.getElementById('lp-col-ai')
+    const you = document.getElementById('lp-col-you')
+    if (!ai) return
+    const io = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        ai.classList.add('in')
+        you?.classList.add('in')
+        io.disconnect()
+      }
+    }, { threshold: 0.2 })
+    io.observe(ai)
+    return () => io.disconnect()
+  }, [])
+
   /* dark section scroll animation */
   useEffect(() => {
     const yellow = document.getElementById('lp-yellow')
@@ -447,19 +607,79 @@ export default function LandingPage() {
 
       </main>
 
+      {/* ── DEMO SECTION ────────────────────── */}
+      <section className="lp-demo" aria-label="See the difference">
+
+        <p className="lp-demo-label">See the Difference</p>
+        <div className="lp-demo-rule" aria-hidden="true" />
+
+        {/* mock browser window */}
+        <div className="lp-browser" role="img" aria-label="Before and after comparison">
+
+          {/* browser chrome bar */}
+          <div className="lp-browser-bar" aria-hidden="true">
+            <div className="lp-browser-dots">
+              <span className="lp-dot lp-dot-r" />
+              <span className="lp-dot lp-dot-y" />
+              <span className="lp-dot lp-dot-g" />
+            </div>
+            <div className="lp-url-bar" />
+          </div>
+
+          {/* two-column body */}
+          <div className="lp-browser-body">
+
+            {/* left: AI generated */}
+            <div id="lp-col-ai" className="lp-col">
+              <div className="lp-col-hdr">
+                <div className="lp-col-hdr-left">
+                  <span className="lp-col-dot lp-col-dot-gray" aria-hidden="true" />
+                  <span className="lp-col-lbl">AI Generated</span>
+                </div>
+              </div>
+              <p className="lp-col-text-ai">
+                In today&rsquo;s competitive landscape, leveraging cutting-edge artificial
+                intelligence solutions enables organizations to optimize their operational
+                efficiency and maximize stakeholder value through data-driven
+                decision-making processes.
+              </p>
+            </div>
+
+            {/* right: your voice */}
+            <div id="lp-col-you" className="lp-col">
+              <div className="lp-col-hdr">
+                <div className="lp-col-hdr-left">
+                  <span className="lp-col-dot lp-col-dot-vi" aria-hidden="true" />
+                  <span className="lp-col-lbl lp-col-lbl-dark">Your Voice</span>
+                </div>
+                <span className="lp-match-badge" aria-label="94% match">94% Match</span>
+              </div>
+              <p className="lp-col-text-you">
+                Here&rsquo;s the thing &mdash; most companies are sitting on AI tools and
+                still wondering why nothing&rsquo;s getting faster. The data&rsquo;s there.
+                The decisions aren&rsquo;t. That gap? That&rsquo;s the problem worth solving.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <p className="lp-demo-caption">
+          Your style. Learned in minutes. Applied instantly.
+        </p>
+
+      </section>
+
       {/* ── DARK SECTION ────────────────────── */}
       <section className="lp-dark" aria-label="Your voice, everywhere">
 
-        {/* Row 1: solid acid yellow headline */}
         <p id="lp-yellow" className="lp-dark-yellow">YOUR VOICE.</p>
 
-        {/* Row 2: ghost echo rows */}
         <div id="lp-ghosts" className="lp-dark-ghosts" aria-hidden="true">
           <span className="lp-ghost-1">SOUNDS LIKE YOU.</span>
           <span className="lp-ghost-2">EVERY WHERE.</span>
         </div>
 
-        {/* Bottom bar */}
         <div className="lp-dark-bar">
           <span className="lp-dark-tag">Trained on your writing. Applied to everything.</span>
           <span className="lp-dark-tag">No credit card ever required</span>
