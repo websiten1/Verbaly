@@ -7,62 +7,55 @@ import { useEffect, useRef, useState } from 'react'
 
 const CSS = `
   /* ── reset + base ──────────────────────────── */
-  html, body { background: #0A0A0A; overflow-x: hidden; }
+  html, body { background: #FFFFFF; overflow-x: hidden; }
   body {
-    margin: 0; padding: 0; color: #FFFFFF;
+    margin: 0; padding: 0; color: #0E0E0E;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     -webkit-font-smoothing: antialiased;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  ::selection { background: #CCFF00; color: #0A0A0A; }
+  ::selection { background: #7B5CF0; color: #FFFFFF; }
   ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-thumb { background: #CCFF00; }
+  ::-webkit-scrollbar-thumb { background: #7B5CF0; }
 
   /* ── cursor ────────────────────────────────── */
   @media (pointer: fine) { body.lp { cursor: none; } }
   #lp-cur {
     display: none; position: fixed;
-    width: 2px; height: 20px; background: #CCFF00;
+    width: 2px; height: 20px; background: #0E0E0E;
     pointer-events: none; z-index: 9999;
     transform: translate(-50%, -50%);
     animation: lp-blink .85s step-end infinite;
   }
   @media (pointer: fine) { #lp-cur { display: block; } }
 
-  /* ── grain ─────────────────────────────────── */
-  #lp-grain {
-    position: fixed; inset: 0; pointer-events: none; z-index: 800; opacity: .045;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 180px 180px;
-  }
-
   /* ── nav ───────────────────────────────────── */
   .lp-nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 200;
     height: 56px; padding: 0 clamp(16px, 4vw, 48px);
     display: flex; align-items: center; justify-content: space-between;
-    background: #0A0A0A;
+    background: #FFFFFF;
     border-bottom: 1px solid transparent;
     transition: border-color .2s ease;
   }
-  .lp-nav.scrolled { border-bottom-color: rgba(255,255,255,0.1); }
+  .lp-nav.scrolled { border-bottom-color: #E0E0E0; }
   .lp-logo {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: 13px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .2em; color: #FFFFFF; text-decoration: none;
+    letter-spacing: .2em; color: #0E0E0E; text-decoration: none;
   }
   .lp-navbtn {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; font-weight: 400; text-transform: uppercase;
-    letter-spacing: .16em; color: #CCFF00; background: transparent;
-    border: 1px solid #CCFF00; padding: 8px 20px; cursor: pointer;
+    letter-spacing: .16em; color: #0E0E0E; background: transparent;
+    border: 1px solid #0E0E0E; padding: 8px 20px; cursor: pointer;
     transition: background .2s, color .2s;
   }
-  .lp-navbtn:hover { background: #CCFF00; color: #0A0A0A; }
+  .lp-navbtn:hover { background: #0E0E0E; color: #FFFFFF; }
 
   /* ── hero ──────────────────────────────────── */
   .lp-main {
-    background: #0A0A0A;
+    background: #FFFFFF;
     display: flex; flex-direction: column;
     align-items: center; text-align: center;
     padding: 110px clamp(16px, 4vw, 32px) 80px;
@@ -72,19 +65,18 @@ const CSS = `
   .lp-eyebrow {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 11px; font-weight: 400; text-transform: uppercase;
-    letter-spacing: .3em; color: rgba(255,255,255,0.35);
+    letter-spacing: .3em; color: rgba(0,0,0,0.35);
     margin-bottom: 32px;
     opacity: 0; animation: lp-fadein .6s ease .1s forwards;
   }
 
-  /* giant title — lime outline ghost on black */
+  /* giant title — solid black */
   .lp-title {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(56px, 13vw, 180px);
     font-weight: 700; text-transform: uppercase;
     letter-spacing: -.025em; line-height: .9;
-    color: transparent;
-    -webkit-text-stroke: 2px #CCFF00;
+    color: #0E0E0E;
     margin-bottom: 20px; max-width: 100%;
     opacity: 0; animation: lp-fadein .5s ease .05s forwards;
   }
@@ -99,24 +91,24 @@ const CSS = `
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: clamp(10px, 1.4vw, 13px); font-weight: 400;
     text-transform: uppercase; letter-spacing: .35em;
-    color: rgba(255,255,255,0.55); margin-bottom: 20px;
+    color: rgba(0,0,0,0.4); margin-bottom: 20px;
     opacity: 0; transition: opacity .6s ease;
   }
   .lp-sub.in { opacity: 1; }
 
-  /* typewriter cycler */
+  /* typewriter cycler — purple */
   .lp-cycler {
     display: flex; align-items: center; justify-content: center;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: clamp(11px, 1.4vw, 13px); font-weight: 400;
     text-transform: uppercase; letter-spacing: .14em;
-    color: #CCFF00; min-height: 20px; margin-bottom: 36px;
+    color: #7B5CF0; min-height: 20px; margin-bottom: 36px;
     opacity: 0; transition: opacity .4s ease;
   }
   .lp-cycler.in { opacity: 1; }
   .lp-vcur {
     display: inline-block; width: 2px; height: 13px;
-    background: #CCFF00; margin-left: 2px; vertical-align: middle;
+    background: #7B5CF0; margin-left: 2px; vertical-align: middle;
     animation: lp-blink .7s step-end infinite;
   }
 
@@ -126,36 +118,37 @@ const CSS = `
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(22px, 3vw, 30px); font-weight: 700;
     text-transform: uppercase; letter-spacing: -.01em;
-    color: #FFFFFF; margin-bottom: 8px;
+    color: #0E0E0E; margin-bottom: 8px;
   }
-  .lp-form-rule { height: 1px; background: #CCFF00; margin-bottom: 8px; }
+  .lp-form-rule { height: 1px; background: #7B5CF0; margin-bottom: 8px; }
   .lp-form-sub {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .22em;
-    color: rgba(255,255,255,0.4); margin-bottom: 20px;
+    color: rgba(0,0,0,0.4); margin-bottom: 20px;
   }
   .lp-form-row {
-    display: flex; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 12px;
+    display: flex; border: 1px solid #0E0E0E; margin-bottom: 12px;
     transition: border-color .2s;
   }
-  .lp-form-row:focus-within { border-color: #CCFF00; }
+  .lp-form-row:focus-within { border-color: #7B5CF0; }
   .lp-input {
-    flex: 1; min-width: 0; background: transparent; border: none;
+    flex: 1; min-width: 0; background: #FFFFFF; border: none;
     padding: 14px 16px;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
-    color: #FFFFFF; outline: none;
+    color: #0E0E0E; outline: none;
   }
-  .lp-input::placeholder { color: rgba(255,255,255,0.25); }
+  .lp-input::placeholder { color: rgba(0,0,0,0.3); }
   .lp-btn {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 11px; font-weight: 500; text-transform: uppercase;
-    letter-spacing: .14em; color: #0A0A0A; background: #CCFF00;
-    border: none; border-left: 1px solid rgba(255,255,255,0.1);
+    letter-spacing: .14em; color: #FFFFFF; background: #0E0E0E;
+    border: none; border-left: 1px solid #0E0E0E;
     padding: 14px 22px; cursor: pointer; white-space: nowrap;
     transition: background .2s ease;
   }
-  .lp-btn:hover { background: #FFFFFF; }
+  .lp-btn:hover:not(:disabled) { background: #7B5CF0; }
+  .lp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .lp-counter {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
@@ -164,45 +157,45 @@ const CSS = `
 
   /* ── demo section ──────────────────────────── */
   .lp-demo {
-    background: #0F0F0F;
+    background: #FFFFFF;
     padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 48px);
     display: flex; flex-direction: column; align-items: center;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid #E0E0E0;
   }
   .lp-demo-label {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 11px; text-transform: uppercase; letter-spacing: .3em;
-    color: rgba(255,255,255,0.35); margin-bottom: 10px; text-align: center;
+    color: rgba(0,0,0,0.35); margin-bottom: 10px; text-align: center;
   }
-  .lp-demo-rule { width: 60px; height: 1px; background: #CCFF00; margin-bottom: 24px; }
+  .lp-demo-rule { width: 60px; height: 1px; background: #7B5CF0; margin-bottom: 24px; }
 
   /* browser chrome */
-  .lp-browser { width: 100%; max-width: 860px; border: 1px solid rgba(255,255,255,0.1); }
+  .lp-browser { width: 100%; max-width: 860px; border: 1px solid #E0E0E0; }
   .lp-browser-bar {
-    background: #1A1A1A; padding: 9px 14px;
+    background: #F5F5F5; padding: 9px 14px;
     display: flex; align-items: center; gap: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid #E0E0E0;
   }
   .lp-browser-dots { display: flex; gap: 5px; flex-shrink: 0; }
   .lp-dot { width: 10px; height: 10px; border-radius: 50%; }
   .lp-dot-r { background: #FF5F57; }
   .lp-dot-y { background: #FFBD2E; }
   .lp-dot-g { background: #28C840; }
-  .lp-url-bar { flex: 1; min-width: 0; background: #2A2A2A; border-radius: 3px; height: 22px; }
+  .lp-url-bar { flex: 1; min-width: 0; background: #E8E8E8; border-radius: 3px; height: 22px; }
   .lp-browser-body { display: flex; }
   .lp-col { flex: 1; min-width: 0; padding: clamp(16px, 2.5vw, 28px); }
-  .lp-col + .lp-col { border-left: 1px solid rgba(255,255,255,0.08); }
+  .lp-col + .lp-col { border-left: 1px solid #E0E0E0; }
   .lp-col-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 8px; }
   .lp-col-hdr-left { display: flex; align-items: center; gap: 6px; }
   .lp-col-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  .lp-col-dot-muted { background: rgba(255,255,255,0.25); }
-  .lp-col-dot-lime  { background: #CCFF00; }
+  .lp-col-dot-muted { background: rgba(0,0,0,0.2); }
+  .lp-col-dot-lime  { background: #7B5CF0; }
   .lp-col-lbl {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
-    color: rgba(255,255,255,0.35);
+    color: rgba(0,0,0,0.35);
   }
-  .lp-col-lbl-bright { color: rgba(255,255,255,0.8); }
+  .lp-col-lbl-bright { color: #0E0E0E; }
   .lp-match-badge {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
@@ -212,12 +205,12 @@ const CSS = `
   .lp-col-text-ai {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(11px, 1.4vw, 13px); line-height: 1.75;
-    color: rgba(255,255,255,0.2);
+    color: rgba(0,0,0,0.2);
   }
   .lp-col-text-you {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(11px, 1.4vw, 13px); line-height: 1.75;
-    color: rgba(255,255,255,0.9);
+    color: #0E0E0E;
   }
 
   /* browser col scroll reveal */
@@ -229,10 +222,10 @@ const CSS = `
   .lp-demo-caption {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
-    color: #CCFF00; margin-top: 20px; text-align: center;
+    color: #7B5CF0; margin-top: 20px; text-align: center;
   }
 
-  /* ── YOUR VOICE section ────────────────────── */
+  /* ── YOUR VOICE section — black bg only ─────── */
   .lp-voice {
     background: #0A0A0A;
     height: 100vh;
@@ -242,37 +235,27 @@ const CSS = `
     border-top: 1px solid rgba(255,255,255,0.06);
   }
 
-  /* three lines grow to fill available space equally */
+  /* three lines packed tight */
   .lp-voice-lines {
     flex: 1;
     display: flex; flex-direction: column;
-    justify-content: space-evenly;
-    padding: clamp(16px, 3vh, 40px) 0;
+    justify-content: center;
+    gap: clamp(6px, 1.5vh, 18px);
   }
 
-  /* font size: fill the width, cap by height so all 3 fit */
+  /* font size: fill width, cap by height */
   .lp-voice-line {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(36px, min(10.5vw, 22vh), 152px);
     font-weight: 700; text-transform: uppercase;
-    letter-spacing: -.02em; line-height: 1;
+    letter-spacing: -.02em; line-height: 1.05;
     white-space: nowrap;
   }
 
-  /* "YOUR VOICE." — lime solid */
-  .lp-vl-lime { color: #CCFF00; }
-
-  /* "SOUNDS LIKE YOU." — white outline */
-  .lp-vl-white-outline {
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(255,255,255,0.6);
-  }
-
-  /* "EVERY WHERE." — purple outline */
-  .lp-vl-purple-outline {
-    color: transparent;
-    -webkit-text-stroke: 1.5px #7B5CF0;
-  }
+  /* solid fills — no outlines */
+  .lp-vl-lime          { color: #CCFF00; }
+  .lp-vl-white-outline { color: #FFFFFF; }
+  .lp-vl-purple-outline{ color: #7B5CF0; }
 
   /* scroll reveal — slide from left */
   .lp-vl-lime          { opacity: 0; transform: translateX(-40px); transition: opacity .6s ease, transform .6s ease; }
@@ -282,7 +265,7 @@ const CSS = `
   .lp-vl-white-outline.in  { opacity: 1; transform: translateX(0); }
   .lp-vl-purple-outline.in { opacity: 1; transform: translateX(0); }
 
-  /* bottom bar pinned to bottom of section */
+  /* bottom bar pinned */
   .lp-voice-bar {
     flex-shrink: 0;
     display: flex; justify-content: space-between; align-items: center;
@@ -296,17 +279,17 @@ const CSS = `
     color: rgba(255,255,255,0.3);
   }
 
-  /* ── footer ────────────────────────────────── */
+  /* ── footer — white ─────────────────────────── */
   .lp-footer {
-    background: #0A0A0A;
+    background: #FFFFFF;
     height: 44px; padding: 0 clamp(16px, 4vw, 48px);
     display: flex; align-items: center; justify-content: space-between;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid #E0E0E0;
   }
   .lp-ft {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
-    color: rgba(255,255,255,0.25);
+    color: rgba(0,0,0,0.25);
   }
 
   /* ── keyframes ─────────────────────────────── */
@@ -316,14 +299,14 @@ const CSS = `
   /* ── responsive ────────────────────────────── */
   @media (max-width: 640px) {
     .lp-browser-body { flex-direction: column; }
-    .lp-col + .lp-col { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); }
+    .lp-col + .lp-col { border-left: none; border-top: 1px solid #E0E0E0; }
     #lp-col-you { transform: translateX(0); }
     .lp-voice { height: auto; min-height: 100vh; }
-    .lp-voice-lines { justify-content: flex-start; gap: clamp(16px, 4vw, 32px); }
+    .lp-voice-lines { justify-content: center; }
   }
   @media (max-width: 480px) {
     .lp-form-row { flex-direction: column; }
-    .lp-btn { border-left: none; border-top: 1px solid rgba(255,255,255,0.1); padding: 14px; width: 100%; }
+    .lp-btn { border-left: none; border-top: 1px solid #0E0E0E; padding: 14px; width: 100%; }
   }
 `
 
@@ -473,7 +456,6 @@ export default function LandingPage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div id="lp-grain" aria-hidden="true" />
       <div ref={curRef} id="lp-cur" aria-hidden="true" />
 
       {/* ── NAV ─── */}
@@ -505,10 +487,10 @@ export default function LandingPage() {
 
           {joinState === 'success' ? (
             <div style={{
-              border: '1px solid #CCFF00', padding: '14px 16px', marginBottom: '12px',
+              border: '1px solid #7B5CF0', padding: '14px 16px', marginBottom: '12px',
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
               fontSize: '11px', textTransform: 'uppercase' as const, letterSpacing: '.12em',
-              color: '#CCFF00',
+              color: '#7B5CF0',
             }}>
               ✓&nbsp;&nbsp;You&apos;re on the list. Check your email.
             </div>
