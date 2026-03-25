@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Verbaly — Everything sounds like you.",
+  title: "Verbaly — Sounds Like You",
   description:
     "Verbaly learns your unique voice from your own writing and transforms any AI-generated text to sound unmistakably, authentically like you.",
 };

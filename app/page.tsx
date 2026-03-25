@@ -328,6 +328,25 @@ export default function LandingPage() {
   const [joinError, setJoinError] = useState<string | null>(null)
   const [count,     setCount]     = useState(247)
 
+  /* canvas favicon */
+  useEffect(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 32; canvas.height = 32
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.fillStyle = '#0A0A0A'
+    ctx.fillRect(0, 0, 32, 32)
+    ctx.fillStyle = '#CCFF00'
+    ctx.font = 'bold 24px "Courier New", monospace'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('V', 16, 17)
+    const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link')
+    link.rel = 'icon'
+    link.href = canvas.toDataURL()
+    document.head.appendChild(link)
+  }, [])
+
   /* cursor */
   useEffect(() => {
     const cur = curRef.current
