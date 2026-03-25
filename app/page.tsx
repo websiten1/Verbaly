@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /* ── Design tokens ─────────────────────────────── */
 // black: #0A0A0A  lime: #CCFF00  white: #FFFFFF  purple: #7B5CF0
@@ -342,6 +342,10 @@ export default function LandingPage() {
   const cyclerTxt = useRef<HTMLSpanElement>(null)
   const emailRef  = useRef<HTMLInputElement>(null)
 
+  const [joinState, setJoinState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [joinError, setJoinError] = useState<string | null>(null)
+  const [count,     setCount]     = useState(247)
+
   /* cursor */
   useEffect(() => {
     const cur = curRef.current
@@ -443,18 +447,27 @@ export default function LandingPage() {
     return () => io.disconnect()
   }, [])
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const input = emailRef.current
     if (!input) return
     const email = input.value.trim()
     if (!email) return
-    window.open(
-      `https://useverbalyapp.beehiiv.com/subscribe?email=${encodeURIComponent(email)}`,
-      '_blank', 'noopener,noreferrer'
-    )
-    input.value = ''
-    input.placeholder = "YOU'RE ON THE LIST. CHECK YOUR EMAIL."
+    setJoinState('loading')
+    setJoinError(null)
+    try {
+      const res = await fetch('https://magic.beehiiv.com/v1/5dbf8d69-9f54-4ee0-9658-260b88b823cb', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (!res.ok) throw new Error('server')
+      setJoinState('success')
+      setCount(c => c + 1)
+    } catch {
+      setJoinState('error')
+      setJoinError("Something went wrong. Please try again.")
+    }
   }
 
   return (
@@ -489,16 +502,47 @@ export default function LandingPage() {
           <p className="lp-form-heading">Join the Waitlist</p>
           <div className="lp-form-rule" aria-hidden="true" />
           <p className="lp-form-sub">Free Pro Access &middot; First 500 People</p>
-          <form className="lp-form-row" onSubmit={handleSubmit} noValidate>
-            <input
-              ref={emailRef} className="lp-input" type="email"
-              placeholder="Your email address" autoComplete="email"
-              required aria-label="Email address"
-            />
-            <button className="lp-btn" type="submit">Join &rarr;</button>
-          </form>
-          <p className="lp-counter" aria-label="247 people already waiting">
-            &#10022;&nbsp;247 People Already Waiting
+
+          {joinState === 'success' ? (
+            <div style={{
+              border: '1px solid #CCFF00', padding: '14px 16px', marginBottom: '12px',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              fontSize: '11px', textTransform: 'uppercase' as const, letterSpacing: '.12em',
+              color: '#CCFF00',
+            }}>
+              ✓&nbsp;&nbsp;You&apos;re on the list. Check your email.
+            </div>
+          ) : (
+            <>
+              <form className="lp-form-row" onSubmit={handleSubmit} noValidate>
+                <input
+                  ref={emailRef} className="lp-input" type="email"
+                  placeholder="Your email address" autoComplete="email"
+                  required aria-label="Email address"
+                  disabled={joinState === 'loading'}
+                />
+                <button
+                  className="lp-btn" type="submit"
+                  disabled={joinState === 'loading'}
+                  style={{ opacity: joinState === 'loading' ? 0.6 : 1, cursor: joinState === 'loading' ? 'not-allowed' : 'pointer' }}
+                >
+                  {joinState === 'loading' ? '…' : 'Join →'}
+                </button>
+              </form>
+              {joinError && (
+                <p style={{
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                  fontSize: '10px', textTransform: 'uppercase' as const, letterSpacing: '.1em',
+                  color: '#FF4444', marginBottom: '10px',
+                }}>
+                  {joinError}
+                </p>
+              )}
+            </>
+          )}
+
+          <p className="lp-counter" aria-label={`${count} people already waiting`}>
+            &#10022;&nbsp;{count} People Already Waiting
           </p>
         </div>
 
