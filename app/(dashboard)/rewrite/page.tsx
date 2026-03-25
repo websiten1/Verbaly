@@ -50,17 +50,17 @@ function Spinner() {
           />
         </svg>
       </div>
-      <p style={{ color: '#6B6960', fontSize: '14px' }}>Rewriting in your voice…</p>
+      <p style={{ color: '#6B6960', fontSize: '14px' }}>The text is being rewritten in your voice…</p>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }
 
 const INTENSITY_LABELS: Record<number, string> = {
-  1: 'Subtle touch',     2: 'Light adjustment', 3: 'Gentle reshape',
-  4: 'Moderate shift',   5: 'Balanced transform', 6: 'Notable change',
-  7: 'Strong rewrite',   8: 'Deep transformation', 9: 'Heavy overhaul',
-  10: 'Complete rebirth',
+  1: 'Subtle touch',   2: 'Light change',   3: 'Gentle reshape',
+  4: 'Moderate shift', 5: 'Balanced rewrite', 6: 'Notable change',
+  7: 'Strong rewrite', 8: 'Deep rewrite',   9: 'Heavy overhaul',
+  10: 'Full rebuild',
 }
 
 export default function RewritePage() {
@@ -73,6 +73,8 @@ export default function RewritePage() {
   const [warning,       setWarning]       = useState<string | null>(null)
   const [copied,        setCopied]        = useState(false)
   const [userId,        setUserId]        = useState<string | null>(null)
+  const [styleProfileReady, setStyleProfileReady] = useState(false)
+  const [showRewriteTooltip, setShowRewriteTooltip] = useState(false)
   const router   = useRouter()
   const supabase = useMemo(() => createClient(), [])
 
@@ -81,13 +83,31 @@ export default function RewritePage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
       setUserId(user.id)
+
+      const [profileRes, traitsRes] = await Promise.all([
+        supabase.from('profiles').select('onboarding_complete').eq('user_id', user.id).maybeSingle(),
+        supabase.from('style_traits').select('trait_name').eq('user_id', user.id).limit(1),
+      ])
+
+      const onboardingOk = profileRes.data?.onboarding_complete === true
+      setStyleProfileReady((traitsRes.data ?? []).length > 0)
+
+      if (onboardingOk) {
+        const key = 'vbTooltipSeen_rewrite'
+        const alreadySeen = typeof window !== 'undefined' ? window.localStorage.getItem(key) : '1'
+        if (!alreadySeen) setShowRewriteTooltip(true)
+      }
     }
     getUser()
   }, [router, supabase])
 
   const handleRewrite = async () => {
-    if (!originalText.trim()) { setError('Please enter some text to rewrite'); return }
-    if (!userId)               { setError('You must be logged in'); return }
+    if (!originalText.trim()) { setError('Enter some text to rewrite first.'); return }
+    if (!userId)               { setError('You need to be logged in.'); return }
+    if (!styleProfileReady) {
+      setError('Upload writing samples first — Verbaly needs them to learn your voice. Go to Style Profile →')
+      return
+    }
     setError(null); setWarning(null); setLoading(true); setRewrittenText(''); setMatchScore(null)
 
     try {
@@ -115,7 +135,7 @@ export default function RewritePage() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      setError('Clipboard copy failed. Please copy manually.')
+      setError('Copy failed. Please copy the text manually.')
     }
   }
 
@@ -135,7 +155,7 @@ export default function RewritePage() {
           Rewrite
         </h1>
         <p style={{ color: '#A09D95', fontSize: '14px' }}>
-          Transform any text to sound like you
+          Any text is rewritten to sound like you.
         </p>
       </div>
 
@@ -165,7 +185,7 @@ export default function RewritePage() {
             />
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
               <span style={{ color: '#A09D95', fontSize: '11px' }}>Subtle</span>
-              <span style={{ color: '#A09D95', fontSize: '11px' }}>Complete rebirth</span>
+              <span style={{ color: '#A09D95', fontSize: '11px' }}>Full rebuild</span>
             </div>
           </div>
           {/* Intensity dots */}
@@ -203,10 +223,49 @@ export default function RewritePage() {
               <span style={{ color: '#A09D95', fontSize: '12px' }}>{wordCount} words</span>
             )}
           </div>
+          {showRewriteTooltip && (
+            <div style={{
+              margin: '14px 18px 0 18px',
+              backgroundColor: 'rgba(84,242,242,0.08)',
+              border: '1px solid rgba(84,242,242,0.25)',
+              borderRadius: '10px',
+              padding: '10px 12px',
+              color: '#042A2B',
+              fontSize: '13px',
+              lineHeight: 1.5,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: '12px',
+            }}>
+              <div>
+                <div style={{ fontWeight: 700, marginBottom: 4 }}>How rewrites work</div>
+                Paste your AI text here. Verbaly reads it and rewrites it in your voice.
+              </div>
+              <button
+                onClick={() => {
+                  window.localStorage.setItem('vbTooltipSeen_rewrite', '1')
+                  setShowRewriteTooltip(false)
+                }}
+                style={{
+                  backgroundColor: '#042A2B',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '6px 12px',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  fontFamily: 'DM Sans, sans-serif',
+                }}
+              >
+                Got it
+              </button>
+            </div>
+          )}
           <textarea
             value={originalText}
             onChange={(e) => setOriginalText(e.target.value)}
-            placeholder="Paste your AI-generated text here…"
+            placeholder="Paste your AI text here…"
             style={{
               flex: 1, border: 'none', outline: 'none',
               padding: '20px', resize: 'none',
@@ -273,7 +332,7 @@ export default function RewritePage() {
                     <circle cx="10" cy="10" r="2.5" stroke="#E5E2D8" strokeWidth="1.4"/>
                   </svg>
                   <p style={{ color: '#A09D95', fontSize: '14px' }}>
-                    Your rewritten text will appear here…
+                    The rewritten text will appear here.
                   </p>
                 </div>
               </div>

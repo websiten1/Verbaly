@@ -10,29 +10,20 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [rewritesResult, samplesResult, traitsResult] = await Promise.all([
+  const [rewritesResult, samplesResult] = await Promise.all([
     supabase.from('rewrites').select('match_score').eq('user_id', user.id),
-    supabase.from('writing_samples').select('id').eq('user_id', user.id),
-    supabase.from('style_traits').select('trait_name, trait_value').eq('user_id', user.id),
+    supabase.from('writing_samples').select('word_count').eq('user_id', user.id),
   ])
 
   const rewrites  = rewritesResult.data  ?? []
   const samples   = samplesResult.data   ?? []
-  const traits    = traitsResult.data    ?? []
-
   const totalRewrites  = rewrites.length
   const avgMatchScore  = rewrites.length > 0
     ? Math.round(rewrites.reduce((s, r) => s + (r.match_score ?? 0), 0) / rewrites.length) : 0
   const writingSamples = samples.length
 
-  // Style Strength: % of the 6 style dimensions that have been analyzed and populated
-  const STYLE_DIMENSIONS = ['vocabulary', 'phrases', 'punctuation', 'structure', 'voice', 'never_does']
-  const populatedDimensions = STYLE_DIMENSIONS.filter(dim => {
-    const trait = traits.find((t: { trait_name: string; trait_value: string }) => t.trait_name === dim)
-    if (!trait) return false
-    try { const v = JSON.parse(trait.trait_value); return Array.isArray(v) && v.length > 0 } catch { return false }
-  }).length
-  const styleStrength = Math.round((populatedDimensions / 6) * 100)
+  const totalWords = samples.reduce((sum, s) => sum + (s.word_count ?? 0), 0)
+  const styleStrength = Math.min(100, Math.round((totalWords / 3000) * 100))
 
   const { data: recentRewrites } = await supabase
     .from('rewrites').select('*').eq('user_id', user.id)
@@ -71,7 +62,7 @@ export default async function DashboardPage() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          New rewrite
+          Start a rewrite
         </Link>
       </div>
 
@@ -152,9 +143,9 @@ export default async function DashboardPage() {
       {/* ── Quick actions ─────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
         {[
-          { href: '/rewrite',  label: 'Rewrite text',    desc: 'Paste AI text, get your voice back', emoji: '↺' },
-          { href: '/generate', label: 'Generate content', desc: 'Write something new in your style',   emoji: '✦' },
-          { href: '/profile',  label: 'My style profile', desc: 'Upload samples & train your model',   emoji: '◈' },
+          { href: '/rewrite',  label: 'Rewrite text',    desc: 'Paste AI text — your voice is put back in.', emoji: '↺' },
+          { href: '/generate', label: 'Generate content', desc: 'New text is written from scratch, in your style.', emoji: '✦' },
+          { href: '/profile',  label: 'My style profile', desc: 'Your writing is uploaded — your profile is built from it.', emoji: '◈' },
         ].map((action) => (
           <Link
             key={action.href}
@@ -225,7 +216,7 @@ export default async function DashboardPage() {
               No rewrites yet
             </p>
             <p style={{ color: '#A09D95', fontSize: '13px', marginBottom: '20px' }}>
-              Paste any AI text and transform it to your voice.
+              Paste any AI text here. It gets rewritten in your voice.
             </p>
             <Link
               href="/rewrite"
@@ -235,7 +226,7 @@ export default async function DashboardPage() {
                 textDecoration: 'none', fontSize: '14px', fontWeight: '600',
               }}
             >
-              Create your first rewrite
+              Start your first rewrite
             </Link>
           </div>
         ) : (

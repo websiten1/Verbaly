@@ -8,19 +8,19 @@ import type { WritingSample, StyleTrait } from '@/lib/types'
 interface PresetProfile { name: string; description: string; icon: string }
 
 const PRESET_PROFILES: PresetProfile[] = [
-  { name: 'The Academic',       icon: '🎓', description: 'Formal, citation-heavy, complex sentences, passive voice, hedging language, and discipline-specific vocabulary.' },
-  { name: 'The Casual Student', icon: '😊', description: 'Relaxed and conversational. Contractions everywhere, occasional slang, short sentences, and filler words like "honestly".' },
-  { name: 'The Creative Writer', icon: '✍️', description: 'Expressive and bold. Rich metaphors, varied sentence rhythm, em-dashes, sensory language, and unconventional punctuation.' },
-  { name: 'The Professional',   icon: '💼', description: 'Clear, concise, business-like. Active voice, bullet-point thinking, no fluff, direct statements.' },
+  { name: 'The Academic',       icon: '🎓', description: 'Formal sentences with citations, passive voice, and hedging — used in academic disciplines.' },
+  { name: 'The Casual Student', icon: '😊', description: 'Relaxed and conversational. Contractions are used throughout, and short sentences are the default.' },
+  { name: 'The Creative Writer', icon: '✍️', description: 'Expressive and bold. Metaphors, em-dashes, and sensory language are used — and the rhythm varies.' },
+  { name: 'The Professional',   icon: '💼', description: 'Clear and direct. Active voice is used, and statements are made without filler.' },
 ]
 
 const TRAIT_CONFIG = [
-  { key: 'vocabulary',  label: 'Vocabulary Fingerprint', desc: 'Your most distinctive words',      accent: '#54F2F2', bg: 'rgba(84,242,242,0.08)',  border: 'rgba(84,242,242,0.2)' },
-  { key: 'phrases',     label: 'Favorite Phrases',       desc: 'Recurring expressions & starters', accent: '#059669', bg: 'rgba(5,150,105,0.08)',   border: 'rgba(5,150,105,0.2)'  },
-  { key: 'punctuation', label: 'Punctuation Patterns',   desc: 'How you use commas, dashes & more',accent: '#7C3AED', bg: 'rgba(124,58,237,0.08)',  border: 'rgba(124,58,237,0.2)' },
-  { key: 'structure',   label: 'Sentence Structure',     desc: 'Your sentence length & rhythm',    accent: '#D97706', bg: 'rgba(217,119,6,0.08)',   border: 'rgba(217,119,6,0.2)'  },
-  { key: 'voice',       label: 'Voice Markers',          desc: 'Formality, tone & perspective',    accent: '#DB2777', bg: 'rgba(219,39,119,0.08)',  border: 'rgba(219,39,119,0.2)' },
-  { key: 'never_does',  label: 'Never Does',             desc: 'Patterns absent from your writing',accent: '#042A2B', bg: 'rgba(4,42,43,0.06)',     border: 'rgba(4,42,43,0.15)'   },
+  { key: 'vocabulary',  label: 'Vocabulary Fingerprint', desc: 'Your most-used words, mapped',               accent: '#54F2F2', bg: 'rgba(84,242,242,0.08)',  border: 'rgba(84,242,242,0.2)' },
+  { key: 'phrases',     label: 'Favorite Phrases',       desc: 'Expressions that appear again and again',     accent: '#059669', bg: 'rgba(5,150,105,0.08)',   border: 'rgba(5,150,105,0.2)'  },
+  { key: 'punctuation', label: 'Punctuation Patterns',   desc: 'The way commas, dashes, and stops are used',  accent: '#7C3AED', bg: 'rgba(124,58,237,0.08)',  border: 'rgba(124,58,237,0.2)' },
+  { key: 'structure',   label: 'Sentence Structure',     desc: 'Sentence length and the rhythm behind it',    accent: '#D97706', bg: 'rgba(217,119,6,0.08)',   border: 'rgba(217,119,6,0.2)'  },
+  { key: 'voice',       label: 'Voice Markers',          desc: 'Tone, formality, and the voice behind the text', accent: '#DB2777', bg: 'rgba(219,39,119,0.08)',  border: 'rgba(219,39,119,0.2)' },
+  { key: 'never_does',  label: 'Never Does',             desc: 'Patterns that never appeared in your writing', accent: '#042A2B', bg: 'rgba(4,42,43,0.06)',     border: 'rgba(4,42,43,0.15)'   },
 ]
 
 function Spinner({ text = 'Working…' }: { text?: string }) {
@@ -42,7 +42,11 @@ export default function ProfilePage() {
   const [content,       setContent]       = useState('')
   const [filename,      setFilename]      = useState('')
   const [samples,       setSamples]       = useState<WritingSample[]>([])
-  const [traitMap,      setTraitMap]      = useState<Record<string, string[]>>({})
+  const [traitMap,      setTraitMap]      = useState<Record<string, unknown>>({})
+  const [totalWords,   setTotalWords]    = useState(0)
+  const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null)
+  const [onboardingStage, setOnboardingStage] = useState<0 | 1>(0)
+  const [showOnboardingSuccess, setShowOnboardingSuccess] = useState(false)
   const [uploading,     setUploading]     = useState(false)
   const [analyzing,     setAnalyzing]     = useState(false)
   const [userId,        setUserId]        = useState<string | null>(null)
@@ -56,27 +60,141 @@ export default function ProfilePage() {
   const flash = (msg: string) => { setNotice(msg); setTimeout(() => setNotice(null), 3500) }
 
   const parseTraits = (traitsData: StyleTrait[]) => {
-    const map: Record<string, string[]> = {}
+    const map: Record<string, unknown> = {}
     for (const t of traitsData) {
-      try { map[t.trait_name] = JSON.parse(t.trait_value) } catch { map[t.trait_name] = [] }
+      try { map[t.trait_name] = JSON.parse(t.trait_value) } catch { map[t.trait_name] = null }
     }
     setTraitMap(map)
+  }
+
+  const traitToDisplayItems = (key: string, raw: unknown): string[] => {
+    if (!raw) return []
+    if (Array.isArray(raw)) return raw.filter((x) => typeof x === 'string')
+
+    if (typeof raw !== 'object') return []
+    const r = raw as Record<string, unknown>
+
+    if (key === 'vocabulary') {
+      const frequent = Array.isArray(r.frequent_words) ? r.frequent_words.filter((x) => typeof x === 'string') : []
+      const neverUsed = Array.isArray(r.never_used_words) ? r.never_used_words.filter((x) => typeof x === 'string') : []
+      const formality = typeof r.formality_level === 'string' ? r.formality_level : null
+      const contractions = typeof r.contractions_used === 'boolean' ? r.contractions_used : null
+      const slang = typeof r.slang_used === 'boolean' ? r.slang_used : null
+      const academic = typeof r.academic_language_used === 'boolean' ? r.academic_language_used : null
+
+      const items: string[] = []
+      items.push(`Frequent: ${frequent.slice(0, 6).join(', ') || '—'}`)
+      items.push(`Never used: ${neverUsed.slice(0, 6).join(', ') || '—'}`)
+      if (formality) items.push(`Formality: ${formality}`)
+      if (contractions !== null) items.push(`Contractions: ${contractions ? 'yes' : 'no'}`)
+      if (slang !== null) items.push(`Slang: ${slang ? 'yes' : 'no'}`)
+      if (academic !== null) items.push(`Academic: ${academic ? 'yes' : 'no'}`)
+      return items
+    }
+
+    if (key === 'phrases') {
+      const openers = Array.isArray(r.sentence_openers) ? r.sentence_openers.filter((x) => typeof x === 'string') : []
+      const transitions = Array.isArray(r.transition_phrases) ? r.transition_phrases.filter((x) => typeof x === 'string') : []
+      const intros = Array.isArray(r.argument_introductions) ? r.argument_introductions.filter((x) => typeof x === 'string') : []
+      const endings = Array.isArray(r.paragraph_endings) ? r.paragraph_endings.filter((x) => typeof x === 'string') : []
+      return [
+        `Openers: ${openers.slice(0, 5).join(', ') || '—'}`,
+        `Transitions: ${transitions.slice(0, 5).join(', ') || '—'}`,
+        `Introductions: ${intros.slice(0, 5).join(', ') || '—'}`,
+        `Endings: ${endings.slice(0, 5).join(', ') || '—'}`,
+      ]
+    }
+
+    if (key === 'punctuation') {
+      const omissions = Array.isArray(r.omission_patterns) ? r.omission_patterns.filter((x) => typeof x === 'string') : []
+      const additions = Array.isArray(r.addition_patterns) ? r.addition_patterns.filter((x) => typeof x === 'string') : []
+      const deviations = Array.isArray(r.specific_deviations) ? r.specific_deviations.filter((x) => typeof x === 'string') : []
+      const overall = typeof r.overall_style === 'string' ? r.overall_style : null
+      const usesEm = typeof r.uses_em_dashes === 'boolean' ? r.uses_em_dashes : null
+      const usesEll = typeof r.uses_ellipses === 'boolean' ? r.uses_ellipses : null
+      const usesSemi = typeof r.uses_semicolons === 'boolean' ? r.uses_semicolons : null
+
+      return [
+        `Overall punctuation style: ${overall ?? '—'}`,
+        usesEm !== null ? `Em-dashes: ${usesEm ? 'yes' : 'no'}` : '—',
+        usesEll !== null ? `Ellipses: ${usesEll ? 'yes' : 'no'}` : '—',
+        usesSemi !== null ? `Semicolons: ${usesSemi ? 'yes' : 'no'}` : '—',
+        `Omission patterns: ${omissions.slice(0, 3).join(', ') || '—'}`,
+        `Addition patterns: ${additions.slice(0, 3).join(', ') || '—'}`,
+        `Deviations: ${deviations.slice(0, 3).join(', ') || '—'}`,
+      ].filter((x) => x !== '—')
+    }
+
+    if (key === 'structure') {
+      const avg = typeof r.avg_paragraph_length_sentences === 'number' ? r.avg_paragraph_length_sentences : null
+      const ratio = typeof r.one_sentence_paragraph_ratio === 'number' ? r.one_sentence_paragraph_ratio : null
+      const order = Array.isArray(r.argument_order_patterns) ? r.argument_order_patterns.filter((x) => typeof x === 'string') : []
+      return [
+        `Avg sentences/paragraph: ${avg !== null ? avg.toFixed(1) : '—'}`,
+        ratio !== null ? `One-sentence paragraph ratio: ${(ratio * 100).toFixed(0)}%` : '—',
+        `Argument order: ${order.slice(0, 5).join(', ') || '—'}`,
+      ].filter((x) => x !== '—')
+    }
+
+    if (key === 'voice') {
+      const first = typeof r.first_person_pct === 'number' ? r.first_person_pct : null
+      const active = typeof r.active_voice_pct === 'number' ? r.active_voice_pct : null
+      const hedging = typeof r.hedging_frequency === 'string' ? r.hedging_frequency : null
+      const formality = typeof r.formality_score === 'number' ? r.formality_score : null
+      const express = typeof r.expressiveness_score === 'number' ? r.expressiveness_score : null
+      const emo = typeof r.emotional_vs_clinical === 'string' ? r.emotional_vs_clinical : null
+      return [
+        `First-person: ${first !== null ? `${first.toFixed(0)}%` : '—'}`,
+        active !== null ? `Active voice: ${active.toFixed(0)}%` : '—',
+        hedging ? `Hedging: ${hedging}` : '—',
+        formality !== null ? `Formality score: ${formality.toFixed(0)}` : '—',
+        express !== null ? `Expressiveness: ${express.toFixed(0)}` : '—',
+        emo ? `Tone: ${emo}` : '—',
+      ].filter((x) => x !== '—')
+    }
+
+    if (key === 'never_does') {
+      const words = Array.isArray(r.banned_words) ? r.banned_words.filter((x) => typeof x === 'string') : []
+      const phrases = Array.isArray(r.banned_phrases) ? r.banned_phrases.filter((x) => typeof x === 'string') : []
+      const starts = Array.isArray(r.banned_sentence_starts) ? r.banned_sentence_starts.filter((x) => typeof x === 'string') : []
+      return [
+        `Never use words: ${words.slice(0, 8).join(', ') || '—'}`,
+        `Never use phrases: ${phrases.slice(0, 6).join(', ') || '—'}`,
+        `Never start sentences with: ${starts.slice(0, 6).join(', ') || '—'}`,
+      ].filter((x) => x !== '—')
+    }
+
+    return []
   }
 
   const loadData = useCallback(async (uid: string) => {
     const [samplesRes, traitsRes, profileRes] = await Promise.all([
       supabase.from('writing_samples').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
       supabase.from('style_traits').select('*').eq('user_id', uid).order('score', { ascending: false }),
-      supabase.from('profiles').select('preset_type').eq('user_id', uid).maybeSingle(),
+      supabase.from('profiles').select('preset_type,onboarding_complete').eq('user_id', uid).maybeSingle(),
     ])
-    if (samplesRes.error || traitsRes.error || profileRes.error) {
-      setError('Failed to load your style profile. Please try again.')
+    if (samplesRes.error) {
+      console.error('loadData: writing_samples failed', samplesRes.error)
+      setError('Your writing samples could not be loaded. Please try again.')
       return
     }
+    if (traitsRes.error) {
+      console.error('loadData: style_traits failed', traitsRes.error)
+      setError('Your style traits could not be loaded. Please try again.')
+      return
+    }
+    if (profileRes.error) {
+      // Keep the page usable even if preset_type is missing/misconfigured.
+      console.error('loadData: profiles(preset_type) failed', profileRes.error)
+    }
     setError(null)
-    setSamples(samplesRes.data ?? [])
+    const nextSamples = samplesRes.data ?? []
+    setSamples(nextSamples)
+    const nextTotalWords = nextSamples.reduce((sum, s) => sum + (s.word_count ?? 0), 0)
+    setTotalWords(nextTotalWords)
     parseTraits(traitsRes.data ?? [])
     setActivePreset(profileRes.data?.preset_type ?? null)
+    setOnboardingComplete(profileRes.data?.onboarding_complete ?? false)
   }, [supabase])
 
   useEffect(() => {
@@ -89,6 +207,32 @@ export default function ProfilePage() {
     getUser()
   }, [loadData, router, supabase])
 
+  // Mark onboarding complete once the user uploads enough words.
+  useEffect(() => {
+    const shouldComplete = onboardingComplete === false && totalWords >= 500 && userId
+    if (!shouldComplete) return
+
+    const run = async () => {
+      try {
+        const { error: e } = await supabase.from('profiles').upsert(
+          { user_id: userId as string, onboarding_complete: true },
+          { onConflict: 'user_id' },
+        )
+        if (e) {
+          console.error('onboarding_complete upsert failed', e)
+          return
+        }
+        setOnboardingComplete(true)
+        setShowOnboardingSuccess(true)
+        setTimeout(() => setShowOnboardingSuccess(false), 6000)
+      } catch (err) {
+        console.error('onboarding_complete update failed', err)
+      }
+    }
+
+    run()
+  }, [onboardingComplete, totalWords, userId, supabase])
+
   const handleSelectPreset = async (name: string) => {
     if (!userId) return
     setPresetSaving(true)
@@ -99,7 +243,7 @@ export default function ProfilePage() {
       )
       if (e) throw e
       setActivePreset(name)
-      flash(`Now using "${name}" profile.`)
+      flash(`The "${name}" profile is now active.`)
     } catch {
       setError('Failed to save preset. Please try again.')
     } finally {
@@ -117,7 +261,7 @@ export default function ProfilePage() {
       )
       if (e) throw e
       setActivePreset(null)
-      flash('Switched to personal profile.')
+      flash('Your personal profile is now active.')
     } catch {
       setError('Failed to switch back to personal profile. Please try again.')
     } finally {
@@ -126,7 +270,7 @@ export default function ProfilePage() {
   }
 
   const handleUpload = async () => {
-    if (!content.trim() || !filename.trim() || !userId) { setError('Please enter both a filename and content'); return }
+    if (!content.trim() || !filename.trim() || !userId) { setError('A filename and content are both needed.'); return }
     setError(null); setUploading(true)
     const wordCount = content.trim().split(/\s+/).filter(Boolean).length
     const { error: e } = await supabase.from('writing_samples').insert({
@@ -135,7 +279,7 @@ export default function ProfilePage() {
     })
     if (e) { setError(e.message); setUploading(false); return }
     setContent(''); setFilename('')
-    flash('Sample uploaded!')
+    flash('Sample uploaded.')
     await loadData(userId)
     setUploading(false)
   }
@@ -152,27 +296,43 @@ export default function ProfilePage() {
   }
 
   const handleAnalyze = async () => {
-    if (!userId || samples.length === 0) { setError('Upload at least one writing sample first'); return }
+    if (!userId || samples.length === 0) { setError('Upload at least one writing sample first.'); return }
     setError(null); setAnalyzing(true)
     try {
       const res = await fetch('/api/analyze-style', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, samples: samples.map((s) => s.content) }),
       })
-      const data = await res.json()
-      if (!res.ok) { setError(data.error || 'Analysis failed'); return }
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        console.error('handleAnalyze: analyze-style failed', { status: res.status, data })
+        setError(data.error || 'The style analysis failed. Please try again.')
+        return
+      }
       parseTraits(data.traits ?? [])
-      flash('Style analysis complete!')
-    } catch { setError('Something went wrong.') }
+      flash('Style analysis done.')
+    } catch (e) {
+      console.error('handleAnalyze: fetch error', e)
+      setError('Something went wrong. Please try again.')
+    }
     finally { setAnalyzing(false) }
   }
 
   const STYLE_DIMENSIONS = ['vocabulary', 'phrases', 'punctuation', 'structure', 'voice', 'never_does']
-  const populatedDimensions = STYLE_DIMENSIONS.filter(k => (traitMap[k] ?? []).length > 0).length
-  const hasStyleData = populatedDimensions > 0
-  const profileStrength = populatedDimensions > 0
-    ? Math.round((populatedDimensions / 6) * 100)
-    : samples.length > 0 ? 12 : 0
+  const hasStyleData = STYLE_DIMENSIONS.some((k) => traitToDisplayItems(k, traitMap[k]).length > 0)
+
+  const styleStrengthPct = Math.min(100, Math.round((totalWords / 3000) * 100))
+  const milestoneLabel =
+    totalWords < 500
+      ? 'Starter — basic patterns were found'
+      : totalWords < 1500
+        ? 'Developing — your voice is getting clearer'
+        : totalWords < 2500
+          ? 'Strong — most patterns were captured'
+          : 'Complete — your full profile is active'
+
+  const shouldShowOnboarding = onboardingComplete === false && totalWords < 500
+  const showUploadTour = shouldShowOnboarding && onboardingStage === 1
 
   const INPUT: React.CSSProperties = {
     width: '100%', backgroundColor: '#F9F8F5', border: '1px solid #E5E2D8',
@@ -182,6 +342,56 @@ export default function ProfilePage() {
 
   return (
     <div style={{ minHeight: '100vh' }}>
+      <style>{`
+        @keyframes vbPulse {
+          0% { box-shadow: 0 0 0 0 rgba(84,242,242,0.28), 0 2px 12px rgba(26,110,255,0.08); }
+          50% { box-shadow: 0 0 0 6px rgba(84,242,242,0.22), 0 0 40px rgba(84,242,242,0.18); }
+          100% { box-shadow: 0 0 0 0 rgba(84,242,242,0.28), 0 2px 12px rgba(26,110,255,0.08); }
+        }
+      `}</style>
+
+      {/* Onboarding overlay (first login) */}
+      {shouldShowOnboarding && onboardingStage === 0 && (
+        <div style={{
+          position: 'fixed', inset: 0, background: '#042A2B', color: '#FFFFFF',
+          zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          padding: '40px 20px'
+        }}>
+          <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'left' }}>
+            <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: '46px', fontWeight: 400, marginBottom: '14px', letterSpacing: '-0.6px' }}>
+              Your writing is read — and your voice is mapped from it.
+            </h1>
+            <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: '16px', lineHeight: 1.7, marginBottom: '28px' }}>
+              Verbaly reads your writing before it can sound like you. Upload at least 3 samples to get started.
+            </p>
+            <button
+              onClick={() => {
+                setOnboardingStage(1)
+                document.getElementById('vb-upload-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }}
+              style={{
+                backgroundColor: '#54F2F2', color: '#042A2B', border: 'none',
+                borderRadius: '12px', padding: '14px 22px', fontSize: '16px',
+                fontWeight: 800, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '10px',
+              }}
+            >
+              Upload my writing →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Completion banner */}
+      {showOnboardingSuccess && (
+        <div style={{
+          backgroundColor: 'rgba(84,242,242,0.08)', border: '1px solid rgba(84,242,242,0.2)',
+          borderRadius: '10px', padding: '14px 16px', color: '#042A2B', fontSize: '14px',
+          marginBottom: '20px', marginTop: '20px',
+          fontWeight: 700,
+        }}>
+          Your style profile is active — Verbaly writes like you now.
+        </div>
+      )}
 
       {/* Header */}
       <div style={{ marginBottom: '48px' }}>
@@ -189,7 +399,7 @@ export default function ProfilePage() {
           Style Profile
         </h1>
         <p style={{ color: '#A09D95', fontSize: '14px' }}>
-          Upload your writing so Verbaly can learn your voice.
+          Upload your writing. Verbaly reads it, and your voice is learned from it.
         </p>
       </div>
 
@@ -212,23 +422,19 @@ export default function ProfilePage() {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <span style={{ color: '#16150F', fontSize: '14px', fontWeight: '600' }}>Profile strength</span>
-          <span style={{ color: '#042A2B', fontSize: '14px', fontWeight: '700' }}>{profileStrength}%</span>
+          <span style={{ color: '#042A2B', fontSize: '14px', fontWeight: '700' }}>{styleStrengthPct}%</span>
         </div>
         <div style={{ backgroundColor: '#F0EDE4', borderRadius: '100px', height: '6px', overflow: 'hidden' }}>
           <div style={{
             backgroundColor: '#54F2F2', height: '100%',
-            width: `${profileStrength}%`, borderRadius: '100px',
+            width: `${styleStrengthPct}%`, borderRadius: '100px',
             transition: 'width 0.8s ease',
           }} />
         </div>
         <p style={{ color: '#A09D95', fontSize: '12px', marginTop: '8px' }}>
-          {populatedDimensions === 0 && samples.length === 0
-            ? 'Upload writing samples to train your profile'
-            : populatedDimensions === 0
-            ? 'Click "Analyze style" to extract your writing fingerprint'
-            : populatedDimensions < 6
-            ? `${populatedDimensions}/6 dimensions analyzed — click Analyze Style to complete your profile`
-            : 'All 6 style dimensions analyzed — your profile is complete'}
+          {totalWords} words were read — upload more writing to strengthen your profile
+          <br />
+          {milestoneLabel}
         </p>
       </div>
 
@@ -238,7 +444,7 @@ export default function ProfilePage() {
           <div>
             <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>Preset Profiles</h2>
             <p style={{ color: '#A09D95', fontSize: '13px' }}>
-              {activePreset ? `Using "${activePreset}"` : 'Using your personal style profile.'}
+              {activePreset ? `The "${activePreset}" profile is active.` : 'Your personal style profile is active.'}
             </p>
           </div>
           {activePreset && (
@@ -249,7 +455,7 @@ export default function ProfilePage() {
                 color: '#6B6960', fontSize: '13px', cursor: 'pointer',
                 fontFamily: 'DM Sans, sans-serif',
               }}>
-              Use personal profile
+              Switch to my profile
             </button>
           )}
         </div>
@@ -304,10 +510,41 @@ export default function ProfilePage() {
 
         {/* Upload */}
         <div>
-          <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', padding: '24px', marginBottom: '16px', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
+        <div
+          id="vb-upload-card"
+          style={{
+            backgroundColor: '#FFFFFF',
+            border: showUploadTour ? '2px solid rgba(84,242,242,0.9)' : '1px solid #E8ECF4',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '16px',
+            boxShadow: showUploadTour ? '0 0 0 6px rgba(84,242,242,0.15), 0 2px 12px rgba(26,110,255,0.08)' : '0 2px 12px rgba(26,110,255,0.08)',
+            animation: showUploadTour ? 'vbPulse 1.8s ease-in-out infinite' : undefined,
+            position: 'relative',
+          }}
+        >
             <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '20px' }}>
-              Upload writing sample
+              Upload a writing sample
             </h2>
+
+          {showUploadTour && (
+            <div style={{
+              position: 'absolute',
+              top: '14px',
+              right: '14px',
+              background: 'rgba(84,242,242,0.10)',
+              border: '1px solid rgba(84,242,242,0.35)',
+              borderRadius: '10px',
+              padding: '10px 12px',
+              color: '#042A2B',
+              fontSize: '13px',
+              lineHeight: 1.45,
+              maxWidth: '320px',
+              fontWeight: 600,
+            }}>
+              Upload essays, assignments, emails — anything you wrote. The more that is uploaded, the better Verbaly sounds like you.
+            </div>
+          )}
 
             <div style={{ marginBottom: '14px' }}>
               <label style={{ display: 'block', color: '#6B6960', fontSize: '13px', fontWeight: '500', marginBottom: '7px' }}>
@@ -322,7 +559,7 @@ export default function ProfilePage() {
                 Content
               </label>
               <textarea value={content} onChange={(e) => setContent(e.target.value)}
-                placeholder="Paste your writing here — emails, essays, blog posts. The more authentic the better."
+                placeholder="Paste your writing here — emails, essays, blog posts. The more real it is, the better."
                 rows={8} style={{ ...INPUT, lineHeight: '1.6', resize: 'vertical', minHeight: '120px', padding: '16px' }}
               />
               {content && (
@@ -412,14 +649,15 @@ export default function ProfilePage() {
                   No style data yet
                 </p>
                 <p style={{ color: '#A09D95', fontSize: '13px' }}>
-                  Upload samples and click Analyze Style to see your writing fingerprint.
+                  Upload samples, then click Analyze Style. Your writing fingerprint will be shown.
                 </p>
               </div>
             ) : (
               <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {TRAIT_CONFIG.map(({ key, label, desc, accent, bg, border }) => {
                   const items = traitMap[key] ?? []
-                  if (items.length === 0) return null
+                  const displayItems = traitToDisplayItems(key, items)
+                  if (displayItems.length === 0) return null
                   return (
                     <div key={key} style={{ backgroundColor: bg, border: `1px solid ${border}`, borderRadius: '12px', padding: '16px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
@@ -430,11 +668,11 @@ export default function ProfilePage() {
                           <div style={{ fontSize: '11px', color: '#A09D95' }}>{desc}</div>
                         </div>
                         <span style={{ backgroundColor: 'rgba(255,255,255,0.6)', border: `1px solid ${border}`, borderRadius: '100px', padding: '2px 8px', fontSize: '11px', color: accent, fontWeight: '600' }}>
-                          {items.length}
+                          {displayItems.length}
                         </span>
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                        {items.map((item, i) => (
+                        {displayItems.map((item, i) => (
                           <span key={i} style={{
                             backgroundColor: 'rgba(255,255,255,0.7)',
                             border: `1px solid ${border}`,

@@ -18,7 +18,7 @@ function Spinner() {
           />
         </svg>
       </div>
-      <p style={{ color: '#6B6960', fontSize: '14px' }}>Writing in your voice…</p>
+      <p style={{ color: '#6B6960', fontSize: '14px' }}>The text is being written in your voice…</p>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
@@ -39,6 +39,7 @@ export default function GeneratePage() {
   const [error,         setError]         = useState<string | null>(null)
   const [copied,        setCopied]        = useState(false)
   const [userId,        setUserId]        = useState<string | null>(null)
+  const [showGenerateTooltip, setShowGenerateTooltip] = useState(false)
   const router   = useRouter()
   const supabase = createClient()
 
@@ -47,6 +48,20 @@ export default function GeneratePage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
       setUserId(user.id)
+
+      const profileRes = await supabase
+        .from('profiles')
+        .select('onboarding_complete')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      const onboardingOk = profileRes.data?.onboarding_complete === true
+
+      if (onboardingOk) {
+        const key = 'vbTooltipSeen_generate'
+        const alreadySeen = typeof window !== 'undefined' ? window.localStorage.getItem(key) : '1'
+        if (!alreadySeen) setShowGenerateTooltip(true)
+      }
     }
     getUser()
   }, [router, supabase])
@@ -54,7 +69,7 @@ export default function GeneratePage() {
   const toneLabel = tone < 33 ? 'Formal' : tone < 66 ? 'Balanced' : 'Casual'
 
   const handleGenerate = async () => {
-    if (!prompt.trim() || !userId) { setError('Please enter a prompt'); return }
+    if (!prompt.trim() || !userId) { setError('Enter a prompt first.'); return }
     setError(null); setGeneratedText(null); setLoading(true)
 
     try {
@@ -64,7 +79,7 @@ export default function GeneratePage() {
         body: JSON.stringify({ userId, prompt: prompt.trim(), length, tone }),
       })
       const data: { generatedText?: string; error?: string } = await res.json()
-      if (!res.ok) { setError(data.error ?? 'Generation failed.'); return }
+      if (!res.ok) { setError(data.error ?? 'The generation failed.'); return }
       setGeneratedText(data.generatedText ?? '')
     } catch {
       setError('Something went wrong. Please try again.')
@@ -80,7 +95,7 @@ export default function GeneratePage() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      setError('Clipboard copy failed. Please copy manually.')
+      setError('Copy failed. Please copy the text manually.')
     }
   }
 
@@ -97,7 +112,7 @@ export default function GeneratePage() {
           Generate
         </h1>
         <p style={{ color: '#A09D95', fontSize: '14px' }}>
-          Write original content from scratch, in your voice.
+          New content is written from scratch — in your voice.
         </p>
       </div>
 
@@ -112,8 +127,48 @@ export default function GeneratePage() {
           boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
         }}>
           <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '22px' }}>
-            What do you want to write?
+            What needs to be written?
           </h2>
+
+          {showGenerateTooltip && (
+            <div style={{
+              marginBottom: '18px',
+              backgroundColor: 'rgba(84,242,242,0.08)',
+              border: '1px solid rgba(84,242,242,0.25)',
+              borderRadius: '12px',
+              padding: '12px 14px',
+              color: '#042A2B',
+              fontSize: '13px',
+              lineHeight: 1.5,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: '12px',
+            }}>
+              <div>
+                <div style={{ fontWeight: 700, marginBottom: 4 }}>How this works</div>
+                Describe what you need. Verbaly writes it from scratch in your style.
+              </div>
+              <button
+                onClick={() => {
+                  window.localStorage.setItem('vbTooltipSeen_generate', '1')
+                  setShowGenerateTooltip(false)
+                }}
+                style={{
+                  backgroundColor: '#042A2B',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '6px 12px',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  fontFamily: 'DM Sans, sans-serif',
+                }}
+              >
+                Got it
+              </button>
+            </div>
+          )}
 
           {/* Prompt */}
           <div style={{ marginBottom: '22px' }}>
@@ -123,7 +178,7 @@ export default function GeneratePage() {
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="e.g. Write an essay intro about why remote work is here to stay"
+              placeholder="e.g. An essay intro on why remote work is here to stay"
               rows={5}
               style={{
                 width: '100%', backgroundColor: '#F9F8F5',
@@ -288,7 +343,7 @@ export default function GeneratePage() {
                   <circle cx="10" cy="10" r="2.5" stroke="#042A2B" strokeWidth="1.4"/>
                 </svg>
                 <p style={{ color: '#A09D95', fontSize: '14px', textAlign: 'center' }}>
-                  Your generated content will appear here.
+                  The generated text will appear here.
                 </p>
               </div>
             )}

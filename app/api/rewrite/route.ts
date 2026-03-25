@@ -6,40 +6,69 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
 })
 
-interface DistinctiveVocabulary {
-  characteristic_words: string[]
-  favorite_transitions: string[]
-  unusual_expressions: string[]
-  non_ai_phrases: string[]
+type HedgingFrequency = 'low' | 'medium' | 'high'
+type OverallStyle = 'sparse' | 'standard' | 'heavy'
+type SentenceRhythm = 'short_punchy' | 'balanced' | 'long_complex'
+type EmotionalVsClinical = 'emotional' | 'balanced' | 'clinical'
+type FormalityLevel = 'low' | 'medium' | 'high'
+
+interface VocabularyAnalysis {
+  frequent_words: string[]
+  never_used_words: string[]
+  formality_level: FormalityLevel
+  contractions_used: boolean
+  slang_used: boolean
+  academic_language_used: boolean
 }
 
-interface PunctuationPatterns {
+interface PhrasesAnalysis {
+  sentence_openers: string[]
+  transition_phrases: string[]
+  argument_introductions: string[]
+  paragraph_endings: string[]
+}
+
+interface PunctuationAnalysis {
+  uses_em_dashes: boolean
+  uses_ellipses: boolean
+  uses_semicolons: boolean
+  avg_sentence_length_words: number
+  sentence_rhythm: SentenceRhythm
   omission_patterns: string[]
   addition_patterns: string[]
-  overall_style: 'sparse' | 'standard' | 'heavy'
+  overall_style: OverallStyle
   specific_deviations: string[]
 }
 
-interface SentenceStructure {
-  avg_length: number
-  short_sentence_pct: number
-  long_sentence_pct: number
-  uses_fragments: boolean
-  fragment_frequency: 'never' | 'rare' | 'occasional' | 'frequent'
-  run_on_tendency: boolean
-  parenthetical_frequency: 'never' | 'rare' | 'occasional' | 'frequent'
-  common_openers: string[]
+interface StructureAnalysis {
+  avg_paragraph_length_sentences: number
+  one_sentence_paragraph_ratio: number
+  argument_order_patterns: string[]
 }
 
-interface VoiceMarkers {
+interface VoiceAnalysis {
   first_person_pct: number
   second_person_pct: number
   third_person_pct: number
   active_voice_pct: number
   formality_score: number
-  hedging_frequency: 'low' | 'medium' | 'high'
+  hedging_frequency: HedgingFrequency
   expressiveness_score: number
+  emotional_vs_clinical: EmotionalVsClinical
 }
+
+interface NeverDoesAnalysis {
+  banned_words: string[]
+  banned_phrases: string[]
+  banned_sentence_starts: string[]
+}
+
+interface SentenceRhythmRatio {
+  short_sentence_pct: number
+  long_sentence_pct: number
+}
+
+type UniqueFingerprints = string[]
 
 interface StyleTrait {
   trait_name: string
@@ -122,22 +151,24 @@ export async function POST(request: NextRequest) {
     const findTrait = (name: string): StyleTrait | undefined =>
       traitList.find((t) => t.trait_name === name)
 
-    const distinctiveVocabTrait = findTrait('distinctive_vocabulary')
-    const punctuationTrait = findTrait('punctuation_patterns')
-    const sentenceStructTrait = findTrait('sentence_structure')
-    const voiceMarkersTrait = findTrait('voice_markers')
+    const vocabularyTrait = findTrait('vocabulary')
+    const phrasesTrait = findTrait('phrases')
+    const punctuationTrait = findTrait('punctuation')
+    const structureTrait = findTrait('structure')
+    const voiceTrait = findTrait('voice')
+    const neverDoesTrait = findTrait('never_does')
+    const sentenceRhythmTrait = findTrait('sentence_rhythm')
+    const uniqueFingerprintsTrait = findTrait('unique_fingerprints')
 
-    const dv = distinctiveVocabTrait
-      ? safeParseJson<DistinctiveVocabulary>(distinctiveVocabTrait.trait_value)
-      : null
-    const pp = punctuationTrait
-      ? safeParseJson<PunctuationPatterns>(punctuationTrait.trait_value)
-      : null
-    const ss = sentenceStructTrait
-      ? safeParseJson<SentenceStructure>(sentenceStructTrait.trait_value)
-      : null
-    const vm = voiceMarkersTrait
-      ? safeParseJson<VoiceMarkers>(voiceMarkersTrait.trait_value)
+    const vocab = vocabularyTrait ? safeParseJson<VocabularyAnalysis>(vocabularyTrait.trait_value) : null
+    const phrases = phrasesTrait ? safeParseJson<PhrasesAnalysis>(phrasesTrait.trait_value) : null
+    const pp = punctuationTrait ? safeParseJson<PunctuationAnalysis>(punctuationTrait.trait_value) : null
+    const ss = structureTrait ? safeParseJson<StructureAnalysis>(structureTrait.trait_value) : null
+    const vm = voiceTrait ? safeParseJson<VoiceAnalysis>(voiceTrait.trait_value) : null
+    const neverDoes = neverDoesTrait ? safeParseJson<NeverDoesAnalysis>(neverDoesTrait.trait_value) : null
+    const sentenceRhythm = sentenceRhythmTrait ? safeParseJson<SentenceRhythmRatio>(sentenceRhythmTrait.trait_value) : null
+    const uniqueFingerprints = uniqueFingerprintsTrait
+      ? safeParseJson<UniqueFingerprints>(uniqueFingerprintsTrait.trait_value)
       : null
 
     // ── Master system prompt ──────────────────────────────────────────────────
@@ -149,44 +180,45 @@ export async function POST(request: NextRequest) {
           ? 7 + (intensityInt - 4)
           : 10 + (intensityInt - 8)
 
-    const MASTER_SYSTEM_PROMPT = `HUMAN WRITING RULES — TOP PRIORITY:
-Use effort verbs not strategic verbs — use "tried", "struggled", "managed" not "implemented", "leveraged", "utilized".
-Describe visible reality not abstract principles — say what physically happened, not the concept behind it.
-Allow uncertainty — use "I think", "probably", "may have" instead of stating universal truths.
-Use simple verbs — "use" not "repurpose", "make" not "facilitate".
-End sentences with results not processes.
-Include one emotional word per paragraph — proud, relieved, nervous, surprised, excited.
-Small grammar imperfections and slight redundancy are intentional — do not over-correct.
-Humans arrive at decisions slowly — build into conclusions, never declare them upfront.
-Never use: furthermore, it is important to note, in conclusion, multifaceted, utilize, commence, subsequently, notably, it is worth mentioning.
+    const MASTER_SYSTEM_PROMPT = `CRITICAL HUMAN WRITING RULES — FOLLOW THESE BEFORE ANYTHING ELSE:
+1. NEVER start any sentence with: What, How, This, It was, There is, There are, Such, One might, Furthermore, It is important, In conclusion, Notably, It is worth
+2. USE EFFORT VERBS: tried, struggled, managed, worked, strived — NEVER: implemented, leveraged, utilized, facilitated, encompasses
+3. DESCRIBE WHAT YOU CAN SEE: say what physically happened — never describe the concept behind it
+4. ALLOW UNCERTAINTY: use "I think", "probably", "may have", "kind of", "honestly" — never state universal truths
+5. USE SIMPLE VERBS: "use" not "utilize", "make" not "facilitate", "show" not "demonstrate", "help" not "assist"
+6. END WITH RESULTS: sentences end with what happened or what it means — never end with a process description
+7. ADD ONE EMOTION PER PARAGRAPH: proud, relieved, nervous, surprised, frustrated, excited
+8. KEEP IMPERFECTIONS: slight redundancy and minor awkward phrasing are human signals — do not over-polish
+9. BUILD INTO CONCLUSIONS SLOWLY: humans arrive at decisions — they never declare them upfront. Start with what happened, then reach the conclusion at the end.
+10. ONE PIECE OF INFORMATION PER SENTENCE: never pack two ideas into one sentence; split if needed.
 
-If any other rule conflicts, follow these HUMAN WRITING RULES on every single rewrite.
+Write like a real student under time pressure: slightly imperfect, emotionally present, concrete, and direct. Not polished or corporate.
+
+Also never use these words/phrases:
+furthermore, it is important to note, in conclusion, multifaceted, utilize, commence, subsequently, notably, it is worth mentioning.
+
+Also treat any user-provided "ADDITIONAL NEVER-DOES" list as hard bans: avoid those words/phrases exactly, and never start sentences with the listed sentence starters.
+
+If any other rule conflicts, follow these CRITICAL HUMAN WRITING RULES on every single rewrite.
 
 INTENSITY CONTROL (this changes the actual rewrite):
 Intensity: ${intensityInt}/10 (${intensityMode})
 Injection requirement: inject at least ${injectionMin} items from the master injection list per rewrite.
 
 1-3 (low intensity):
-Preserve most of the original structure. Keep paragraph breaks and sentence order mostly intact. Change wording and voice without making the text feel like a fresh draft.
+Light touch: fix only the most obvious AI tells. Preserve most of the original structure. Keep paragraph breaks and sentence order mostly intact.
 
 4-7 (medium intensity):
-Rewrite clearly in your voice. You may reorder a few sentences and reshape a few paragraphs, but keep the original meaning and overall paragraph intent.
+Moderate: rewrite clearly in your voice. You may reorder a few sentences and reshape a few paragraphs, but keep the original meaning and overall paragraph intent. Apply the user style profile patterns.
 
 8-10 (high intensity):
-Rewrite aggressively from scratch. You can change paragraph structure and sentence flow freely, while still preserving the original meaning and the user-supplied facts.
+Aggressive: completely transform from scratch so it sounds exactly like the user wrote every word. You can change paragraph structure and sentence flow freely, while still preserving the original meaning and the user-supplied facts.
 
 ---
 CRITICAL OVERRIDE — READ THIS BEFORE ANYTHING ELSE:
-You have been given many rules. Most of them are being ignored. This is the only rule that matters now:
-NEVER start a sentence with: What, How, This, It was, There is, There are, Such, One might, It is clear, It becomes, What began, What started, What seemed.
-These are abstraction openers. They are the single most detected AI pattern. Every sentence must start with a real person, a real object, a real action, or a real time. No exceptions.
-NEVER write a sentence that exists only to be contradicted by the next sentence. Do not write 'X is commonly believed. However, X is incomplete.' Just start with what you actually mean.
-NEVER hedge a universal. Do not write 'people often' or 'it tends to' or 'in many cases.' If the human would say 'everyone,' write 'everyone.'
-NEVER use moderate words when radical ones are true. 'Never' not 'rarely.' 'Always' not 'usually.' 'Everyone' not 'most people.'
-NEVER put the challenge at the end of a sentence. Structure: [challenge] + [what the challenge applies to]. 'It would be a challenge TO COMPLETE the minimum' — not 'the minimum requirements would be technically demanding.'
-ONE piece of information per sentence. If a sentence contains 'when,' 'which,' 'who,' or 'as' introducing new information — split it into two sentences.
-Write 'I knew' not 'it was obvious.' Write 'I realized' not 'it became clear.' Own every perception in first person.
-These rules override everything else in this prompt. Follow them sentence by sentence, not as general guidelines.
+If you start any sentence with one of these words, you have failed:
+What, How, This, It was, There is, There are, Such, One might, Furthermore, It is important, In conclusion, Notably, It is worth.
+Follow the 10 CRITICAL HUMAN WRITING RULES above sentence by sentence.
 
 # VERBALY — MASTER HUMAN WRITING DNA
 # Built from: deep micro-syntax analysis of 15+ verified 100% human texts
@@ -1217,7 +1249,281 @@ Human = incremental, imperfect, emotional, concrete, uncertain, arrives slowly
 
 ---
 
+# HUMANIZATION GRAMMAR DNA — v6 FINAL OVERRIDE
+# Derived from forensic micro-syntax analysis of verified 100% human text vs AI text
+# These rules OVERRIDE all preceding style instructions
+
+## HUMAN GRAMMAR PATTERN — ALWAYS REPLICATE
+
+**Sentence openings:** Use infinitive markers + verb infinitive, coordinating conjunctions, or proper nouns to open clauses. Never open with a gerund or present-participle phrase.
+
+**Verb tense:** Default to past simple as the primary narrative tense. Use modal verbs (will, would, can, could, shall) for future/conditional meaning. Use present simple only for universal truths or ongoing states.
+
+**Noun phrases:** Lead with definite article + adjective + noun, or proper noun sequences. Use possessive determiners (his, her, their, its) frequently before nouns. Chain noun phrases with prepositions rather than commas.
+
+**Clause linking:** Connect clauses primarily with coordinating conjunctions (and, but, or). Use subordinating conjunctions (when, if, although, because) sparingly and only mid-sentence, never at sentence start.
+
+**Passive constructions:** Use past participle passive voice regularly (was done, were established, had been placed). This is a marker of human formal writing — do not avoid it.
+
+**Relative clauses:** Use "which", "who", "that", "whose" + present/modal verb to embed information inside noun phrases rather than starting new sentences.
+
+**Modifiers:** Place ordinal adjectives (first, second, third) and proper adjectives directly before nouns. Stack adjectives without commas when two adjectives precede a noun.
+
+**Pronouns:** Use object pronouns (him, her, them, it) and demonstrative pronouns naturally. Avoid overusing "it" as a dummy subject.
+
+**Adverb placement:** Place adverbs mid-clause or post-verb, not at sentence start. Never start sentences with "Additionally", "Furthermore", "Notably", "Importantly".
+
+**Negation:** Use negation adverbs (not, never, no longer) naturally embedded in clauses. Do not cluster negations.
+
+## AI GRAMMAR PATTERN — NEVER USE
+
+**Sentence openings banned:**
+- Never open with a gerund phrase (e.g., "Recognizing the importance of...", "Building on this...")
+- Never open with "This [noun] + verb" as a topic sentence
+- Never open with adverbs at sentence start: "Additionally,", "Furthermore,", "Notably,", "Importantly,"
+- Never open with "This + noun + verb past simple + preposition" (e.g., "This decision came from...", "This move resulted in...")
+
+**Clause patterns banned:**
+- No paired gerund constructions as subject (e.g., "Balancing X and maintaining Y")
+- No lists disguised as prose using "coordinating conjunction + past participle verb" chains
+- No "subordinating conjunction + proper noun + auxiliary past + negation + past participle" constructions
+- No repeated demonstrative pronoun + noun openers across a paragraph
+
+**Vocabulary/phrasing banned:**
+- Do not use "especially" or "instead" as mid-sentence pivots — these are AI pivot words
+- Do not use "as a [noun]" as a framing device (e.g., "as a leader", "as a result", "as a way")
+- No "past participle verb + infinitive marker + verb infinitive + determiner + numeral + noun" chains
+
+**Structural habits banned:**
+- Do not write paragraphs where every sentence rigidly follows Subject + Verb + Object + Prepositional phrase
+- Do not use the same sentence length repeatedly — vary short and long
+- Do not resolve clauses with "coordinating conjunction + past participle verb" at sentence end as a summary device
+- Avoid embedded parenthetical clauses of the form: "punctuation + relative pronoun + adjective + noun plural + preposition + noun + noun plural"
+
+## GRAMMAR DNA OVERRIDE RULES
+
+1. The Human Pattern grammar above is the ONLY stylistic reference for humanized output.
+2. Do not make text cleaner, smoother, or more structured if doing so introduces AI Pattern grammar.
+3. Do not add bullet points, numbered lists, or headers to rewritten prose.
+4. Do not normalize sentence length — preserve irregularity.
+5. Do not replace passive voice with active voice.
+6. Do not replace proper noun chains with pronouns for "clarity".
+7. If in doubt between two phrasings, always choose past simple + prepositional phrase over gerund + subordinating clause.
+
+---
+
 # OUTPUT INSTRUCTIONS
+
+# SENTENCE STRUCTURE TEMPLATES — v7 ABSOLUTE OVERRIDE
+# Exact part-of-speech sequences extracted from verified 100% human writing.
+# Every sentence produced MUST match one of these structural templates.
+# This overrides ALL prior rules without exception.
+
+TEMPLATE 1 — proper noun chain + present perfect passive + infinitive purpose + prepositional chain:
+[proper adjective] [proper noun] [proper noun] [verb present perfect + past participle] [adverb] [infinitive marker + verb infinitive] [particle] [possessive determiner + noun] [preposition] [definite article + noun] [preposition] [definite article + adjective + noun] [preposition] [indefinite article + adjective + noun] [preposition + preposition] [noun + noun] [adverb] [preposition] [proper noun + noun]
+
+TEMPLATE 2 — proper noun subject + past simple + relative clause + gerund appositive:
+[proper noun] [verb past simple] [proper noun + proper noun] [indefinite article + adjective + noun] [relative pronoun] [possessive determiner + noun plural + verb past simple] [preposition + proper noun] [preposition + proper noun] [preposition + proper noun] [preposition + proper noun] [gerund verb + indefinite article + noun + past participle] [subordinating conjunction + noun] [proper noun + proper noun + verb past simple] [noun + preposition + indefinite article + adjective + noun] [preposition + definite article + noun] [preposition + definite article + adjective + noun] [preposition + definite article + adjective + noun] [preposition + noun plural]
+
+TEMPLATE 3 — proper noun + numeral + present simple + ordinal noun phrase + infinitive + pronoun clause + past gerund:
+[proper noun + numeral] [verb present simple] [definite article + ordinal + noun] [preposition + indefinite article + adjective + noun] [infinitive marker + verb infinitive] [definite article + noun] [punctuation] [pronoun + preposition + definite article + adverb + adjective] [preposition + definite article + proper adjective + noun] [pronoun + verb past simple + adverb] [preposition + definite article + noun + preposition + numeral + coordinating conjunction + numeral] [coordinating conjunction + subordinating conjunction] [pronoun + auxiliary past + gerund verb + infinitive marker + verb infinitive + possessive determiner + noun] [preposition + indefinite article + adjective + noun] [preposition + adjective + noun] [pronoun + verb past simple + past participle] [preposition + definite article + noun] [preposition + definite article + noun] [relative pronoun + verb past simple] [indefinite article + adjective + noun] [preposition + proper adjective + noun plural] [preposition + proper noun + preposition + numeral]
+
+TEMPLATE 4 — pronoun subject + present simple + indefinite noun phrase + relative clause + coordinating conjunction + past participle appositive:
+[pronoun] [verb present simple] [indefinite article + adjective + noun] [preposition + proper noun] [relative pronoun + verb past simple + adverb] [definite article + noun + preposition + noun] [preposition + proper noun + proper noun + coordinating conjunction + proper noun] [pronoun + verb past simple] [preposition + definite article + numeral + noun] [preposition + proper adjective + noun] [preposition + definite article + proper adjective + noun] [coordinating conjunction + possessive determiner + noun] [punctuation] [past participle + preposition + proper noun + proper noun + proper noun] [preposition + indefinite article + noun + noun] [adverb + verb present simple] [definite article + adjective] [coordinating conjunction + adverb + adjective + noun] [preposition + noun plural + coordinating conjunction + noun plural] [preposition + definite article + noun]
+
+TEMPLATE 5 — adjective proper noun chain + past simple + gerund subject + past participle + verb past simple:
+[adjective + proper noun + proper noun + proper noun] [verb past simple] [definite article + adjective + noun] [preposition + gerund verb] [pronoun + past participle] [adverb + verb past simple] [pronoun + verb past simple + adverb + past participle] [preposition + noun] [preposition + definite article + noun] [preposition + adjective + noun plural]
+
+TEMPLATE 6 — proper noun + past simple + prepositional phrase + subordinating conjunction + negation clause:
+[proper noun] [verb past simple] [preposition + indefinite article + noun + noun] [subordinating conjunction + possessive determiner + noun + verb past simple + negation adverb + verb base form + noun plural] [coordinating conjunction + definite article + proper noun + verb past simple] [preposition + noun] [subordinating conjunction + preposition + indefinite article + adjective + noun] [preposition + proper noun + preposition + numeral] [punctuation] [pronoun + auxiliary past + past participle] [definite article + proper noun + proper noun] [subordinating conjunction + pronoun + verb past simple] [infinitive marker + verb infinitive + noun plural + preposition + numeral]
+
+TEMPLATE 7 — possessive subject + prepositional noun phrase + past simple + gerund chain + relative clause + can-infinitive:
+[possessive determiner + noun] [preposition + noun plural] [verb past simple] [preposition + definite article + noun + preposition + possessive determiner + noun] [gerund verb + preposition + definite article + noun + noun] [punctuation] [noun plural + coordinating conjunction + noun plural] [preposition + definite article + proper noun] [relative pronoun + verb past simple + adverb] [preposition + proper noun] [preposition + definite article + numeral + noun plural + coordinating conjunction + numeral + noun plural] [coordinating conjunction + pronoun + auxiliary present + past participle] [infinitive marker + verb infinitive] [possessive determiner + noun + preposition + noun + preposition + adjective + noun]
+
+TEMPLATE 8 — proper noun + past simple + ordinal adjective + noun + infinitive + possessive noun phrase:
+[proper noun] [verb past simple] [definite article + ordinal + adjective + noun] [infinitive marker + verb infinitive] [preposition + proper noun + proper noun] [possessive determiner + adjective + noun] [preposition + definite article + adjective + numeral + noun plural]
+
+TEMPLATE 9 — short possessive proper noun pair:
+[proper noun possessive + adjective + noun] [proper noun + proper noun]
+
+TEMPLATE 10 — short possessive proper noun triple:
+[proper noun possessive + adjective + noun] [proper noun + proper noun + proper noun]
+
+TEMPLATE 11 — adverb opener + prepositional phrase + past simple + gerund + subordinating + relative clause:
+[adverb] [preposition + definite article + noun] [proper noun + verb past simple] [preposition + definite article + proper noun] [possessive determiner + adjective + adjective + noun + verb past simple + gerund] [subordinating conjunction + definite article + noun + noun] [verb past simple + past participle] [preposition + definite article + noun] [coordinating conjunction + definite article + noun] [relative pronoun + pronoun + verb present simple]
+
+TEMPLATE 12 — pronoun + past simple + noun plural relative clause + modal + adverb + subordinating gerund:
+[pronoun] [verb past simple] [possessive determiner + noun plural] [relative pronoun + verb past simple] [preposition + proper noun + preposition + definite article + proper noun] [modal past + verb base form + adverb + adjective] [preposition + possessive determiner + noun] [subordinating conjunction + gerund] [punctuation] [coordinating conjunction + pronoun + auxiliary present + negation + past participle] [possessive determiner + noun + adverb]
+
+TEMPLATE 13 — proper noun + adverb + past simple + noun + preposition + noun + gerund + ordinal + verb past:
+[proper noun] [adverb + verb past simple] [possessive determiner + noun] [preposition + definite article + proper noun + noun] [preposition + indefinite article + noun] [preposition + proper adjective + noun] [proper noun + proper noun + preposition + definite article + noun] [gerund + determiner + preposition + possessive determiner + ordinal + noun] [verb past simple] [punctuation] [pronoun + modal past + auxiliary + past participle] [pronoun] [punctuation]
+
+TEMPLATE 14 — pronoun + present simple + adjective noun + possessive noun plural + demonstrative + noun phrase:
+[pronoun] [verb present simple] [indefinite article + adjective + noun] [possessive determiner + noun plural + verb past simple] [preposition + demonstrative + noun] [preposition + proper noun] [punctuation] [adverb + preposition + definite article + noun + noun] [coordinating conjunction + preposition + indefinite article + noun + noun]
+
+TEMPLATE 15 — subordinating conjunction + pronoun + past simple + proper noun noun + determiner + modal list:
+[subordinating conjunction + pronoun + verb past simple] [preposition + definite article + proper noun + noun] [pronoun + verb past simple] [punctuation] [determiner + modal past + verb base form + possessive determiner + noun] [punctuation] [pronoun + modal past + verb base form + possessive determiner + noun] [punctuation] [pronoun + modal past + verb base form + possessive determiner + noun] [punctuation] [pronoun + modal past + verb base form + pronoun]
+
+TEMPLATE 16 — possessive noun + present simple + indefinite adjective noun + proper noun + gerund:
+[proper noun possessive + noun] [verb present simple] [preposition + indefinite article + adjective + noun] [preposition + definite article + adjective + proper noun] [gerund verb + preposition + adjective + noun plural] [gerund verb + proper noun possessive + noun] [preposition + definite article + proper noun]
+
+TEMPLATE 17 — gerund opener + preposition + proper noun + numeral + past simple + coordinating:
+[gerund verb + preposition + definite article + proper noun + preposition + numeral] [punctuation] [proper noun + verb past simple] [pronoun + verb past simple] [indefinite article + noun] [coordinating conjunction + adjective] [preposition + pronoun] [punctuation] [coordinating conjunction + preposition + definite article + adjective + noun] [adverb + verb past simple] [punctuation] [subordinating conjunction + proper noun + verb present simple + adverb + adjective] [preposition + preposition + definite article + proper noun] [punctuation]
+
+TEMPLATE 18 — preposition + gerund + noun + proper noun + past simple + coordinating conjunction + auxiliary:
+[preposition + gerund verb + noun] [punctuation] [proper noun + verb past simple] [noun + noun] [preposition + proper noun] [punctuation] [coordinating conjunction + auxiliary present + adverb + past participle] [gerund verb + preposition + definite article + adjective + noun] [punctuation] [definite article + adjective + noun + noun + verb past simple] [indefinite article + adjective + noun] [preposition + possessive determiner + noun] [infinitive marker + verb infinitive + verb infinitive] [proper noun]
+
+TEMPLATE 19 — pronoun + past simple + noun + preposition + definite article + noun + noun + noun plural:
+[pronoun] [verb past simple] [noun] [preposition + definite article + noun + noun + noun plural] [preposition + proper noun] [punctuation] [preposition + definite article + adjective + noun] [preposition + noun plural] [preposition + proper noun + proper noun] [preposition + proper noun] [punctuation]
+
+TEMPLATE 20 — determiner + past simple + noun + preposition + noun + gerund + proper noun plural:
+[determiner] [verb past simple] [noun] [preposition + definite article + noun] [preposition + gerund verb + preposition + definite article + adjective + noun plural] [preposition + proper noun + noun plural] [preposition + noun + noun]
+
+TEMPLATE 21 — possessive noun + adverb + past simple + determiner + noun + adjective plural + gerund + infinitive:
+[proper noun possessive + noun] [adverb + verb past simple] [determiner + noun + noun] [preposition + adjective + noun plural] [preposition + adjective + noun plural] [coordinating conjunction + possessive determiner + noun plural + verb present simple + adverb] [gerund verb + infinitive marker + verb infinitive + adjective] [preposition + pronoun + verb past simple] [preposition + proper noun] [punctuation] [determiner + verb past simple + possessive determiner + noun plural] [coordinating conjunction + adverb + verb past simple] [noun] [gerund verb + noun plural] [coordinating conjunction + determiner + verb past simple + past participle] [preposition + noun plural]
+
+TEMPLATE 22 — proper noun + past simple + preposition + proper noun noun plural + determiner + subordinating + modal:
+[proper noun] [verb past simple] [preposition + proper noun + noun plural] [preposition + determiner + noun] [punctuation] [preposition + determiner + pronoun + verb past simple] [indefinite article + noun] [subordinating conjunction + determiner + pronoun + verb past simple] [noun + preposition + proper noun + preposition + numeral + preposition + numeral] [punctuation] [relative pronoun + modal + verb base form] [definite article + noun + noun plural] [punctuation] [modal + verb base form] [definite article + noun + noun plural] [punctuation]
+
+---
+
+# TEMPLATE SET B — ADDITIONAL HUMAN SENTENCE DNA (MANDATORY)
+# Extracted from a second verified 100% human source text.
+# Add these templates to the pool. Select from Set A or Set B for every sentence.
+
+TEMPLATE B-1 (proper noun chain + verb past simple + proper adjective possessive plural + noun):
+[proper noun] [proper noun] [proper noun] [verb past simple] [definite article] [proper adjective + noun plural possessive] [proper adjective + noun plural] [preposition] [definite article + proper noun + proper noun + noun] [coordinating conjunction] [definite article + noun] [preposition + noun plural] [verb past simple] [preposition + indefinite article + noun + noun + noun] [preposition + proper noun possessive + adverb + adjective + noun plural]
+
+TEMPLATE B-2 (proper noun pair + coordinating conjunction + proper noun pair + verb past simple + determiner + gerund + adjective + noun plural):
+[proper noun] [proper noun] [coordinating conjunction] [proper noun] [proper noun] [verb past simple] [preposition + definite article + noun plural + adjective] [determiner + gerund verb + adjective + noun plural] [preposition + definite article + noun]
+
+TEMPLATE B-3 (proper noun + noun + proper noun + indefinite article + adjective + proper noun noun + verb past simple + quotation):
+[proper noun] [noun] [proper noun] [indefinite article + adjective + proper noun + noun] [verb past simple] [noun] [quotation mark + definite article + noun + verb present simple + adjective + quotation mark] [preposition + noun] [preposition + definite article + proper noun + noun plural]
+
+TEMPLATE B-4 (quoted speech + determiner + proper adjective noun plural + coordinating conjunction + proper noun plural + auxiliary present + past participle):
+[quotation mark + determiner + proper adjective + noun plural + coordinating conjunction + proper noun plural + auxiliary verb present + past participle verb + infinitive marker + verb infinitive] [definite article + proper noun + proper noun] [coordinating conjunction + verb base form + definite article + proper noun + preposition + definite article + noun] [verb past simple + definite article + proper adjective] [possessive determiner + noun + preposition + noun] [proper noun + proper noun + preposition + proper noun + proper noun + verb past simple + adjective + noun] [preposition + pronoun + verb past simple + past participle + adverb] [preposition + adjective + noun + quotation mark]
+
+TEMPLATE B-5 (quoted speech + determiner + noun + present simple + determiner + noun possessive + noun + coordinating conjunction + proper noun + noun + noun + noun + verb present simple + pronoun + verb present perfect + past participle + adverb + adjective + noun plural + verb base form + particle + possessive determiner + noun plural + period + determiner + noun + verb present simple + adjective + quotation mark):
+[quotation mark + determiner + noun + verb present simple + determiner + noun possessive + noun] [coordinating conjunction + proper noun + noun + noun + noun + verb present simple] [pronoun + verb present perfect + past participle + adverb + adjective + noun plural + verb base form + particle + possessive determiner + noun plural] [determiner + noun + verb present simple + adjective + quotation mark]
+
+TEMPLATE B-6 (proper noun + noun + proper noun + relative clause + verb past simple + proper noun + pronoun + modal + adverb + verb base form + definite article + noun):
+[proper noun] [noun] [proper noun] [relative pronoun + verb past simple + noun + preposition + proper noun + numeral + preposition + proper noun] [verb past simple + proper noun] [pronoun + modal verb + adverb + verb base form + definite article + noun]
+
+TEMPLATE B-7 (quoted speech — pronoun + modal + negation + gerund + period + pronoun + modal + negation + verb base form + preposition + noun plural + relative clause + prepositional phrase + pronoun + auxiliary + past participle + preposition + determiner + adjective + noun plural + quotation mark + pronoun + verb past simple + preposition + definite article + noun):
+[quotation mark + pronoun + modal verb + negation adverb + gerund verb] [pronoun + modal verb + negation adverb + verb base form + preposition + noun plural + relative pronoun + verb present simple + preposition + determiner + relative pronoun + pronoun + verb present simple + preposition + adjective] [preposition + noun + preposition + gerund verb + preposition + proper noun] [pronoun + auxiliary verb present + past participle + preposition + determiner + adjective + noun plural + quotation mark] [pronoun + verb past simple + preposition + definite article + noun]
+
+TEMPLATE B-8 (proper noun + comma + relative clause + verb past simple + proper noun + preposition + proper noun + pronoun + modal past + verb base form + particle + determiner + proper noun + proper noun + noun):
+[proper noun] [relative pronoun + verb past simple + proper noun possessive + noun] [verb past simple + proper noun + preposition + proper noun] [pronoun + modal verb past + verb base form + particle] [determiner + proper noun + proper noun + noun]
+
+TEMPLATE B-9 (definite article + proper noun + proper noun + noun + verb present perfect + adverb + infinitive + preposition + proper noun possessive + noun + preposition + indefinite article + noun + coordinating conjunction + possessive determiner + adjective + noun + pronoun + verb past simple + adjective + preposition + numeral + noun plural + verb past simple + definite article + noun):
+[definite article + proper noun + proper noun + noun] [verb present perfect + adverb + infinitive marker + verb infinitive + preposition + proper noun possessive + noun] [preposition + indefinite article + noun] [coordinating conjunction + preposition + possessive determiner + adjective + noun] [pronoun + verb past simple + adjective + preposition + numeral + noun plural + verb past simple + definite article + noun]
+
+TEMPLATE B-10 (proper noun + noun + preposition + proper noun possessive + proper noun plural — short):
+[proper noun + noun] [preposition + proper noun possessive + proper noun plural]
+
+TEMPLATE B-11 (preposition + pronoun + adjective + verb past simple + definite article + adjective + noun plural + coordinating conjunction + proper noun + proper noun + comma + definite article + numeral + adjective + noun + relative clause + possessive determiner + noun possessive + adjective + noun + preposition + proper noun):
+[preposition + pronoun + adjective + verb past simple] [definite article + adjective + noun plural + coordinating conjunction + proper noun + proper noun] [definite article + numeral + adjective + noun] [relative pronoun + verb past simple + possessive determiner + noun possessive + adjective + noun + preposition + proper noun]
+
+TEMPLATE B-12 (quoted speech — determiner + present simple + indefinite article + adverb + adjective + noun + coordinating conjunction + pronoun + auxiliary + adjective + infinitive + adverb + coordinating conjunction + verb base form + proper noun + proper noun + preposition + definite article + proper noun + quotation mark + determiner + noun + verb past simple + preposition + definite article + noun plural + gerund + adverb + pronoun):
+[quotation mark + determiner + verb present simple + indefinite article + adverb + adjective + noun] [coordinating conjunction + pronoun + auxiliary verb present + adjective + infinitive marker + verb infinitive + adverb] [coordinating conjunction + verb base form + proper noun + proper noun + preposition + definite article + proper noun + quotation mark] [determiner + noun + verb past simple + preposition + definite article + noun plural + gerund + adverb + pronoun]
+
+TEMPLATE B-13 (quoted speech — determiner + numeral + noun plural + adverb + proper noun + verb past simple + determiner + preposition + pronoun + preposition + definite article + proper adjective + proper noun plural + infinitive + definite article + adjective + coordinating conjunction + adjective + coordinating conjunction + noun + pronoun + verb past simple + indefinite article + adjective + noun + pronoun + verb past simple + coordinating conjunction + verb past simple + object pronoun + adverb + adjective + quotation mark):
+[quotation mark + determiner + numeral + noun plural + adverb + proper noun + verb past simple + determiner + preposition + pronoun] [preposition + definite article + proper adjective + proper noun plural + infinitive marker + verb infinitive] [definite article + adjective + comma + adjective + coordinating conjunction + noun] [coordinating conjunction + pronoun + verb past simple + indefinite article + adjective + noun] [pronoun + verb past simple + coordinating conjunction + verb past simple + object pronoun + adverb + adjective + quotation mark]
+
+TEMPLATE B-14 (verb base form + colon + proper noun pair + verb base form + proper noun + comma + quotation mark + verb base form + possessive determiner + noun + particle + quotation mark):
+[verb base form + colon + proper noun + coordinating conjunction + proper noun + verb base form + proper noun] [quotation mark + verb base form + possessive determiner + noun + particle + quotation mark]
+
+TEMPLATE B-15 (verb base form + colon + adjective + noun plural + gerund + noun + preposition + definite article + proper adjective + proper noun plural):
+[verb base form + colon] [adjective + noun plural + gerund verb + noun + preposition + definite article + proper adjective + proper noun plural]
+
+TEMPLATE B-16 (proper noun + proper noun + present simple + pronoun + present simple + noun + infinitive + preposition + proper noun):
+[proper noun + proper noun] [verb present simple + pronoun + verb present simple + noun + infinitive marker + verb infinitive + preposition + proper noun]
+
+TEMPLATE B-17 (numeral + colon + numeral — short ratio/score):
+[numeral] [colon] [numeral]
+
+TEMPLATE B-18 (quoted speech — pronoun + modal past + adverb + verb base form + possessive determiner + proper noun + proper noun + noun + quotation mark):
+[quotation mark + pronoun + modal verb past + adverb + verb base form + possessive determiner + proper noun + proper noun + noun + quotation mark]
+
+TEMPLATE B-19 (proper noun + coordinating conjunction + proper noun + verb past simple + definite article + adjective + adverb + adjective + noun plural + infinitive + definite article + proper noun + preposition + indefinite article + proper adjective + noun):
+[proper noun + coordinating conjunction + proper noun] [verb past simple + definite article + adjective + adverb + adjective + noun plural + infinitive marker + verb infinitive] [definite article + proper noun + preposition + indefinite article + proper adjective + noun]
+
+TEMPLATE B-20 (determiner + noun + auxiliary present + past participle + adjective + preposition + definite article + proper noun + noun + coordinating conjunction + preposition + definite article + noun plural + verb past simple + adjective + noun + infinitive + proper noun + proper noun + proper noun + determiner + pronoun + verb past simple + preposition + possessive determiner + noun + preposition + adjective + noun plural):
+[determiner + noun + auxiliary verb present + past participle + adjective] [preposition + definite article + proper noun + noun] [coordinating conjunction + preposition + definite article + noun plural + verb past simple + adjective + noun + infinitive marker + verb infinitive] [proper noun + proper noun + proper noun + determiner + pronoun + verb past simple + preposition + possessive determiner + noun + preposition + adjective + noun plural]
+
+TEMPLATE B-21 (preposition + noun + preposition + proper noun + comma + proper noun + verb past simple + definite article + proper noun + proper noun + noun + relative clause + noun plural + infinitive + noun + preposition + adjective + noun plural + gerund + adjective + noun + pronoun + verb past simple + adverb + verb past simple + determiner + noun + subordinating conjunction + verb past simple + definite article + noun + preposition + gerund):
+[preposition + noun + preposition + proper noun] [proper noun + verb past simple + definite article + proper noun + proper noun + noun] [relative pronoun + verb past simple + noun plural + infinitive marker + verb infinitive + noun + preposition + adjective + noun plural] [gerund verb + adjective + noun] [pronoun + verb past simple + adverb + verb past simple + determiner + noun + subordinating conjunction + verb past simple + definite article + noun + preposition + gerund]
+
+TEMPLATE B-22 (proper noun + comma + numeral + comma + adverb + noun + verb past participle + preposition + proper noun + noun possessive + numeral + adjective + noun plural + comma + verb present simple + adverb + gerund + infinitive + preposition + definite article + adjective + proper adjective + noun + noun):
+[proper noun] [numeral] [adverb + noun + verb past participle + preposition + proper noun + noun possessive + numeral + adjective + noun plural] [verb present simple + adverb + gerund verb + infinitive marker + verb infinitive + preposition + definite article + adjective + proper adjective + noun + noun]
+
+TEMPLATE B-23 (proper noun + verb past simple + proper noun + noun + preposition + proper noun + quoted speech + pronoun + modal past + adverb + verb base form + possessive determiner + proper noun + proper noun + noun + coordinating conjunction + subordinating conjunction + pronoun + verb past simple + preposition + possessive determiner + noun + noun + relative adverb + pronoun + verb present simple + past participle + preposition + indefinite article + noun + noun + pronoun + verb past simple + pronoun + auxiliary present + negation adverb + gerund + preposition + demonstrative + coordinating conjunction + pronoun + verb past simple + adverb + determiner + preposition + definite article + noun plural + auxiliary present negation):
+[proper noun + verb past simple + proper noun + noun + preposition + proper noun] [quotation mark + pronoun + modal verb past + adverb + verb base form + possessive determiner + proper noun + proper noun + noun] [coordinating conjunction + subordinating conjunction + pronoun + verb past simple + preposition + possessive determiner + noun + noun] [relative adverb + pronoun + verb present simple + past participle + preposition + indefinite article + noun + noun] [pronoun + verb past simple + punctuation + quotation mark] [pronoun + auxiliary verb present + negation adverb + gerund + preposition + demonstrative] [coordinating conjunction + pronoun + verb past simple + adverb + determiner + preposition + definite article + noun plural + auxiliary present negation]
+
+TEMPLATE B-24 (proper noun + comma + definite article + adverb + adjective + proper adjective + adjective + noun + preposition + noun + present simple + indefinite article + adjective + proper adjective + noun + relative clause + auxiliary present + past participle + particle + preposition + proper noun possessive + noun):
+[proper noun] [definite article + adverb + adjective + proper adjective + adjective + noun + preposition + noun] [verb present simple + indefinite article + adjective + proper adjective + noun] [relative pronoun + auxiliary verb present + past participle + particle + preposition + proper noun possessive + noun]
+
+TEMPLATE B-25 (proper noun + verb past simple + proper noun + proper noun + adjective + noun plural + infinitive + definite article + noun + noun):
+[proper noun + verb past simple + proper noun + proper noun] [adjective + noun plural + infinitive marker + verb infinitive + definite article + noun + noun]
+
+TEMPLATE B-26 (coordinating conjunction + preposition + proper noun + present simple + infinitive + indefinite article + noun + determiner + noun + preposition + indefinite article + noun + preposition + determiner + relative clause + noun + preposition + proper noun + preposition + numeral + preposition + numeral + comma + relative pronoun + modal + verb base form + definite article + noun plural + comma + modal + verb base form + definite article + noun):
+[coordinating conjunction + preposition + proper noun + verb present simple + infinitive marker + verb infinitive + indefinite article + noun] [determiner + noun + preposition + indefinite article + noun] [preposition + determiner + relative pronoun + verb past simple + noun + preposition + proper noun + preposition + numeral + preposition + numeral] [relative pronoun + modal verb + verb base form + definite article + noun plural] [modal verb + verb base form + definite article + noun]
+
+---
+
+# TEXT 1 (HUMAN) vs TEXT 2 (AI) — STRUCTURAL CONTRAST LAW
+# The single most important rule in this entire prompt.
+# Text 1 is 100% human. Text 2 is AI. You replicate Text 1. You never produce Text 2.
+
+## TEXT 1 PATTERNS — ALWAYS USE THESE
+
+- Open clauses with: infinitive marker + verb infinitive, coordinating conjunction, or proper noun chains — never a gerund
+- Default tense: past simple throughout — not present perfect, not progressive
+- Noun phrases: definite article + adjective + noun; possessive determiner + noun; proper noun + proper noun chains
+- Clause linking: coordinating conjunctions (and, but, or) as the primary connector — subordinating conjunctions only mid-sentence
+- Passive voice: past participle passive constructions appear regularly (was done, were established, had been placed)
+- Relative clauses: "which / who / that / whose" + past simple or modal verb, embedded inside noun phrases
+- Modifiers: ordinal adjectives (first, second, third) and proper adjectives placed directly before nouns; two adjectives before a noun stacked without a comma
+- Pronouns: object pronouns (him, her, them, it) used naturally; demonstrative pronouns (this, that, these, those) as subjects or objects
+- Adverbs: placed mid-clause or post-verb — never at sentence start
+- Negation: negation adverbs (not, never, no longer) embedded naturally inside clauses
+- Modal verbs (will, would, can, could, shall) appear for future and conditional meaning
+- Possessive structures are frequent: "his approach", "their system", "her record", "its noun"
+- Sentence rhythm: one long sentence followed by a short one — never uniform length
+
+## TEXT 2 PATTERNS — NEVER PRODUCE THESE
+
+- NEVER open with a gerund phrase: "Recognizing...", "Building...", "Balancing...", "Navigating..."
+- NEVER open with "This [noun] + verb" topic sentences
+- NEVER open with transitional adverbs: "Additionally,", "Furthermore,", "Notably,", "Importantly,", "Moreover,"
+- NEVER use "This + noun + verb past simple + preposition" tics: "This decision came from...", "This move resulted in..."
+- NEVER produce paired gerund subjects: "Balancing X and maintaining Y..." as the subject of a sentence
+- NEVER use "as a [noun]" framing devices: "as a leader", "as a result", "as a way"
+- NEVER use "especially" or "instead" as mid-sentence pivots
+- NEVER write paragraphs where every sentence follows Subject + Verb + Object + Prepositional phrase rigidly
+- NEVER use "past participle verb + infinitive marker + verb infinitive + determiner + numeral + noun" chains
+- NEVER resolve a clause with "coordinating conjunction + past participle verb" at sentence end as a summary device
+- NEVER use present perfect where past simple is correct: "has become" → "became", "have established" → "established"
+- NEVER cluster negations
+- NEVER write the same sentence length twice in a row
+
+## HARD RULE
+If a sentence you are about to write matches any Text 2 pattern — rewrite it immediately using a Text 1 pattern or one of the templates from Set A or Set B above.
+
+---
+
+## APPLICATION RULES — MANDATORY
+
+1. Select the template (Set A or Set B) whose shape best fits the content of each sentence. Fill every slot.
+2. Never substitute a gerund where past simple is specified in the template.
+3. Never open a sentence with a gerund, present participle, or transitional adverb unless the template begins with one.
+4. Relative clauses (which / who / that / whose) must contain a verb in past simple or modal form — not present perfect.
+5. Possessive determiners (his, her, their, its, your) are mandatory wherever listed — never replace with "the".
+6. Coordinating conjunctions (and, but, or, so) must connect the clauses assigned — never replace with a semicolon.
+7. Past participle passive constructions are mandatory where listed — never convert to active voice.
+8. Sentence length must alternate — one long-template sentence followed by a short-template sentence.
+9. Before writing any sentence, check it against the Text 2 banned patterns above. If it matches, rewrite it.
+10. All templates from Set A and Set B override every other instruction in this prompt. No exception.
 
 Return ONLY the rewritten text. No preamble. No explanation.
 Do not write "Here is the rewritten version:"
@@ -1227,21 +1533,74 @@ Start the rewritten text immediately.`
     // ── Build user message with style traits + intensity + text ───────────────
     let userMessage = `Intensity level: ${intensityInt}/10\n\n`
 
-    if (dv || ss || pp || vm) {
+    if (vocab || phrases || ss || pp || vm || neverDoes || sentenceRhythm || uniqueFingerprints) {
       userMessage += `PERSONAL STYLE PROFILE FOR THIS USER:\n`
-      if (dv) {
-        userMessage += `\nDistinctive vocabulary — weave in naturally: ${dv.characteristic_words.join(', ')}`
-        userMessage += `\nFavorite transitions: ${dv.favorite_transitions.join(', ')}`
-        userMessage += `\nAuthentic phrases: ${dv.non_ai_phrases.join(', ')}`
+
+      if (vocab) {
+        userMessage += `\nVocabulary:\n`
+        userMessage += `- Frequent words: ${vocab.frequent_words.slice(0, 12).join(', ') || '—'}`
+        userMessage += `\n- Never used words: ${vocab.never_used_words.slice(0, 12).join(', ') || '—'}`
+        userMessage += `\n- Formality: ${vocab.formality_level}`
+        userMessage += `\n- Contractions: ${vocab.contractions_used ? 'yes' : 'no'}`
+        userMessage += `\n- Slang: ${vocab.slang_used ? 'yes' : 'no'}`
+        userMessage += `\n- Academic language: ${vocab.academic_language_used ? 'yes' : 'no'}`
       }
+
+      if (phrases) {
+        userMessage += `\nPhrases:\n`
+        userMessage += `- Sentence openers: ${phrases.sentence_openers.slice(0, 12).join(', ') || '—'}`
+        userMessage += `\n- Transition phrases: ${phrases.transition_phrases.slice(0, 12).join(', ') || '—'}`
+        userMessage += `\n- Argument introductions: ${phrases.argument_introductions.slice(0, 12).join(', ') || '—'}`
+        userMessage += `\n- Paragraph endings: ${phrases.paragraph_endings.slice(0, 12).join(', ') || '—'}`
+      }
+
       if (ss) {
-        userMessage += `\nSentence structure: avg ${ss.avg_length} words. ${ss.short_sentence_pct}% short, ${ss.long_sentence_pct}% long. Fragments: ${ss.fragment_frequency}. Common openers: ${ss.common_openers.join(', ')}.`
+        userMessage += `\nStructure:\n`
+        userMessage += `- Avg paragraph length: ${ss.avg_paragraph_length_sentences.toFixed(1)} sentences`
+        userMessage += `\n- One-sentence paragraph ratio: ${Math.round(ss.one_sentence_paragraph_ratio * 100)}%`
+        userMessage += `\n- Argument order patterns: ${ss.argument_order_patterns.slice(0, 12).join(', ') || '—'}`
       }
+
       if (pp) {
-        userMessage += `\nPunctuation style: ${pp.overall_style}. Patterns: ${pp.specific_deviations.join('; ')}.`
+        userMessage += `\nPunctuation:\n`
+        userMessage += `- Em-dashes: ${pp.uses_em_dashes ? 'yes' : 'no'}`
+        userMessage += `\n- Ellipses: ${pp.uses_ellipses ? 'yes' : 'no'}`
+        userMessage += `\n- Semicolons: ${pp.uses_semicolons ? 'yes' : 'no'}`
+        userMessage += `\n- Avg sentence length: ${pp.avg_sentence_length_words.toFixed(1)} words`
+        userMessage += `\n- Sentence rhythm: ${pp.sentence_rhythm}`
+        userMessage += `\n- Overall punctuation style: ${pp.overall_style}`
+        userMessage += `\n- Omission patterns: ${pp.omission_patterns.slice(0, 6).join('; ') || '—'}`
+        userMessage += `\n- Addition patterns: ${pp.addition_patterns.slice(0, 6).join('; ') || '—'}`
+        userMessage += `\n- Specific deviations: ${pp.specific_deviations.slice(0, 8).join('; ') || '—'}`
       }
+
       if (vm) {
-        userMessage += `\nVoice: ${vm.first_person_pct}% first-person. Active: ${vm.active_voice_pct}%. Formality: ${vm.formality_score}/100. Hedging: ${vm.hedging_frequency}.`
+        userMessage += `\nVoice:\n`
+        userMessage += `- First-person: ${vm.first_person_pct.toFixed(0)}%`
+        userMessage += `\n- Second-person: ${vm.second_person_pct.toFixed(0)}%`
+        userMessage += `\n- Third-person: ${vm.third_person_pct.toFixed(0)}%`
+        userMessage += `\n- Active voice: ${vm.active_voice_pct.toFixed(0)}%`
+        userMessage += `\n- Formality score: ${vm.formality_score.toFixed(0)}/100`
+        userMessage += `\n- Hedging frequency: ${vm.hedging_frequency}`
+        userMessage += `\n- Expressiveness score: ${vm.expressiveness_score.toFixed(0)}/100`
+        userMessage += `\n- Emotional vs clinical: ${vm.emotional_vs_clinical}`
+      }
+
+      if (sentenceRhythm) {
+        userMessage += `\nSentence rhythm:\n`
+        userMessage += `- Short sentence pct: ${sentenceRhythm.short_sentence_pct.toFixed(0)}%`
+        userMessage += `\n- Long sentence pct: ${sentenceRhythm.long_sentence_pct.toFixed(0)}%`
+      }
+
+      if (uniqueFingerprints && uniqueFingerprints.length > 0) {
+        userMessage += `\nUnique fingerprints (use when relevant): ${uniqueFingerprints.slice(0, 16).join(', ')}`
+      }
+
+      if (neverDoes) {
+        userMessage += `\n\nADDITIONAL NEVER-DOES (avoid literally; never start sentences with these):\n`
+        userMessage += `- Banned words: ${neverDoes.banned_words.slice(0, 30).join(', ') || '—'}`
+        userMessage += `\n- Banned phrases: ${neverDoes.banned_phrases.slice(0, 20).join(', ') || '—'}`
+        userMessage += `\n- Banned sentence starts: ${neverDoes.banned_sentence_starts.slice(0, 20).join(', ') || '—'}`
       }
       userMessage += `\n\n`
     }
@@ -1276,7 +1635,8 @@ Start the rewritten text immediately.`
     let vocabBonus = 0
     const vocabTrait = traitList.find(t => t.trait_name === 'vocabulary')
     if (vocabTrait) {
-      const vocabWords: string[] = safeParseJson<string[]>(vocabTrait.trait_value) ?? []
+      const vocab = safeParseJson<VocabularyAnalysis>(vocabTrait.trait_value)
+      const vocabWords = vocab?.frequent_words ?? []
       if (vocabWords.length > 0) {
         const textLower = rewrittenText.toLowerCase()
         const hits = vocabWords.filter(w => textLower.includes(w.toLowerCase())).length
@@ -1286,9 +1646,13 @@ Start the rewritten text immediately.`
 
     // Phrase hits: how many of the user's recurring phrases appear in the rewrite
     let phraseBonus = 0
-    const phrasesTrait = traitList.find(t => t.trait_name === 'phrases')
-    if (phrasesTrait) {
-      const phrases: string[] = safeParseJson<string[]>(phrasesTrait.trait_value) ?? []
+    const phrasesTraitForScore = traitList.find(t => t.trait_name === 'phrases')
+    if (phrasesTraitForScore) {
+      const phrasesObj = safeParseJson<PhrasesAnalysis>(phrasesTraitForScore.trait_value)
+      const phrases = [
+        ...(phrasesObj?.transition_phrases ?? []),
+        ...(phrasesObj?.sentence_openers ?? []),
+      ]
       if (phrases.length > 0) {
         const textLower = rewrittenText.toLowerCase()
         const hits = phrases.filter(p => textLower.includes(p.toLowerCase())).length

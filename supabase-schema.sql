@@ -8,6 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
+  onboarding_complete BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
@@ -37,7 +38,7 @@ CREATE TABLE IF NOT EXISTS style_traits (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   trait_name VARCHAR(100) NOT NULL,
-  trait_value VARCHAR(255) NOT NULL,
+  trait_value TEXT NOT NULL,
   score INTEGER NOT NULL DEFAULT 0 CHECK (score >= 0 AND score <= 100),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   UNIQUE(user_id, trait_name)

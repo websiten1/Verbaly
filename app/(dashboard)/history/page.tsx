@@ -32,7 +32,7 @@ function LoadingState() {
           />
         </svg>
       </div>
-      <p style={{ color: '#A09D95', fontSize: '14px' }}>Loading history…</p>
+      <p style={{ color: '#A09D95', fontSize: '14px' }}>Your history is being loaded…</p>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
@@ -44,6 +44,7 @@ export default function HistoryPage() {
   const [expandedId,  setExpandedId]  = useState<string | null>(null)
   const [copiedId,    setCopiedId]    = useState<string | null>(null)
   const [error,       setError]       = useState<string | null>(null)
+  const [showHistoryTooltip, setShowHistoryTooltip] = useState(false)
   const router   = useRouter()
   const supabase = createClient()
 
@@ -52,7 +53,7 @@ export default function HistoryPage() {
       .from('rewrites').select('*').eq('user_id', uid)
       .order('created_at', { ascending: false })
     if (loadError) {
-      setError('Failed to load your rewrite history.')
+      setError('Your rewrite history could not be loaded.')
       setRewrites([])
       setLoading(false)
       return
@@ -67,6 +68,20 @@ export default function HistoryPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
       await loadHistory(user.id)
+
+      const profileRes = await supabase
+        .from('profiles')
+        .select('onboarding_complete')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      const onboardingOk = profileRes.data?.onboarding_complete === true
+
+      if (onboardingOk) {
+        const key = 'vbTooltipSeen_history'
+        const alreadySeen = typeof window !== 'undefined' ? window.localStorage.getItem(key) : '1'
+        if (!alreadySeen) setShowHistoryTooltip(true)
+      }
     }
     getUser()
   }, [loadHistory, router, supabase])
@@ -79,7 +94,7 @@ export default function HistoryPage() {
       setCopiedId(id)
       setTimeout(() => setCopiedId(null), 2000)
     } catch {
-      setError('Clipboard copy failed. Please copy manually.')
+      setError('Copy failed. Please copy the text manually.')
     }
   }
 
@@ -113,6 +128,46 @@ export default function HistoryPage() {
         <p style={{ color: '#A09D95', fontSize: '14px' }}>
           {rewrites.length} total rewrite{rewrites.length !== 1 ? 's' : ''}
         </p>
+
+        {showHistoryTooltip && (
+          <div style={{
+            marginTop: '16px',
+            backgroundColor: 'rgba(84,242,242,0.08)',
+            border: '1px solid rgba(84,242,242,0.25)',
+            borderRadius: '12px',
+            padding: '12px 14px',
+            color: '#042A2B',
+            fontSize: '13px',
+            lineHeight: 1.5,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: '12px',
+          }}>
+            <div>
+              <div style={{ fontWeight: 700, marginBottom: 4 }}>Your history</div>
+              Every rewrite you made is saved here. The match score is shown next to it.
+            </div>
+            <button
+              onClick={() => {
+                window.localStorage.setItem('vbTooltipSeen_history', '1')
+                setShowHistoryTooltip(false)
+              }}
+              style={{
+                backgroundColor: '#042A2B',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontFamily: 'DM Sans, sans-serif',
+              }}
+            >
+              Got it
+            </button>
+          </div>
+        )}
       </div>
 
       {rewrites.length === 0 ? (
