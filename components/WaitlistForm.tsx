@@ -20,21 +20,29 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
   if (submitted) {
     return (
       <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '20px 32px',
-        backgroundColor: 'rgba(84,242,242,0.08)',
-        border: '1px solid rgba(84,242,242,0.25)',
-        borderRadius: '12px',
+        border: '1px solid #111111',
+        padding: '20px 28px',
+        display: 'inline-block',
       }}>
-        <span style={{ fontSize: '22px' }}>🎉</span>
-        <p style={{ color: '#54F2F2', fontWeight: '600', fontSize: '16px', margin: 0 }}>
-          You&apos;re on the list!
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '11px',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '0.15em',
+          color: '#111111',
+        }}>
+          YOU&apos;RE ON THE LIST →
         </p>
-        <p style={{ color: '#9ECFCF', fontSize: '14px', margin: 0 }}>
-          Check the new tab to confirm your spot.
+        <p style={{
+          fontFamily: 'var(--font-jet)',
+          fontSize: '11px',
+          color: '#666666',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          marginTop: '6px',
+        }}>
+          Check the new tab to confirm.
         </p>
       </div>
     )
@@ -46,10 +54,8 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
       style={{
         display: 'flex',
         flexDirection: compact ? 'row' : 'column',
-        gap: '10px',
+        gap: '0',
         width: '100%',
-        maxWidth: compact ? '480px' : '420px',
-        margin: '0 auto',
       }}
     >
       <input
@@ -57,37 +63,41 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email address"
+        placeholder="YOUR EMAIL ADDRESS"
         style={{
           flex: 1,
-          padding: compact ? '11px 16px' : '14px 18px',
-          borderRadius: '10px',
-          border: '1px solid rgba(84,242,242,0.25)',
-          backgroundColor: 'rgba(255,255,255,0.06)',
-          color: '#E4F5F5',
-          fontSize: '15px',
-          fontFamily: 'DM Sans, sans-serif',
-          outline: 'none',
+          padding: compact ? '11px 14px' : '14px 16px',
+          border: '1px solid #111111',
+          borderRight: compact ? 'none' : '1px solid #111111',
+          borderBottom: compact ? '1px solid #111111' : 'none',
+          borderRadius: 0,
+          backgroundColor: 'transparent',
+          color: '#111111',
+          fontSize: '11px',
+          fontFamily: 'var(--font-jet)',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
           width: compact ? 'auto' : '100%',
         }}
       />
       <button
         type="submit"
         style={{
-          padding: compact ? '11px 22px' : '14px 28px',
-          borderRadius: '10px',
-          backgroundColor: '#54F2F2',
-          color: '#042A2B',
-          fontSize: '15px',
-          fontWeight: '700',
-          fontFamily: 'DM Sans, sans-serif',
-          border: 'none',
+          padding: compact ? '11px 22px' : '14px 20px',
+          backgroundColor: '#111111',
+          color: '#FFFFFF',
+          border: '1px solid #111111',
+          borderRadius: 0,
+          fontSize: '11px',
+          fontWeight: 700,
+          fontFamily: 'var(--font-mono)',
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
           cursor: 'pointer',
           whiteSpace: 'nowrap',
-          letterSpacing: '-0.2px',
         }}
       >
-        Join the waitlist →
+        JOIN WAITLIST →
       </button>
     </form>
   )
