@@ -241,10 +241,10 @@ const CSS = `
     gap: clamp(6px, 1.5vh, 18px);
   }
 
-  /* font size: fill width, cap by height */
+  /* font size: ~25% smaller than before */
   .lp-voice-line {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(36px, min(10.5vw, 22vh), 152px);
+    font-size: clamp(28px, min(7.8vw, 16vh), 114px);
     font-weight: 700; text-transform: uppercase;
     letter-spacing: -.02em; line-height: 1.05;
     white-space: nowrap;
@@ -252,7 +252,7 @@ const CSS = `
 
   .lp-vl-lime          { color: #CCFF00; }
   .lp-vl-white-outline { color: transparent; -webkit-text-stroke: 2px #FFFFFF; }
-  .lp-vl-purple-outline{ color: #7B5CF0; }
+  .lp-vl-purple-outline{ color: transparent; -webkit-text-stroke: 2px #7B5CF0; }
 
   /* scroll reveal — slide from left */
   .lp-vl-lime          { opacity: 0; transform: translateX(-40px); transition: opacity .6s ease, transform .6s ease; }
@@ -463,7 +463,7 @@ export default function LandingPage() {
       {/* ── HERO ─── */}
       <main className="lp-main" role="main">
 
-        <p className="lp-eyebrow">Pre-Launch &middot; AI Writing Tool</p>
+        <p className="lp-eyebrow">Pre-Launch &middot; Turn AI Text Into Your Voice</p>
 
         <h1 ref={titleRef} className="lp-title" aria-label="Verbaly" />
 
