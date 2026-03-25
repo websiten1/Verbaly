@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
+const JET = "'JetBrains Mono', 'Courier New', monospace"
+const CPR = "'Courier Prime', 'Courier New', monospace"
+
 const PLANS = {
   student: {
     monthly: 'price_1T9rnl1qRl4Kd6hG2HMlbVTP',
@@ -50,27 +53,29 @@ const PLAN_DATA: Plan[] = [
   },
 ]
 
-function Check({ cyan = false }: { cyan?: boolean }) {
+function Check({ lime = false }: { lime?: boolean }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: '1px' }}>
-      <circle cx="8" cy="8" r="7.5" fill={cyan ? 'rgba(84,242,242,0.18)' : 'rgba(4,42,43,0.07)'}/>
-      <polyline points="4.5 8 7 10.5 11.5 5.5" stroke={cyan ? '#54F2F2' : '#042A2B'} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, marginTop: '2px' }}>
+      <polyline
+        points="2.5 7 5.5 10 11.5 4"
+        stroke={lime ? '#CCFF00' : 'rgba(255,255,255,0.4)'}
+        strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+      />
     </svg>
   )
 }
 
 export default function PricingPage() {
-  const [annual,      setAnnual]      = useState(false)
-  const [currentPlan, setCurrentPlan] = useState<string>('free')
-  const [userId,      setUserId]      = useState<string | null>(null)
-  const [loading,     setLoading]     = useState<string | null>(null)
+  const [annual,        setAnnual]        = useState(false)
+  const [currentPlan,   setCurrentPlan]   = useState<string>('free')
+  const [userId,        setUserId]        = useState<string | null>(null)
+  const [loading,       setLoading]       = useState<string | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
-  const [mounted,     setMounted]     = useState(false)
+  const [mounted,       setMounted]       = useState(false)
 
   useEffect(() => {
     setMounted(true)
     const supabase = createClient()
-
     async function loadUser() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -94,46 +99,43 @@ export default function PricingPage() {
         body: JSON.stringify({ priceId, userId }),
       })
       const data = await res.json()
-      if (!res.ok) {
-        setCheckoutError(data.error || 'Checkout failed. Please try again.')
-        return
-      }
+      if (!res.ok) { setCheckoutError(data.error || 'Checkout failed. Please try again.'); return }
       if (data.url) window.location.href = data.url
       else setCheckoutError('Checkout failed. Missing redirect URL.')
     } catch (err) {
       console.error('Checkout error:', err)
       setCheckoutError('Checkout failed. Please try again.')
-    } finally {
-      setLoading(null)
-    }
+    } finally { setLoading(null) }
   }
 
   return (
     <div style={{ minHeight: '100vh' }}>
 
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '52px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '48px' }}>
         <h1 style={{
-          fontFamily: 'Instrument Serif, serif',
-          fontSize: 'clamp(30px, 4vw, 44px)',
-          fontWeight: '400', color: '#16150F',
-          letterSpacing: '-1px', marginBottom: '10px',
-          opacity: mounted ? 1 : 0,
-          transform: mounted ? 'translateY(0)' : 'translateY(12px)',
+          fontFamily: CPR,
+          fontSize: 'clamp(24px, 4vw, 40px)', fontWeight: '700',
+          color: '#0E0E0E', letterSpacing: '-0.02em',
+          textTransform: 'uppercase', marginBottom: '8px',
+          opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(12px)',
           transition: 'opacity 400ms ease, transform 400ms ease',
         }}>
           Simple, honest pricing
         </h1>
-        <p style={{ color: '#6B6960', fontSize: '16px', marginBottom: '32px', opacity: mounted ? 1 : 0, transition: 'opacity 400ms ease 80ms' }}>
+        <p style={{
+          fontFamily: JET, color: '#888880', fontSize: '11px',
+          textTransform: 'uppercase', letterSpacing: '.12em',
+          marginBottom: '28px',
+          opacity: mounted ? 1 : 0, transition: 'opacity 400ms ease 80ms',
+        }}>
           Write like a human. Pay like one too.
         </p>
 
         {/* Monthly / Annual toggle */}
         <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: '4px',
-          backgroundColor: '#FFFFFF', border: '1px solid #E5E2D8',
-          borderRadius: '100px', padding: '4px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+          display: 'inline-flex', alignItems: 'center', gap: '2px',
+          border: '1px solid #E0E0E0', padding: '3px',
         }}>
           {[
             { label: 'Monthly', value: false },
@@ -143,20 +145,23 @@ export default function PricingPage() {
               key={label}
               onClick={() => setAnnual(value)}
               style={{
-                padding: '8px 20px', borderRadius: '100px', border: 'none',
-                cursor: 'pointer', fontSize: '14px', fontWeight: '500',
-                backgroundColor: annual === value ? '#042A2B' : 'transparent',
-                color: annual === value ? '#FFFFFF' : '#6B6960',
-                transition: 'all 200ms ease', fontFamily: 'DM Sans, sans-serif',
+                padding: '8px 18px', border: 'none', cursor: 'pointer',
+                fontFamily: JET, fontSize: '10px', fontWeight: '500',
+                textTransform: 'uppercase', letterSpacing: '.12em',
+                backgroundColor: annual === value ? '#0E0E0E' : 'transparent',
+                color: annual === value ? '#FFFFFF' : '#888880',
+                transition: 'all 200ms ease',
                 display: 'flex', alignItems: 'center', gap: '8px',
               }}
             >
               {label}
               {badge && (
                 <span style={{
-                  backgroundColor: annual === value ? 'rgba(84,242,242,0.2)' : 'rgba(84,242,242,0.15)',
-                  color: annual === value ? '#54F2F2' : '#042A2B',
-                  fontSize: '11px', fontWeight: '700', padding: '1px 7px', borderRadius: '100px',
+                  fontFamily: JET, fontSize: '9px', fontWeight: '500',
+                  textTransform: 'uppercase', letterSpacing: '.1em',
+                  color: annual === value ? '#CCFF00' : '#7B5CF0',
+                  border: `1px solid ${annual === value ? '#CCFF00' : '#7B5CF0'}`,
+                  padding: '1px 6px',
                 }}>
                   {badge}
                 </span>
@@ -167,87 +172,96 @@ export default function PricingPage() {
       </div>
 
       {/* Plan cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ maxWidth: '960px', margin: '0 auto' }}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4" style={{ maxWidth: '960px', margin: '0 auto' }}>
+
         {checkoutError && (
           <div style={{
             gridColumn: '1 / -1',
-            backgroundColor: 'rgba(220,38,38,0.05)',
-            border: '1px solid rgba(220,38,38,0.18)',
-            borderRadius: '10px',
-            padding: '12px 16px',
-            color: '#DC2626',
-            fontSize: '14px',
-            marginBottom: '-6px',
+            border: '1px solid #DC2626', padding: '12px 16px',
+            fontFamily: JET, color: '#DC2626', fontSize: '11px',
+            textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: '-4px',
           }}>
             {checkoutError}
           </div>
         )}
+
         {PLAN_DATA.map((plan, i) => {
           const isCurrent = currentPlan === plan.key
           const price     = annual ? plan.annualMonthlyPrice : plan.monthlyPrice
-          const isDark    = plan.popular
+          const isPopular = plan.popular
 
           return (
             <div
               key={plan.key}
               style={{
-                backgroundColor: isDark ? '#042A2B' : '#FFFFFF',
-                border: '1px solid #E8ECF4',
-                borderRadius: '12px',
-                padding: '32px',
+                backgroundColor: isPopular ? '#0A0A0A' : '#FFFFFF',
+                border: isPopular ? '1px solid #CCFF00' : '1px solid #E0E0E0',
+                borderRadius: '2px',
+                padding: '28px',
                 position: 'relative',
                 opacity:    mounted ? 1 : 0,
                 transform:  mounted ? 'translateY(0)' : 'translateY(16px)',
                 transition: `opacity 400ms ease ${i * 80}ms, transform 400ms ease ${i * 80}ms`,
-                boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
               }}
             >
-              {plan.popular && (
+              {isPopular && (
                 <div style={{
-                  position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)',
-                  backgroundColor: '#54F2F2', color: '#042A2B',
-                  fontSize: '12px', fontWeight: '700',
-                  padding: '4px 16px', borderRadius: '100px', whiteSpace: 'nowrap',
+                  position: 'absolute', top: '-1px', left: '50%', transform: 'translateX(-50%)',
+                  backgroundColor: '#CCFF00', color: '#0A0A0A',
+                  fontFamily: JET, fontSize: '9px', fontWeight: '700',
+                  textTransform: 'uppercase', letterSpacing: '.15em',
+                  padding: '4px 14px', whiteSpace: 'nowrap',
                 }}>
                   Most popular
                 </div>
               )}
 
-              {/* Plan name + desc */}
-              <div style={{ marginBottom: '24px' }}>
+              {/* Plan name + dot */}
+              <div style={{ marginBottom: '20px', paddingTop: isPopular ? '12px' : '0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                   <div style={{
-                    width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
-                    backgroundColor: plan.popular ? '#54F2F2' : plan.key === 'pro' ? '#9ECFCF' : '#E5E2D8',
+                    width: '7px', height: '7px', borderRadius: '50%', flexShrink: 0,
+                    backgroundColor: isPopular ? '#CCFF00' : plan.key === 'pro' ? '#7B5CF0' : '#E0E0E0',
                   }} />
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: isDark ? '#E4F5F5' : '#16150F', fontFamily: 'DM Sans, sans-serif' }}>
+                  <h3 style={{
+                    fontFamily: JET, fontSize: '11px', fontWeight: '500',
+                    textTransform: 'uppercase', letterSpacing: '.15em',
+                    color: isPopular ? '#FFFFFF' : '#0E0E0E',
+                  }}>
                     {plan.name}
                   </h3>
                 </div>
-                <p style={{ fontSize: '13px', color: isDark ? '#5E8E90' : '#6B6960', lineHeight: '1.5' }}>
+                <p style={{
+                  fontFamily: JET, fontSize: '11px', lineHeight: '1.6',
+                  color: isPopular ? 'rgba(255,255,255,0.4)' : '#888880',
+                }}>
                   {plan.description}
                 </p>
               </div>
 
               {/* Price */}
-              <div style={{ marginBottom: '28px' }}>
+              <div style={{ marginBottom: '24px' }}>
                 {plan.monthlyPrice === 0 ? (
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                    <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '42px', fontWeight: '800', letterSpacing: '-2px', color: isDark ? '#E4F5F5' : '#16150F' }}>
+                    <span style={{ fontFamily: CPR, fontSize: '40px', fontWeight: '700', letterSpacing: '-2px', color: isPopular ? '#FFFFFF' : '#0E0E0E' }}>
                       $0
                     </span>
-                    <span style={{ fontSize: '14px', color: isDark ? '#5E8E90' : '#A09D95' }}>/ forever</span>
+                    <span style={{ fontFamily: JET, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: isPopular ? 'rgba(255,255,255,0.3)' : '#888880' }}>
+                      / forever
+                    </span>
                   </div>
                 ) : (
                   <>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                      <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '42px', fontWeight: '800', letterSpacing: '-2px', color: plan.popular ? '#54F2F2' : '#16150F' }}>
+                      <span style={{ fontFamily: CPR, fontSize: '40px', fontWeight: '700', letterSpacing: '-2px', color: isPopular ? '#CCFF00' : '#0E0E0E' }}>
                         ${price}
                       </span>
-                      <span style={{ fontSize: '14px', color: isDark ? '#5E8E90' : '#A09D95' }}>/ mo</span>
+                      <span style={{ fontFamily: JET, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: isPopular ? 'rgba(255,255,255,0.3)' : '#888880' }}>
+                        / mo
+                      </span>
                     </div>
                     {annual && (
-                      <p style={{ fontSize: '12px', color: isDark ? '#54F2F2' : '#042A2B', marginTop: '3px', fontWeight: '500' }}>
+                      <p style={{ fontFamily: JET, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', color: isPopular ? 'rgba(204,255,0,0.7)' : '#7B5CF0', marginTop: '4px' }}>
                         Billed ${plan.annualPrice}/year
                       </p>
                     )}
@@ -260,30 +274,34 @@ export default function PricingPage() {
                 onClick={() => handleSubscribe(plan)}
                 disabled={isCurrent || plan.key === 'free' || loading === plan.key}
                 style={{
-                  width: '100%', padding: '12px 0',
-                  borderRadius: '10px', border: 'none',
+                  width: '100%', padding: '11px 0',
+                  border: 'none', borderRadius: '2px',
                   cursor: isCurrent || plan.key === 'free' ? 'default' : 'pointer',
-                  fontSize: '14px', fontWeight: '600',
-                  marginBottom: '28px',
+                  fontFamily: JET, fontSize: '11px', fontWeight: '500',
+                  textTransform: 'uppercase', letterSpacing: '.12em',
+                  marginBottom: '24px',
                   transition: 'all 200ms ease',
                   backgroundColor: isCurrent || plan.key === 'free'
-                    ? (isDark ? 'rgba(255,255,255,0.05)' : '#F9F8F5')
-                    : isDark ? '#54F2F2' : '#042A2B',
+                    ? (isPopular ? 'rgba(255,255,255,0.06)' : '#F5F5F5')
+                    : isPopular ? '#CCFF00' : '#0E0E0E',
                   color: isCurrent || plan.key === 'free'
-                    ? (isDark ? '#5E8E90' : '#A09D95')
-                    : isDark ? '#042A2B' : '#FFFFFF',
+                    ? (isPopular ? 'rgba(255,255,255,0.25)' : '#888880')
+                    : isPopular ? '#0A0A0A' : '#FFFFFF',
                   opacity: loading === plan.key ? 0.7 : 1,
-                  fontFamily: 'DM Sans, sans-serif',
                 }}
               >
                 {loading === plan.key ? 'Redirecting…' : isCurrent ? 'Current plan' : plan.cta}
               </button>
 
               {/* Features */}
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '9px' }}>
                 {plan.features.map((feature) => (
-                  <li key={feature} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: isDark ? '#9ECFCF' : '#6B6960' }}>
-                    <Check cyan={isDark} />
+                  <li key={feature} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: '8px',
+                    fontFamily: JET, fontSize: '11px', lineHeight: '1.5',
+                    color: isPopular ? 'rgba(255,255,255,0.55)' : '#888880',
+                  }}>
+                    <Check lime={isPopular} />
                     {feature}
                   </li>
                 ))}
@@ -294,11 +312,12 @@ export default function PricingPage() {
       </div>
 
       <p style={{
-        textAlign: 'center', fontSize: '13px', color: '#A09D95',
-        marginTop: '40px',
+        textAlign: 'center', fontFamily: JET, fontSize: '10px',
+        color: '#888880', textTransform: 'uppercase', letterSpacing: '.12em',
+        marginTop: '36px',
         opacity: mounted ? 1 : 0, transition: 'opacity 400ms ease 400ms',
       }}>
-        Cancel anytime · No hidden fees · Secure payment via Stripe
+        Cancel anytime &middot; No hidden fees &middot; Secure payment via Stripe
       </p>
     </div>
   )

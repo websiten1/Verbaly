@@ -2,420 +2,335 @@
 
 import { useEffect, useRef } from 'react'
 
-const CSS = `
-  /* ── tokens ─────────────────────────────── */
-  :root {
-    --paper:  #FFFFFF;
-    --ink:    #0E0E0E;
-    --violet: #6B1FFF;
-    --gray:   #888880;
-  }
+/* ── Design tokens ─────────────────────────────── */
+// black: #0A0A0A  lime: #CCFF00  white: #FFFFFF  purple: #7B5CF0
 
-  /* ── base ───────────────────────────────── */
-  html { scroll-behavior: smooth; overflow-x: hidden; }
-  html, body { background: #FFFFFF; }
+const CSS = `
+  /* ── reset + base ──────────────────────────── */
+  html, body { background: #0A0A0A; overflow-x: hidden; }
   body {
-    margin: 0; padding: 0; overflow-x: hidden;
-    color: #0E0E0E;
+    margin: 0; padding: 0; color: #FFFFFF;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     -webkit-font-smoothing: antialiased;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  ::selection { background: #6B1FFF; color: #FFFFFF; }
+  ::selection { background: #CCFF00; color: #0A0A0A; }
   ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-thumb { background: #0E0E0E; }
+  ::-webkit-scrollbar-thumb { background: #CCFF00; }
 
-  /* ── cursor ─────────────────────────────── */
+  /* ── cursor ────────────────────────────────── */
   @media (pointer: fine) { body.lp { cursor: none; } }
   #lp-cur {
-    display: none;
-    position: fixed;
-    width: 2px; height: 20px;
-    background: #0E0E0E;
-    pointer-events: none;
-    z-index: 9999;
+    display: none; position: fixed;
+    width: 2px; height: 20px; background: #CCFF00;
+    pointer-events: none; z-index: 9999;
     transform: translate(-50%, -50%);
     animation: lp-blink .85s step-end infinite;
   }
   @media (pointer: fine) { #lp-cur { display: block; } }
 
-  /* ── grain ──────────────────────────────── */
+  /* ── grain ─────────────────────────────────── */
   #lp-grain {
-    position: fixed; inset: 0;
-    pointer-events: none; z-index: 800; opacity: .035;
+    position: fixed; inset: 0; pointer-events: none; z-index: 800; opacity: .045;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 180px 180px;
   }
 
-  /* ── nav ────────────────────────────────── */
+  /* ── nav ───────────────────────────────────── */
   .lp-nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 200; height: 56px;
-    padding: 0 clamp(16px, 4vw, 40px);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    height: 56px; padding: 0 clamp(16px, 4vw, 48px);
     display: flex; align-items: center; justify-content: space-between;
-    background: #FFFFFF;
+    background: #0A0A0A;
     border-bottom: 1px solid transparent;
     transition: border-color .2s ease;
   }
-  .lp-nav.scrolled { border-bottom-color: #0E0E0E; }
-
+  .lp-nav.scrolled { border-bottom-color: rgba(255,255,255,0.1); }
   .lp-logo {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: 13px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .2em;
-    color: #0E0E0E; text-decoration: none;
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .2em; color: #FFFFFF; text-decoration: none;
   }
   .lp-navbtn {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 10px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .16em;
-    color: #0E0E0E; background: transparent;
-    border: 1px solid #0E0E0E; padding: 8px 20px; cursor: pointer;
+    font-size: 10px; font-weight: 400; text-transform: uppercase;
+    letter-spacing: .16em; color: #CCFF00; background: transparent;
+    border: 1px solid #CCFF00; padding: 8px 20px; cursor: pointer;
     transition: background .2s, color .2s;
   }
-  .lp-navbtn:hover { background: #0E0E0E; color: #FFFFFF; }
+  .lp-navbtn:hover { background: #CCFF00; color: #0A0A0A; }
 
-  /* ── hero — tight newspaper layout ──────── */
+  /* ── hero ──────────────────────────────────── */
   .lp-main {
-    background: #FFFFFF;
+    background: #0A0A0A;
     display: flex; flex-direction: column;
     align-items: center; text-align: center;
-    padding: 100px clamp(16px, 4vw, 24px) 80px;
+    padding: 110px clamp(16px, 4vw, 32px) 80px;
   }
 
+  /* eyebrow */
   .lp-eyebrow {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 11px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .3em;
-    color: #888880; margin-bottom: 40px;
-    opacity: 0; animation: lp-fadein .5s ease .1s forwards;
+    font-size: 11px; font-weight: 400; text-transform: uppercase;
+    letter-spacing: .3em; color: rgba(255,255,255,0.35);
+    margin-bottom: 32px;
+    opacity: 0; animation: lp-fadein .6s ease .1s forwards;
   }
 
+  /* giant title — lime outline ghost on black */
   .lp-title {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(56px, 13vw, 180px);
     font-weight: 700; text-transform: uppercase;
     letter-spacing: -.025em; line-height: .9;
-    color: #0E0E0E; margin-bottom: 16px;
-    max-width: 100%;
+    color: transparent;
+    -webkit-text-stroke: 2px #CCFF00;
+    margin-bottom: 20px; max-width: 100%;
+    opacity: 0; animation: lp-fadein .5s ease .05s forwards;
   }
   .lp-title .lp-c {
-    display: inline-block; opacity: 0; transform: translateY(-10px);
+    display: inline-block; opacity: 0; transform: translateY(-12px);
     transition: opacity .09s ease, transform .09s ease;
   }
   .lp-title .lp-c.in { opacity: 1; transform: translateY(0); }
 
+  /* subtitle */
   .lp-sub {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 12px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .3em;
-    color: #888880; margin-bottom: 20px;
+    font-size: clamp(10px, 1.4vw, 13px); font-weight: 400;
+    text-transform: uppercase; letter-spacing: .35em;
+    color: rgba(255,255,255,0.55); margin-bottom: 20px;
     opacity: 0; transition: opacity .6s ease;
   }
   .lp-sub.in { opacity: 1; }
 
+  /* typewriter cycler */
   .lp-cycler {
     display: flex; align-items: center; justify-content: center;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 13px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .12em;
-    color: #0E0E0E; min-height: 20px; margin-bottom: 32px;
+    font-size: clamp(11px, 1.4vw, 13px); font-weight: 400;
+    text-transform: uppercase; letter-spacing: .14em;
+    color: #CCFF00; min-height: 20px; margin-bottom: 36px;
     opacity: 0; transition: opacity .4s ease;
   }
   .lp-cycler.in { opacity: 1; }
   .lp-vcur {
-    display: inline-block; width: 1.5px; height: 13px;
-    background: #6B1FFF; margin-left: 2px; vertical-align: middle;
+    display: inline-block; width: 2px; height: 13px;
+    background: #CCFF00; margin-left: 2px; vertical-align: middle;
     animation: lp-blink .7s step-end infinite;
   }
 
-  /* ── form block ─────────────────────────── */
-  .lp-form-block { width: 100%; max-width: 500px; }
-
+  /* form block */
+  .lp-form-block { width: 100%; max-width: 520px; }
   .lp-form-heading {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: 32px; font-weight: 700;
+    font-size: clamp(22px, 3vw, 30px); font-weight: 700;
     text-transform: uppercase; letter-spacing: -.01em;
-    color: #0E0E0E; margin-bottom: 8px;
+    color: #FFFFFF; margin-bottom: 8px;
   }
-  .lp-form-rule { height: 1px; background: #6B1FFF; margin-bottom: 8px; }
+  .lp-form-rule { height: 1px; background: #CCFF00; margin-bottom: 8px; }
   .lp-form-sub {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 10px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .22em;
-    color: #888880; margin-bottom: 20px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .22em;
+    color: rgba(255,255,255,0.4); margin-bottom: 20px;
   }
-  .lp-form-row { display: flex; border: 1px solid #0E0E0E; margin-bottom: 12px; }
+  .lp-form-row {
+    display: flex; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 12px;
+    transition: border-color .2s;
+  }
+  .lp-form-row:focus-within { border-color: #CCFF00; }
   .lp-input {
     flex: 1; min-width: 0; background: transparent; border: none;
     padding: 14px 16px;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 11px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .08em;
-    color: #0E0E0E; outline: none;
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: #FFFFFF; outline: none;
   }
-  .lp-input::placeholder { color: #888880; }
+  .lp-input::placeholder { color: rgba(255,255,255,0.25); }
   .lp-btn {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 11px; font-weight: 500;
-    text-transform: uppercase; letter-spacing: .14em;
-    color: #FFFFFF; background: #0E0E0E;
-    border: none; border-left: 1px solid #0E0E0E;
+    font-size: 11px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: .14em; color: #0A0A0A; background: #CCFF00;
+    border: none; border-left: 1px solid rgba(255,255,255,0.1);
     padding: 14px 22px; cursor: pointer; white-space: nowrap;
     transition: background .2s ease;
   }
-  .lp-btn:hover { background: #6B1FFF; }
+  .lp-btn:hover { background: #FFFFFF; }
   .lp-counter {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 10px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .2em;
-    color: #6B1FFF; text-align: center;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
+    color: #7B5CF0; text-align: center;
   }
 
-  /* ── demo section ───────────────────────── */
+  /* ── demo section ──────────────────────────── */
   .lp-demo {
-    background: #FFFFFF;
+    background: #0F0F0F;
     padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 48px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-top: 1px solid #E0E0E0;
+    display: flex; flex-direction: column; align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.06);
   }
-
   .lp-demo-label {
-    font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: 11px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .3em;
-    color: #888880;
-    margin-bottom: 10px;
-    text-align: center;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 11px; text-transform: uppercase; letter-spacing: .3em;
+    color: rgba(255,255,255,0.35); margin-bottom: 10px; text-align: center;
   }
-
-  .lp-demo-rule {
-    width: 60px; height: 1px;
-    background: #6B1FFF;
-    margin-bottom: 24px;
-    flex-shrink: 0;
-  }
+  .lp-demo-rule { width: 60px; height: 1px; background: #CCFF00; margin-bottom: 24px; }
 
   /* browser chrome */
-  .lp-browser {
-    width: 100%; max-width: 860px;
-    border: 1px solid #E0E0E0;
-  }
-
+  .lp-browser { width: 100%; max-width: 860px; border: 1px solid rgba(255,255,255,0.1); }
   .lp-browser-bar {
-    background: #F5F5F5;
-    padding: 9px 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid #E0E0E0;
+    background: #1A1A1A; padding: 9px 14px;
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
-
-  .lp-browser-dots {
-    display: flex; gap: 5px; flex-shrink: 0;
-  }
+  .lp-browser-dots { display: flex; gap: 5px; flex-shrink: 0; }
   .lp-dot { width: 10px; height: 10px; border-radius: 50%; }
   .lp-dot-r { background: #FF5F57; }
   .lp-dot-y { background: #FFBD2E; }
   .lp-dot-g { background: #28C840; }
-
-  .lp-url-bar {
-    flex: 1; min-width: 0;
-    background: #E8E8E8;
-    border-radius: 3px;
-    height: 22px;
-  }
-
-  /* browser body: two columns */
-  .lp-browser-body {
-    display: flex;
-  }
-
-  .lp-col {
-    flex: 1; min-width: 0;
-    padding: clamp(16px, 2.5vw, 28px);
-  }
-  .lp-col + .lp-col {
-    border-left: 1px solid #E0E0E0;
-  }
-
-  /* column header row */
-  .lp-col-hdr {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-    gap: 8px;
-  }
-  .lp-col-hdr-left {
-    display: flex; align-items: center; gap: 6px;
-  }
-  .lp-col-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%; flex-shrink: 0;
-  }
-  .lp-col-dot-gray  { background: #888880; }
-  .lp-col-dot-vi    { background: #6B1FFF; }
-
+  .lp-url-bar { flex: 1; min-width: 0; background: #2A2A2A; border-radius: 3px; height: 22px; }
+  .lp-browser-body { display: flex; }
+  .lp-col { flex: 1; min-width: 0; padding: clamp(16px, 2.5vw, 28px); }
+  .lp-col + .lp-col { border-left: 1px solid rgba(255,255,255,0.08); }
+  .lp-col-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 8px; }
+  .lp-col-hdr-left { display: flex; align-items: center; gap: 6px; }
+  .lp-col-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .lp-col-dot-muted { background: rgba(255,255,255,0.25); }
+  .lp-col-dot-lime  { background: #CCFF00; }
   .lp-col-lbl {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 10px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .2em;
-    color: #888880;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
+    color: rgba(255,255,255,0.35);
   }
-  .lp-col-lbl-dark { color: #0E0E0E; }
-
+  .lp-col-lbl-bright { color: rgba(255,255,255,0.8); }
   .lp-match-badge {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 10px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .06em;
-    color: #FFFFFF;
-    background: #6B1FFF;
-    padding: 3px 8px;
-    border-radius: 2px;
-    white-space: nowrap;
-    flex-shrink: 0;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
+    color: #FFFFFF; background: #7B5CF0;
+    padding: 3px 8px; border-radius: 2px; white-space: nowrap; flex-shrink: 0;
   }
-
   .lp-col-text-ai {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(11px, 1.4vw, 13px); line-height: 1.75;
-    color: #BBBBBB;
+    color: rgba(255,255,255,0.2);
   }
   .lp-col-text-you {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(11px, 1.4vw, 13px); line-height: 1.75;
-    color: #0E0E0E;
+    color: rgba(255,255,255,0.9);
   }
 
-  /* scroll reveal */
-  #lp-col-ai {
-    opacity: 0;
-    transition: opacity .5s ease;
-  }
+  /* browser col scroll reveal */
+  #lp-col-ai  { opacity: 0; transition: opacity .5s ease; }
   #lp-col-ai.in { opacity: 1; }
-
-  #lp-col-you {
-    opacity: 0;
-    transform: translateX(10px);
-    transition: opacity .5s ease .3s, transform .5s ease .3s;
-  }
+  #lp-col-you { opacity: 0; transform: translateX(10px); transition: opacity .5s ease .3s, transform .5s ease .3s; }
   #lp-col-you.in { opacity: 1; transform: translateX(0); }
 
   .lp-demo-caption {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 10px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .2em;
-    color: #888880;
-    margin-top: 20px;
-    text-align: center;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
+    color: #CCFF00; margin-top: 20px; text-align: center;
   }
 
-  /* ── dark section ───────────────────────── */
-  .lp-dark {
-    background: #0E0E0E;
-    padding: clamp(40px, 6vw, 80px) clamp(16px, 4vw, 48px);
+  /* ── YOUR VOICE section ────────────────────── */
+  .lp-voice {
+    background: #0A0A0A;
+    height: 100vh;
+    display: flex; flex-direction: column;
+    padding: 0 clamp(16px, 4vw, 48px);
     overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,0.06);
   }
 
-  .lp-dark-yellow {
+  /* three lines grow to fill available space equally */
+  .lp-voice-lines {
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: space-evenly;
+    padding: clamp(16px, 3vh, 40px) 0;
+  }
+
+  /* font size: fill the width, cap by height so all 3 fit */
+  .lp-voice-line {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(48px, 10vw, 160px);
+    font-size: clamp(36px, min(10.5vw, 22vh), 152px);
     font-weight: 700; text-transform: uppercase;
-    letter-spacing: -.02em; line-height: .88;
-    color: #C8F400; white-space: nowrap;
-    opacity: 0; transform: translateX(-48px);
-    transition: opacity .6s ease, transform .6s ease;
-  }
-  .lp-dark-yellow.in { opacity: 1; transform: translateX(0); }
-
-  .lp-dark-ghosts {
-    display: flex; gap: clamp(16px, 4vw, 48px); flex-wrap: wrap;
-    opacity: 0;
-    transition: opacity .5s ease .3s;
-  }
-  .lp-dark-ghosts.in { opacity: 1; }
-
-  .lp-ghost-1 {
-    font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(48px, 10vw, 160px);
-    font-weight: 700; text-transform: uppercase;
-    letter-spacing: -.02em; line-height: .88;
-    color: transparent; white-space: nowrap;
-    -webkit-text-stroke: 1.5px #2a2a2a;
-  }
-  .lp-ghost-2 {
-    font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(48px, 10vw, 160px);
-    font-weight: 700; text-transform: uppercase;
-    letter-spacing: -.02em; line-height: .88;
-    color: transparent; white-space: nowrap;
-    -webkit-text-stroke: 1.5px #3a3a3a;
+    letter-spacing: -.02em; line-height: 1;
+    white-space: nowrap;
   }
 
-  .lp-dark-bar {
+  /* "YOUR VOICE." — lime solid */
+  .lp-vl-lime { color: #CCFF00; }
+
+  /* "SOUNDS LIKE YOU." — white outline */
+  .lp-vl-white-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255,255,255,0.6);
+  }
+
+  /* "EVERY WHERE." — purple outline */
+  .lp-vl-purple-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px #7B5CF0;
+  }
+
+  /* scroll reveal — slide from left */
+  .lp-vl-lime          { opacity: 0; transform: translateX(-40px); transition: opacity .6s ease, transform .6s ease; }
+  .lp-vl-white-outline { opacity: 0; transform: translateX(-40px); transition: opacity .6s ease .15s, transform .6s ease .15s; }
+  .lp-vl-purple-outline{ opacity: 0; transform: translateX(-40px); transition: opacity .6s ease .3s, transform .6s ease .3s; }
+  .lp-vl-lime.in           { opacity: 1; transform: translateX(0); }
+  .lp-vl-white-outline.in  { opacity: 1; transform: translateX(0); }
+  .lp-vl-purple-outline.in { opacity: 1; transform: translateX(0); }
+
+  /* bottom bar pinned to bottom of section */
+  .lp-voice-bar {
+    flex-shrink: 0;
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: wrap; gap: 12px;
-    margin-top: 48px;
-    padding-top: 20px;
-    border-top: 1px solid #1a1a1a;
+    padding: 16px 0 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
   }
-  .lp-dark-tag {
+  .lp-voice-tag {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 11px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .15em;
-    color: #666660;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .15em;
+    color: rgba(255,255,255,0.3);
   }
 
-  /* ── footer (static) ────────────────────── */
+  /* ── footer ────────────────────────────────── */
   .lp-footer {
-    background: #FFFFFF;
-    height: 44px; padding: 0 clamp(16px, 4vw, 40px);
+    background: #0A0A0A;
+    height: 44px; padding: 0 clamp(16px, 4vw, 48px);
     display: flex; align-items: center; justify-content: space-between;
-    border-top: 1px solid #0E0E0E;
+    border-top: 1px solid rgba(255,255,255,0.1);
   }
   .lp-ft {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 10px; font-weight: 400;
-    text-transform: uppercase; letter-spacing: .2em; color: #888880;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
+    color: rgba(255,255,255,0.25);
   }
 
-  /* ── keyframes ──────────────────────────── */
-  @keyframes lp-blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0; }
-  }
-  @keyframes lp-fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
+  /* ── keyframes ─────────────────────────────── */
+  @keyframes lp-blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+  @keyframes lp-fadein { from{opacity:0;} to{opacity:1;} }
 
-  /* ── responsive ─────────────────────────── */
+  /* ── responsive ────────────────────────────── */
   @media (max-width: 640px) {
     .lp-browser-body { flex-direction: column; }
-    .lp-col + .lp-col { border-left: none; border-top: 1px solid #E0E0E0; }
+    .lp-col + .lp-col { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); }
     #lp-col-you { transform: translateX(0); }
+    .lp-voice { height: auto; min-height: 100vh; }
+    .lp-voice-lines { justify-content: flex-start; gap: clamp(16px, 4vw, 32px); }
   }
-
   @media (max-width: 480px) {
     .lp-form-row { flex-direction: column; }
-    .lp-btn {
-      border-left: none; border-top: 1px solid #0E0E0E;
-      padding: 14px; width: 100%;
-    }
-  }
-
-  @media (max-width: 560px) {
-    .lp-dark-ghosts { gap: 16px; }
+    .lp-btn { border-left: none; border-top: 1px solid rgba(255,255,255,0.1); padding: 14px; width: 100%; }
   }
 `
 
 const PHRASES = [
   "YOUR VOICE. NOT A ROBOT'S.",
-  "AI TEXT THAT SOUNDS LIKE YOU.",
-  "WRITE LESS. SOUND MORE.",
+  "YOUR WORDS. YOUR STYLE.",
+  "AI THAT SOUNDS LIKE YOU.",
 ]
 
 export default function LandingPage() {
@@ -437,10 +352,7 @@ export default function LandingPage() {
       cur.style.top  = e.clientY + 'px'
     }
     document.addEventListener('mousemove', move, { passive: true })
-    return () => {
-      document.body.classList.remove('lp')
-      document.removeEventListener('mousemove', move)
-    }
+    return () => { document.body.classList.remove('lp'); document.removeEventListener('mousemove', move) }
   }, [])
 
   /* nav border on scroll */
@@ -452,7 +364,7 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  /* title → subtitle → cycler */
+  /* title → subtitle → cycler chain */
   useEffect(() => {
     const title = titleRef.current
     if (!title) return
@@ -462,13 +374,12 @@ export default function LandingPage() {
       s.className = 'lp-c'
       s.textContent = ch
       title.appendChild(s)
-      setTimeout(() => s.classList.add('in'), 260 + i * 30)
+      setTimeout(() => s.classList.add('in'), 200 + i * 50)
     })
-
-    const afterTitle = 260 + 7 * 30 + 110
+    const afterTitle = 200 + 7 * 50 + 120
     setTimeout(() => {
       subRef.current?.classList.add('in')
-      setTimeout(startCycler, 380)
+      setTimeout(startCycler, 400)
     }, afterTitle)
 
     function startCycler() {
@@ -485,54 +396,50 @@ export default function LandingPage() {
           t.textContent = p.slice(0, ++ci)
           if (ci === p.length) {
             paused = true
-            setTimeout(() => { paused = false; del = true; tick() }, 1500)
+            setTimeout(() => { paused = false; del = true; tick() }, 2000)
             return
           }
-          setTimeout(tick, 40)
+          setTimeout(tick, 38)
         } else {
           t.textContent = p.slice(0, --ci)
           if (ci === 0) {
-            del = false
-            pi = (pi + 1) % PHRASES.length
-            setTimeout(tick, 420)
-            return
+            del = false; pi = (pi + 1) % PHRASES.length
+            setTimeout(tick, 400); return
           }
-          setTimeout(tick, 24)
+          setTimeout(tick, 20)
         }
       }
       setTimeout(tick, 200)
     }
   }, [])
 
-  /* demo section scroll reveal */
+  /* demo browser reveal */
   useEffect(() => {
     const ai  = document.getElementById('lp-col-ai')
     const you = document.getElementById('lp-col-you')
     if (!ai) return
     const io = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) {
-        ai.classList.add('in')
-        you?.classList.add('in')
-        io.disconnect()
-      }
+      if (entries[0].isIntersecting) { ai.classList.add('in'); you?.classList.add('in'); io.disconnect() }
     }, { threshold: 0.2 })
     io.observe(ai)
     return () => io.disconnect()
   }, [])
 
-  /* dark section scroll animation */
+  /* YOUR VOICE section reveal */
   useEffect(() => {
-    const yellow = document.getElementById('lp-yellow')
-    const ghosts = document.getElementById('lp-ghosts')
-    if (!yellow || !ghosts) return
+    const lime   = document.getElementById('lp-vl-lime')
+    const white  = document.getElementById('lp-vl-white')
+    const purple = document.getElementById('lp-vl-purple')
+    if (!lime) return
     const io = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) {
-        yellow.classList.add('in')
-        setTimeout(() => ghosts.classList.add('in'), 300)
+        lime.classList.add('in')
+        white?.classList.add('in')
+        purple?.classList.add('in')
         io.disconnect()
       }
-    }, { threshold: 0.15 })
-    io.observe(yellow)
+    }, { threshold: 0.1 })
+    io.observe(lime)
     return () => io.disconnect()
   }, [])
 
@@ -544,8 +451,7 @@ export default function LandingPage() {
     if (!email) return
     window.open(
       `https://useverbalyapp.beehiiv.com/subscribe?email=${encodeURIComponent(email)}`,
-      '_blank',
-      'noopener,noreferrer'
+      '_blank', 'noopener,noreferrer'
     )
     input.value = ''
     input.placeholder = "YOU'RE ON THE LIST. CHECK YOUR EMAIL."
@@ -554,23 +460,18 @@ export default function LandingPage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-
       <div id="lp-grain" aria-hidden="true" />
       <div ref={curRef} id="lp-cur" aria-hidden="true" />
 
-      {/* ── NAV ─────────────────────────────── */}
+      {/* ── NAV ─── */}
       <nav ref={navRef} className="lp-nav" role="navigation">
         <a href="/" className="lp-logo">Verbaly</a>
-        <button
-          className="lp-navbtn"
-          onClick={() => emailRef.current?.focus()}
-          aria-label="Join the waitlist"
-        >
+        <button className="lp-navbtn" onClick={() => emailRef.current?.focus()} aria-label="Join the waitlist">
           Join Waitlist
         </button>
       </nav>
 
-      {/* ── HERO / WAITLIST ─────────────────── */}
+      {/* ── HERO ─── */}
       <main className="lp-main" role="main">
 
         <p className="lp-eyebrow">Pre-Launch &middot; AI Writing Tool</p>
@@ -590,13 +491,9 @@ export default function LandingPage() {
           <p className="lp-form-sub">Free Pro Access &middot; First 500 People</p>
           <form className="lp-form-row" onSubmit={handleSubmit} noValidate>
             <input
-              ref={emailRef}
-              className="lp-input"
-              type="email"
-              placeholder="Your email address"
-              autoComplete="email"
-              required
-              aria-label="Email address"
+              ref={emailRef} className="lp-input" type="email"
+              placeholder="Your email address" autoComplete="email"
+              required aria-label="Email address"
             />
             <button className="lp-btn" type="submit">Join &rarr;</button>
           </form>
@@ -607,14 +504,13 @@ export default function LandingPage() {
 
       </main>
 
-      {/* ── DEMO SECTION ────────────────────── */}
+      {/* ── DEMO ─── */}
       <section className="lp-demo" aria-label="See the difference">
 
         <p className="lp-demo-label">See the Difference</p>
         <div className="lp-demo-rule" aria-hidden="true" />
 
         <div className="lp-browser" role="img" aria-label="Before and after comparison">
-
           <div className="lp-browser-bar" aria-hidden="true">
             <div className="lp-browser-dots">
               <span className="lp-dot lp-dot-r" />
@@ -625,11 +521,10 @@ export default function LandingPage() {
           </div>
 
           <div className="lp-browser-body">
-
             <div id="lp-col-ai" className="lp-col">
               <div className="lp-col-hdr">
                 <div className="lp-col-hdr-left">
-                  <span className="lp-col-dot lp-col-dot-gray" aria-hidden="true" />
+                  <span className="lp-col-dot lp-col-dot-muted" aria-hidden="true" />
                   <span className="lp-col-lbl">AI Generated</span>
                 </div>
               </div>
@@ -644,8 +539,8 @@ export default function LandingPage() {
             <div id="lp-col-you" className="lp-col">
               <div className="lp-col-hdr">
                 <div className="lp-col-hdr-left">
-                  <span className="lp-col-dot lp-col-dot-vi" aria-hidden="true" />
-                  <span className="lp-col-lbl lp-col-lbl-dark">Your Voice</span>
+                  <span className="lp-col-dot lp-col-dot-lime" aria-hidden="true" />
+                  <span className="lp-col-lbl lp-col-lbl-bright">Your Voice</span>
                 </div>
                 <span className="lp-match-badge" aria-label="94% match">94% Match</span>
               </div>
@@ -655,7 +550,6 @@ export default function LandingPage() {
                 The decisions aren&rsquo;t. That gap? That&rsquo;s the problem worth solving.
               </p>
             </div>
-
           </div>
         </div>
 
@@ -665,24 +559,23 @@ export default function LandingPage() {
 
       </section>
 
-      {/* ── DARK SECTION ────────────────────── */}
-      <section className="lp-dark" aria-label="Your voice, everywhere">
+      {/* ── YOUR VOICE SECTION ─── */}
+      <section className="lp-voice" aria-label="Your voice, everywhere">
 
-        <p id="lp-yellow" className="lp-dark-yellow">YOUR VOICE.</p>
-
-        <div id="lp-ghosts" className="lp-dark-ghosts" aria-hidden="true">
-          <span className="lp-ghost-1">SOUNDS LIKE YOU.</span>
-          <span className="lp-ghost-2">EVERY WHERE.</span>
+        <div className="lp-voice-lines">
+          <p id="lp-vl-lime"   className="lp-voice-line lp-vl-lime">YOUR VOICE.</p>
+          <p id="lp-vl-white"  className="lp-voice-line lp-vl-white-outline" aria-hidden="true">SOUNDS LIKE YOU.</p>
+          <p id="lp-vl-purple" className="lp-voice-line lp-vl-purple-outline" aria-hidden="true">EVERY WHERE.</p>
         </div>
 
-        <div className="lp-dark-bar">
-          <span className="lp-dark-tag">Trained on your writing. Applied to everything.</span>
-          <span className="lp-dark-tag">No credit card ever required</span>
+        <div className="lp-voice-bar">
+          <span className="lp-voice-tag">Trained on your writing. Applied to everything.</span>
+          <span className="lp-voice-tag">No credit card ever required</span>
         </div>
 
       </section>
 
-      {/* ── FOOTER ──────────────────────────── */}
+      {/* ── FOOTER ─── */}
       <footer className="lp-footer" role="contentinfo">
         <span className="lp-ft">&copy; Verbaly 2026</span>
         <span className="lp-ft">Everything Sounds Like You</span>
