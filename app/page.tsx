@@ -439,12 +439,10 @@ export default function LandingPage() {
     setJoinState('loading')
     setJoinError(null)
     try {
-      const res = await fetch('https://magic.beehiiv.com/v1/5dbf8d69-9f54-4ee0-9658-260b88b823cb', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      await fetch(`https://magic.beehiiv.com/v1/5dbf8d69-9f54-4ee0-9658-260b88b823cb?email=${encodeURIComponent(email)}`, {
+        method: 'GET',
+        mode: 'no-cors',
       })
-      if (!res.ok) throw new Error('server')
       setJoinState('success')
       setCount(c => c + 1)
     } catch {
