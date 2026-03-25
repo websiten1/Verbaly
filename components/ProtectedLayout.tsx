@@ -9,19 +9,19 @@ interface ProtectedLayoutProps {
   children: React.ReactNode
 }
 
-const SIDEBAR_W = 240 // px — single source of truth
+const SIDEBAR_W = 220
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard',    shortLabel: 'Home',    icon: 'dashboard' },
-  { href: '/rewrite',   label: 'Rewrite',      shortLabel: 'Rewrite', icon: 'rewrite'   },
-  { href: '/generate',  label: 'Generate',     shortLabel: 'Generate',icon: 'generate'  },
-  { href: '/profile',   label: 'Style Profile',shortLabel: 'Profile', icon: 'profile'   },
-  { href: '/history',   label: 'History',      shortLabel: 'History', icon: 'history'   },
-  { href: '/pricing',   label: 'Pricing',      shortLabel: 'Plans',   icon: 'pricing'   },
+  { href: '/dashboard', label: 'Dashboard',     shortLabel: 'Home',    icon: 'dashboard' },
+  { href: '/rewrite',   label: 'Rewrite',       shortLabel: 'Rewrite', icon: 'rewrite'   },
+  { href: '/generate',  label: 'Generate',      shortLabel: 'Generate',icon: 'generate'  },
+  { href: '/profile',   label: 'Style Profile', shortLabel: 'Profile', icon: 'profile'   },
+  { href: '/history',   label: 'History',       shortLabel: 'History', icon: 'history'   },
+  { href: '/pricing',   label: 'Pricing',       shortLabel: 'Plans',   icon: 'pricing'   },
 ]
 
-function NavIcon({ icon, active, size = 18 }: { icon: string; active: boolean; size?: number }) {
-  const stroke = active ? '#042A2B' : '#A09D95'
+function NavIcon({ icon, active, size = 16 }: { icon: string; active: boolean; size?: number }) {
+  const stroke = active ? '#6B1FFF' : '#888880'
   const p = {
     width: size, height: size,
     viewBox: '0 0 24 24', fill: 'none' as const,
@@ -31,10 +31,10 @@ function NavIcon({ icon, active, size = 18 }: { icon: string; active: boolean; s
   }
   if (icon === 'dashboard') return (
     <svg {...p}>
-      <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-      <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-      <rect x="14" y="14" width="7" height="7" rx="1.5"/>
-      <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+      <rect x="3" y="3" width="7" height="7" rx="1"/>
+      <rect x="14" y="3" width="7" height="7" rx="1"/>
+      <rect x="14" y="14" width="7" height="7" rx="1"/>
+      <rect x="3" y="14" width="7" height="7" rx="1"/>
     </svg>
   )
   if (icon === 'rewrite') return (
@@ -82,13 +82,15 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
     router.push('/')
   }
 
+  const JET: React.CSSProperties = {
+    fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+  }
+
   return (
     <>
-      {/* ── Global layout styles ─────────────────────────────────────────── */}
       <style>{`
-        html, body { overflow-x: hidden; }
+        html, body { overflow-x: hidden; background: #FFFFFF; }
 
-        /* Main content spacing (gap to sidebar + top breathing room) */
         #vb-main {
           padding-left: 32px;
           padding-right: 32px;
@@ -96,10 +98,8 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
           box-sizing: border-box;
         }
 
-        /* Sidebar: hidden on mobile, fixed on desktop */
-        #vb-sidebar {
-          display: none;
-        }
+        #vb-sidebar { display: none; }
+
         @media (min-width: 768px) {
           #vb-sidebar {
             display: flex;
@@ -107,8 +107,8 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
             position: fixed;
             top: 0; left: 0; bottom: 0;
             width: ${SIDEBAR_W}px;
-            background: #ffffff;
-            border-right: 1px solid #E5E2D8;
+            background: #FFFFFF;
+            border-right: 1px solid #E0E0E0;
             z-index: 30;
             overflow-y: auto;
           }
@@ -118,42 +118,37 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
           }
         }
 
-        /* Mobile bottom nav */
-        #vb-mobile-nav {
-          display: flex;
-        }
+        #vb-mobile-nav { display: flex; }
+
         @media (min-width: 768px) {
-          #vb-mobile-nav {
-            display: none;
-          }
+          #vb-mobile-nav { display: none; }
         }
       `}</style>
 
-      {/* ── Root ─────────────────────────────────────────────────────────── */}
-      <div style={{ minHeight: '100vh', backgroundColor: '#F9F8F5', overflowX: 'hidden' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#FFFFFF', overflowX: 'hidden' }}>
 
-        {/* ── Sidebar ──────────────────────────────────────────────────────── */}
+        {/* ── Sidebar ── */}
         <aside id="vb-sidebar">
+
           {/* Logo */}
-          <div style={{ padding: '28px 20px 20px', flexShrink: 0 }}>
-            <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '9px' }}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="8.5" stroke="#54F2F2" strokeWidth="1.4"/>
-                <circle cx="10" cy="10" r="5.5" stroke="#54F2F2" strokeWidth="1.4" opacity="0.6"/>
-                <circle cx="10" cy="10" r="2.5" stroke="#54F2F2" strokeWidth="1.4" opacity="0.3"/>
-              </svg>
-              <span style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'DM Sans, sans-serif', letterSpacing: '-0.3px' }}>
-                <span style={{ color: '#16150F' }}>Verba</span>
-                <span style={{ color: '#54F2F2' }}>ly</span>
+          <div style={{ padding: '24px 20px 20px', flexShrink: 0 }}>
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <span style={{
+                ...JET,
+                fontFamily: "'Courier Prime', 'Courier New', monospace",
+                fontSize: '14px', fontWeight: 700,
+                textTransform: 'uppercase', letterSpacing: '.18em',
+                color: '#0E0E0E',
+              }}>
+                Verbaly
               </span>
             </Link>
           </div>
 
-          {/* Divider */}
-          <div style={{ height: '1px', backgroundColor: '#F0EDE4', margin: '0 16px', flexShrink: 0 }} />
+          <div style={{ height: '1px', backgroundColor: '#E0E0E0', margin: '0 0', flexShrink: 0 }} />
 
           {/* Nav items */}
-          <nav style={{ flex: 1, padding: '12px 10px', overflowY: 'auto' }}>
+          <nav style={{ flex: 1, padding: '12px 0', overflowY: 'auto' }}>
             {navItems.map((item, i) => {
               const active = pathname === item.href
               return (
@@ -164,58 +159,52 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
-                    padding: '9px 12px',
-                    borderRadius: '8px',
+                    padding: '9px 20px 9px 17px',
+                    borderLeft: `3px solid ${active ? '#6B1FFF' : 'transparent'}`,
                     textDecoration: 'none',
-                    fontSize: '14px',
-                    fontWeight: active ? '600' : '400',
-                    marginBottom: '2px',
+                    ...JET,
+                    fontSize: '11px',
+                    fontWeight: active ? '500' : '400',
+                    textTransform: 'uppercase',
+                    letterSpacing: '.12em',
+                    marginBottom: '1px',
                     transition: 'all 200ms ease',
                     transitionDelay: mounted ? '0ms' : `${i * 40}ms`,
                     transform: mounted ? 'translateX(0)' : 'translateX(-10px)',
                     opacity: mounted ? 1 : 0,
-                    backgroundColor: active ? 'rgba(84,242,242,0.12)' : 'transparent',
-                    color: active ? '#042A2B' : '#A09D95',
+                    color: active ? '#0E0E0E' : '#888880',
                   }}
                 >
                   <NavIcon icon={item.icon} active={active} />
                   {item.label}
-                  {active && (
-                    <div style={{
-                      marginLeft: 'auto',
-                      width: '5px', height: '5px',
-                      borderRadius: '50%',
-                      backgroundColor: '#54F2F2',
-                      flexShrink: 0,
-                    }} />
-                  )}
                 </Link>
               )
             })}
           </nav>
 
           {/* Sign out */}
-          <div style={{ padding: '12px 10px 24px', flexShrink: 0 }}>
-            <div style={{ height: '1px', backgroundColor: '#F0EDE4', marginBottom: '12px' }} />
+          <div style={{ padding: '0 0 24px', flexShrink: 0 }}>
+            <div style={{ height: '1px', backgroundColor: '#E0E0E0', marginBottom: '12px' }} />
             <button
               onClick={handleSignOut}
               style={{
                 width: '100%',
-                padding: '9px 12px',
+                padding: '9px 20px 9px 20px',
                 backgroundColor: 'transparent',
                 border: 'none',
-                borderRadius: '8px',
-                color: '#A09D95',
+                color: '#888880',
                 cursor: 'pointer',
-                fontSize: '14px',
+                ...JET,
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '.12em',
                 textAlign: 'left',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                fontFamily: 'DM Sans, sans-serif',
               }}
             >
-              <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+              <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                 <polyline points="16 17 21 12 16 7"/>
                 <line x1="21" y1="12" x2="9" y2="12"/>
@@ -225,8 +214,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
           </div>
         </aside>
 
-        {/* ── Main content ─────────────────────────────────────────────────── */}
-        {/* margin-left and width are injected by the <style> block above */}
+        {/* ── Main content ── */}
         <main
           id="vb-main"
           style={{ paddingBottom: '80px', minHeight: '100vh', boxSizing: 'border-box' }}
@@ -234,7 +222,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
           {children}
         </main>
 
-        {/* ── Mobile bottom nav ────────────────────────────────────────────── */}
+        {/* ── Mobile bottom nav ── */}
         <nav
           id="vb-mobile-nav"
           style={{
@@ -244,7 +232,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
             alignItems: 'center',
             justifyContent: 'space-around',
             backgroundColor: '#FFFFFF',
-            borderTop: '1px solid #E5E2D8',
+            borderTop: '1px solid #E0E0E0',
             padding: '6px 4px',
             paddingBottom: 'calc(6px + env(safe-area-inset-bottom))',
           }}
@@ -264,14 +252,19 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
                   minHeight: '44px',
                   justifyContent: 'center',
                   textDecoration: 'none',
-                  color: active ? '#042A2B' : '#A09D95',
-                  backgroundColor: active ? 'rgba(84,242,242,0.1)' : 'transparent',
-                  borderRadius: '10px',
+                  color: active ? '#6B1FFF' : '#888880',
                   padding: '4px 8px',
                 }}
               >
-                <NavIcon icon={item.icon} active={active} size={19} />
-                <span style={{ fontSize: '10px', fontWeight: active ? '600' : '400', lineHeight: 1 }}>
+                <NavIcon icon={item.icon} active={active} size={18} />
+                <span style={{
+                  ...JET,
+                  fontSize: '9px',
+                  fontWeight: active ? '500' : '400',
+                  textTransform: 'uppercase',
+                  letterSpacing: '.08em',
+                  lineHeight: 1,
+                }}>
                   {item.shortLabel}
                 </span>
               </Link>

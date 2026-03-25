@@ -4,19 +4,28 @@ import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
-/* ── SVG ring score gauge ──────────────────────────────────── */
+const JET = "'JetBrains Mono', 'Courier New', monospace"
+const CPR = "'Courier Prime', 'Courier New', monospace"
+
+const CARD: React.CSSProperties = {
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #E0E0E0',
+  borderRadius: '2px',
+}
+
+/* ── Ring score gauge ── */
 function RingScore({ score }: { score: number }) {
   const r = 44
   const circ = 2 * Math.PI * r
   const offset = circ * (1 - score / 100)
 
   return (
-    <div style={{ position: 'relative', width: '120px', height: '120px', flexShrink: 0 }}>
-      <svg width="120" height="120" viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(84,242,242,0.1)" strokeWidth="7"/>
+    <div style={{ position: 'relative', width: '110px', height: '110px', flexShrink: 0 }}>
+      <svg width="110" height="110" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r={r} fill="none" stroke="#E0E0E0" strokeWidth="6"/>
         <circle
           cx="60" cy="60" r={r} fill="none"
-          stroke="#54F2F2" strokeWidth="7" strokeLinecap="round"
+          stroke="#6B1FFF" strokeWidth="6" strokeLinecap="round"
           strokeDasharray={circ} strokeDashoffset={offset}
           style={{ transform: 'rotate(-90deg)', transformOrigin: '60px 60px', transition: 'stroke-dashoffset 1s ease' }}
         />
@@ -26,31 +35,33 @@ function RingScore({ score }: { score: number }) {
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
       }}>
-        <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '24px', fontWeight: '700', color: '#16150F', lineHeight: 1 }}>
+        <span style={{ fontFamily: CPR, fontSize: '22px', fontWeight: '700', color: '#0E0E0E', lineHeight: 1 }}>
           {score}%
         </span>
-        <span style={{ fontSize: '10px', color: '#A09D95', letterSpacing: '0.08em', marginTop: '2px' }}>
-          MATCH
+        <span style={{ fontFamily: JET, fontSize: '9px', color: '#888880', letterSpacing: '.12em', textTransform: 'uppercase', marginTop: '2px' }}>
+          match
         </span>
       </div>
     </div>
   )
 }
 
-/* ── Loading ring spinner ──────────────────────────────────── */
+/* ── Spinner ── */
 function Spinner() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', height: '100%', minHeight: '200px' }}>
-      <div style={{ position: 'relative', width: '52px', height: '52px' }}>
-        <svg width="52" height="52" viewBox="0 0 52 52">
-          <circle cx="26" cy="26" r="20" fill="none" stroke="rgba(84,242,242,0.1)" strokeWidth="4"/>
-          <circle cx="26" cy="26" r="20" fill="none" stroke="#54F2F2" strokeWidth="4"
-            strokeLinecap="round" strokeDasharray="80 46"
+      <div style={{ position: 'relative', width: '44px', height: '44px' }}>
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="17" fill="none" stroke="#E0E0E0" strokeWidth="3"/>
+          <circle cx="22" cy="22" r="17" fill="none" stroke="#6B1FFF" strokeWidth="3"
+            strokeLinecap="round" strokeDasharray="68 40"
             style={{ animation: 'spin 0.85s linear infinite', transformOrigin: 'center' }}
           />
         </svg>
       </div>
-      <p style={{ color: '#6B6960', fontSize: '14px' }}>The text is being rewritten in your voice…</p>
+      <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em' }}>
+        Rewriting in your voice…
+      </p>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
@@ -146,34 +157,23 @@ export default function RewritePage() {
     <div style={{ minHeight: '100vh' }}>
 
       {/* Header */}
-      <div style={{ marginBottom: '48px' }}>
-        <h1 style={{
-          fontFamily: 'Instrument Serif, serif',
-          fontSize: '30px', fontWeight: '400',
-          color: '#16150F', letterSpacing: '-0.5px', marginBottom: '4px',
-        }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontFamily: CPR, fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: '700', color: '#0E0E0E', letterSpacing: '-0.02em', marginBottom: '4px', textTransform: 'uppercase' }}>
           Rewrite
         </h1>
-        <p style={{ color: '#A09D95', fontSize: '14px' }}>
+        <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em' }}>
           Any text is rewritten to sound like you.
         </p>
       </div>
 
       {/* Intensity control */}
-      <div style={{
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E8ECF4',
-        borderRadius: '12px',
-        padding: '20px 24px',
-        marginBottom: '48px',
-        boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-      }}>
+      <div style={{ ...CARD, padding: '18px 22px', marginBottom: '24px' }}>
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <div style={{ minWidth: '200px' }}>
-            <div style={{ color: '#A09D95', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
+            <div style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: '4px' }}>
               Rewrite intensity
             </div>
-            <div style={{ fontSize: '15px', fontWeight: '600', color: '#042A2B' }}>
+            <div style={{ fontFamily: JET, fontSize: '12px', fontWeight: '500', color: '#6B1FFF', letterSpacing: '.05em' }}>
               {intensity} — {INTENSITY_LABELS[intensity]}
             </div>
           </div>
@@ -181,11 +181,11 @@ export default function RewritePage() {
             <input
               type="range" min={1} max={10} value={intensity}
               onChange={(e) => setIntensity(Number(e.target.value))}
-              style={{ width: '100%', cursor: 'pointer' }}
+              style={{ width: '100%', cursor: 'pointer', accentColor: '#6B1FFF' }}
             />
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
-              <span style={{ color: '#A09D95', fontSize: '11px' }}>Subtle</span>
-              <span style={{ color: '#A09D95', fontSize: '11px' }}>Full rebuild</span>
+              <span style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.08em' }}>Subtle</span>
+              <span style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.08em' }}>Full rebuild</span>
             </div>
           </div>
           {/* Intensity dots */}
@@ -193,7 +193,7 @@ export default function RewritePage() {
             {Array.from({ length: 10 }, (_, i) => (
               <div key={i} style={{
                 width: '6px', height: '6px', borderRadius: '50%',
-                backgroundColor: i < intensity ? '#54F2F2' : '#E5E2D8',
+                backgroundColor: i < intensity ? '#6B1FFF' : '#E0E0E0',
                 transition: 'background-color 150ms',
               }} />
             ))}
@@ -202,44 +202,32 @@ export default function RewritePage() {
       </div>
 
       {/* Split panels */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 
         {/* Input */}
-        <div style={{
-          backgroundColor: '#FFFFFF',
-          border: '1px solid #E8ECF4',
-          borderRadius: '12px', overflow: 'hidden',
-          display: 'flex', flexDirection: 'column',
-          boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-        }}>
+        <div style={{ ...CARD, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           <div style={{
-            padding: '13px 18px', borderBottom: '1px solid #E5E2D8',
+            padding: '12px 16px', borderBottom: '1px solid #E0E0E0',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
-            <span style={{ color: '#A09D95', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.15em' }}>
               AI Generated
             </span>
             {wordCount > 0 && (
-              <span style={{ color: '#A09D95', fontSize: '12px' }}>{wordCount} words</span>
+              <span style={{ fontFamily: JET, color: '#888880', fontSize: '10px', letterSpacing: '.08em' }}>{wordCount} words</span>
             )}
           </div>
           {showRewriteTooltip && (
             <div style={{
-              margin: '14px 18px 0 18px',
-              backgroundColor: 'rgba(84,242,242,0.08)',
-              border: '1px solid rgba(84,242,242,0.25)',
-              borderRadius: '10px',
-              padding: '10px 12px',
-              color: '#042A2B',
-              fontSize: '13px',
-              lineHeight: 1.5,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              gap: '12px',
+              margin: '14px 16px 0 16px',
+              border: '1px solid #6B1FFF', borderRadius: '2px',
+              padding: '10px 12px', fontFamily: JET, color: '#0E0E0E',
+              fontSize: '11px', lineHeight: 1.5,
+              display: 'flex', justifyContent: 'space-between',
+              alignItems: 'flex-start', gap: '12px',
             }}>
               <div>
-                <div style={{ fontWeight: 700, marginBottom: 4 }}>How rewrites work</div>
+                <div style={{ fontWeight: 700, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.1em', fontSize: '10px' }}>How rewrites work</div>
                 Paste your AI text here. Verbaly reads it and rewrites it in your voice.
               </div>
               <button
@@ -248,14 +236,9 @@ export default function RewritePage() {
                   setShowRewriteTooltip(false)
                 }}
                 style={{
-                  backgroundColor: '#042A2B',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '6px 12px',
-                  cursor: 'pointer',
-                  fontWeight: 700,
-                  fontFamily: 'DM Sans, sans-serif',
+                  backgroundColor: '#0E0E0E', color: '#FFFFFF', border: 'none',
+                  borderRadius: '2px', padding: '6px 12px', cursor: 'pointer',
+                  fontFamily: JET, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em',
                 }}
               >
                 Got it
@@ -268,40 +251,33 @@ export default function RewritePage() {
             placeholder="Paste your AI text here…"
             style={{
               flex: 1, border: 'none', outline: 'none',
-              padding: '20px', resize: 'none',
-              color: '#16150F', fontSize: '14px', lineHeight: '1.75',
-              backgroundColor: 'transparent', fontFamily: 'DM Sans, sans-serif',
+              padding: '16px', resize: 'none',
+              fontFamily: JET, color: '#0E0E0E', fontSize: '12px', lineHeight: '1.75',
+              backgroundColor: 'transparent',
               minHeight: '260px',
             }}
           />
         </div>
 
         {/* Output */}
-        <div style={{
-          backgroundColor: rewrittenText ? 'rgba(84,242,242,0.03)' : '#FFFFFF',
-          border: '1px solid #E8ECF4',
-          borderRadius: '12px', overflow: 'hidden',
-          display: 'flex', flexDirection: 'column',
-          transition: 'border-color 400ms ease, background-color 400ms ease',
-          boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-        }}>
+        <div style={{ ...CARD, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           <div style={{
-            padding: '13px 18px', borderBottom: '1px solid rgba(84,242,242,0.12)',
+            padding: '12px 16px', borderBottom: '1px solid #E0E0E0',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
-            <span style={{ color: rewrittenText ? '#042A2B' : '#A09D95', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ fontFamily: JET, color: rewrittenText ? '#6B1FFF' : '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.15em' }}>
               Your Voice
             </span>
             {rewrittenText && (
               <button
                 onClick={handleCopy}
                 style={{
-                  backgroundColor: copied ? 'rgba(84,242,242,0.12)' : '#F9F8F5',
-                  border: `1px solid ${copied ? 'rgba(84,242,242,0.3)' : '#E5E2D8'}`,
-                  borderRadius: '7px', padding: '4px 12px',
-                  color: copied ? '#042A2B' : '#6B6960',
-                  cursor: 'pointer', fontSize: '12px', fontWeight: '500',
-                  fontFamily: 'DM Sans, sans-serif', transition: 'all 150ms',
+                  backgroundColor: 'transparent',
+                  border: '1px solid #E0E0E0',
+                  borderRadius: '2px', padding: '4px 10px',
+                  fontFamily: JET, color: copied ? '#6B1FFF' : '#888880',
+                  fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em',
+                  cursor: 'pointer', transition: 'all 150ms',
                 }}
               >
                 {copied ? '✓ Copied' : 'Copy'}
@@ -309,32 +285,23 @@ export default function RewritePage() {
             )}
           </div>
 
-          {/* Match score + output */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '260px' }}>
             {loading ? (
               <Spinner />
             ) : rewrittenText ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '20px', height: '100%' }}>
-                {/* Score + text layout */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '16px', height: '100%' }}>
                 <div className="flex flex-col sm:flex-row gap-4 items-start">
                   {matchScore !== null && <RingScore score={matchScore} />}
-                  <p style={{ color: '#16150F', fontSize: '14px', lineHeight: '1.75', flex: 1 }}>
+                  <p style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '12px', lineHeight: '1.75', flex: 1 }}>
                     {rewrittenText}
                   </p>
                 </div>
               </div>
             ) : (
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <svg width="36" height="36" viewBox="0 0 20 20" fill="none" style={{ margin: '0 auto 12px' }}>
-                    <circle cx="10" cy="10" r="8.5" stroke="#E5E2D8" strokeWidth="1.4"/>
-                    <circle cx="10" cy="10" r="5.5" stroke="#E5E2D8" strokeWidth="1.4"/>
-                    <circle cx="10" cy="10" r="2.5" stroke="#E5E2D8" strokeWidth="1.4"/>
-                  </svg>
-                  <p style={{ color: '#A09D95', fontSize: '14px' }}>
-                    The rewritten text will appear here.
-                  </p>
-                </div>
+                <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', textAlign: 'center' }}>
+                  Rewritten text will appear here.
+                </p>
               </div>
             )}
           </div>
@@ -344,10 +311,9 @@ export default function RewritePage() {
       {/* Error */}
       {error && (
         <div style={{
-          backgroundColor: 'rgba(220,38,38,0.05)',
-          border: '1px solid rgba(220,38,38,0.18)',
-          borderRadius: '10px', padding: '11px 16px',
-          color: '#DC2626', fontSize: '14px', marginBottom: '16px',
+          border: '1px solid #DC2626', borderRadius: '2px',
+          padding: '10px 14px', fontFamily: JET,
+          color: '#DC2626', fontSize: '11px', marginBottom: '14px',
         }}>
           {error}
         </div>
@@ -356,13 +322,9 @@ export default function RewritePage() {
       {/* Warning */}
       {warning && (
         <div style={{
-          backgroundColor: 'rgba(84,242,242,0.06)',
-          border: '1px solid rgba(84,242,242,0.22)',
-          borderRadius: '10px',
-          padding: '11px 16px',
-          color: '#042A2B',
-          fontSize: '14px',
-          marginBottom: '16px',
+          border: '1px solid #6B1FFF', borderRadius: '2px',
+          padding: '10px 14px', fontFamily: JET,
+          color: '#6B1FFF', fontSize: '11px', marginBottom: '14px',
         }}>
           {warning}
         </div>
@@ -373,12 +335,13 @@ export default function RewritePage() {
         onClick={handleRewrite}
         disabled={!canSubmit}
         style={{
-          backgroundColor: canSubmit ? '#042A2B' : 'rgba(4,42,43,0.3)',
-          color: '#FFFFFF', border: 'none',
-          borderRadius: '10px', padding: '14px 32px',
-          fontSize: '16px', fontWeight: '600',
+          backgroundColor: canSubmit ? '#0E0E0E' : '#E0E0E0',
+          color: canSubmit ? '#FFFFFF' : '#888880',
+          border: 'none', borderRadius: '2px', padding: '14px 32px',
+          fontFamily: JET, fontSize: '11px', fontWeight: '500',
+          textTransform: 'uppercase', letterSpacing: '.15em',
           cursor: canSubmit ? 'pointer' : 'not-allowed',
-          width: '100%', fontFamily: 'DM Sans, sans-serif',
+          width: '100%',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
           transition: 'background-color 200ms',
         }}
@@ -386,7 +349,7 @@ export default function RewritePage() {
         {loading ? (
           <>
             <span style={{
-              width: '16px', height: '16px',
+              width: '12px', height: '12px',
               border: '2px solid rgba(255,255,255,0.3)',
               borderTopColor: '#FFFFFF', borderRadius: '50%',
               animation: 'spin 0.8s linear infinite',

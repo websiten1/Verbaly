@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
 const CSS = `
   /* ── tokens ─────────────────────────────── */
   :root {
-    --paper:  #F0EDE6;
+    --paper:  #FFFFFF;
     --ink:    #0E0E0E;
     --violet: #6B1FFF;
     --gray:   #888880;
@@ -13,7 +13,7 @@ const CSS = `
 
   /* ── base ───────────────────────────────── */
   html { scroll-behavior: smooth; overflow-x: hidden; }
-  html, body { background: #F0EDE6; }
+  html, body { background: #FFFFFF; }
   body {
     margin: 0; padding: 0; overflow-x: hidden;
     color: #0E0E0E;
@@ -21,7 +21,7 @@ const CSS = `
     -webkit-font-smoothing: antialiased;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  ::selection { background: #6B1FFF; color: #F0EDE6; }
+  ::selection { background: #6B1FFF; color: #FFFFFF; }
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-thumb { background: #0E0E0E; }
 
@@ -42,7 +42,7 @@ const CSS = `
   /* ── grain ──────────────────────────────── */
   #lp-grain {
     position: fixed; inset: 0;
-    pointer-events: none; z-index: 800; opacity: .04;
+    pointer-events: none; z-index: 800; opacity: .035;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 180px 180px;
   }
@@ -53,7 +53,7 @@ const CSS = `
     z-index: 200; height: 56px;
     padding: 0 clamp(16px, 4vw, 40px);
     display: flex; align-items: center; justify-content: space-between;
-    background: #F0EDE6;
+    background: #FFFFFF;
     border-bottom: 1px solid transparent;
     transition: border-color .2s ease;
   }
@@ -73,15 +73,14 @@ const CSS = `
     border: 1px solid #0E0E0E; padding: 8px 20px; cursor: pointer;
     transition: background .2s, color .2s;
   }
-  .lp-navbtn:hover { background: #0E0E0E; color: #F0EDE6; }
+  .lp-navbtn:hover { background: #0E0E0E; color: #FFFFFF; }
 
-  /* ── hero ───────────────────────────────── */
+  /* ── hero — tight newspaper layout ──────── */
   .lp-main {
-    height: 100vh; background: #F0EDE6;
+    background: #FFFFFF;
     display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    padding: 56px clamp(16px, 4vw, 24px) 0;
+    align-items: center; text-align: center;
+    padding: 100px clamp(16px, 4vw, 24px) 80px;
   }
 
   .lp-eyebrow {
@@ -97,7 +96,7 @@ const CSS = `
     font-size: clamp(56px, 13vw, 180px);
     font-weight: 700; text-transform: uppercase;
     letter-spacing: -.025em; line-height: .9;
-    color: #0E0E0E; margin-bottom: 24px;
+    color: #0E0E0E; margin-bottom: 16px;
     max-width: 100%;
   }
   .lp-title .lp-c {
@@ -110,7 +109,7 @@ const CSS = `
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 12px; font-weight: 400;
     text-transform: uppercase; letter-spacing: .3em;
-    color: #888880; margin-bottom: 48px;
+    color: #888880; margin-bottom: 20px;
     opacity: 0; transition: opacity .6s ease;
   }
   .lp-sub.in { opacity: 1; }
@@ -120,7 +119,7 @@ const CSS = `
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 13px; font-weight: 400;
     text-transform: uppercase; letter-spacing: .12em;
-    color: #0E0E0E; min-height: 20px; margin-bottom: 64px;
+    color: #0E0E0E; min-height: 20px; margin-bottom: 32px;
     opacity: 0; transition: opacity .4s ease;
   }
   .lp-cycler.in { opacity: 1; }
@@ -144,7 +143,7 @@ const CSS = `
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; font-weight: 400;
     text-transform: uppercase; letter-spacing: .22em;
-    color: #888880; margin-bottom: 24px;
+    color: #888880; margin-bottom: 20px;
   }
   .lp-form-row { display: flex; border: 1px solid #0E0E0E; margin-bottom: 12px; }
   .lp-input {
@@ -160,7 +159,7 @@ const CSS = `
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 11px; font-weight: 500;
     text-transform: uppercase; letter-spacing: .14em;
-    color: #F0EDE6; background: #0E0E0E;
+    color: #FFFFFF; background: #0E0E0E;
     border: none; border-left: 1px solid #0E0E0E;
     padding: 14px 22px; cursor: pointer; white-space: nowrap;
     transition: background .2s ease;
@@ -175,11 +174,12 @@ const CSS = `
 
   /* ── demo section ───────────────────────── */
   .lp-demo {
-    background: #F0EDE6;
+    background: #FFFFFF;
     padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 48px);
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-top: 1px solid #E0E0E0;
   }
 
   .lp-demo-label {
@@ -201,16 +201,16 @@ const CSS = `
   /* browser chrome */
   .lp-browser {
     width: 100%; max-width: 860px;
-    border: 1px solid #D0CCC4;
+    border: 1px solid #E0E0E0;
   }
 
   .lp-browser-bar {
-    background: #E8E4DC;
+    background: #F5F5F5;
     padding: 9px 14px;
     display: flex;
     align-items: center;
     gap: 12px;
-    border-bottom: 1px solid #D0CCC4;
+    border-bottom: 1px solid #E0E0E0;
   }
 
   .lp-browser-dots {
@@ -223,7 +223,7 @@ const CSS = `
 
   .lp-url-bar {
     flex: 1; min-width: 0;
-    background: #D8D4CC;
+    background: #E8E8E8;
     border-radius: 3px;
     height: 22px;
   }
@@ -238,7 +238,7 @@ const CSS = `
     padding: clamp(16px, 2.5vw, 28px);
   }
   .lp-col + .lp-col {
-    border-left: 1px solid #D0CCC4;
+    border-left: 1px solid #E0E0E0;
   }
 
   /* column header row */
@@ -260,7 +260,7 @@ const CSS = `
   .lp-col-dot-vi    { background: #6B1FFF; }
 
   .lp-col-lbl {
-    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; font-weight: 400;
     text-transform: uppercase; letter-spacing: .2em;
     color: #888880;
@@ -268,13 +268,13 @@ const CSS = `
   .lp-col-lbl-dark { color: #0E0E0E; }
 
   .lp-match-badge {
-    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; font-weight: 400;
     text-transform: uppercase; letter-spacing: .06em;
     color: #FFFFFF;
     background: #6B1FFF;
     padding: 3px 8px;
-    border-radius: 4px;
+    border-radius: 2px;
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -282,7 +282,7 @@ const CSS = `
   .lp-col-text-ai {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(11px, 1.4vw, 13px); line-height: 1.75;
-    color: #999990;
+    color: #BBBBBB;
   }
   .lp-col-text-you {
     font-family: 'Courier Prime', 'Courier New', monospace;
@@ -305,7 +305,7 @@ const CSS = `
   #lp-col-you.in { opacity: 1; transform: translateX(0); }
 
   .lp-demo-caption {
-    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; font-weight: 400;
     text-transform: uppercase; letter-spacing: .2em;
     color: #888880;
@@ -371,7 +371,7 @@ const CSS = `
 
   /* ── footer (static) ────────────────────── */
   .lp-footer {
-    background: #F0EDE6;
+    background: #FFFFFF;
     height: 44px; padding: 0 clamp(16px, 4vw, 40px);
     display: flex; align-items: center; justify-content: space-between;
     border-top: 1px solid #0E0E0E;
@@ -395,7 +395,7 @@ const CSS = `
   /* ── responsive ─────────────────────────── */
   @media (max-width: 640px) {
     .lp-browser-body { flex-direction: column; }
-    .lp-col + .lp-col { border-left: none; border-top: 1px solid #D0CCC4; }
+    .lp-col + .lp-col { border-left: none; border-top: 1px solid #E0E0E0; }
     #lp-col-you { transform: translateX(0); }
   }
 
@@ -613,10 +613,8 @@ export default function LandingPage() {
         <p className="lp-demo-label">See the Difference</p>
         <div className="lp-demo-rule" aria-hidden="true" />
 
-        {/* mock browser window */}
         <div className="lp-browser" role="img" aria-label="Before and after comparison">
 
-          {/* browser chrome bar */}
           <div className="lp-browser-bar" aria-hidden="true">
             <div className="lp-browser-dots">
               <span className="lp-dot lp-dot-r" />
@@ -626,10 +624,8 @@ export default function LandingPage() {
             <div className="lp-url-bar" />
           </div>
 
-          {/* two-column body */}
           <div className="lp-browser-body">
 
-            {/* left: AI generated */}
             <div id="lp-col-ai" className="lp-col">
               <div className="lp-col-hdr">
                 <div className="lp-col-hdr-left">
@@ -645,7 +641,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* right: your voice */}
             <div id="lp-col-you" className="lp-col">
               <div className="lp-col-hdr">
                 <div className="lp-col-hdr-left">

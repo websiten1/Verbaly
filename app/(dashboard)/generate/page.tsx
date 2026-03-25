@@ -6,19 +6,37 @@ import { useRouter } from 'next/navigation'
 
 type LengthOption = 'short' | 'medium' | 'long'
 
+const JET = "'JetBrains Mono', 'Courier New', monospace"
+const CPR = "'Courier Prime', 'Courier New', monospace"
+
+const CARD: React.CSSProperties = {
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #E0E0E0',
+  borderRadius: '2px',
+}
+
+const INPUT_STYLE: React.CSSProperties = {
+  width: '100%', backgroundColor: '#FFFFFF',
+  border: '1px solid #E0E0E0', borderRadius: '2px',
+  padding: '12px 14px', color: '#0E0E0E',
+  fontFamily: JET, fontSize: '11px',
+  letterSpacing: '.05em', outline: 'none',
+  lineHeight: '1.65',
+}
+
 function Spinner() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '14px', padding: '60px 0' }}>
-      <div style={{ position: 'relative', width: '48px', height: '48px' }}>
-        <svg width="48" height="48" viewBox="0 0 48 48">
-          <circle cx="24" cy="24" r="18" fill="none" stroke="rgba(84,242,242,0.1)" strokeWidth="4"/>
-          <circle cx="24" cy="24" r="18" fill="none" stroke="#54F2F2" strokeWidth="4"
-            strokeLinecap="round" strokeDasharray="72 41"
+      <div style={{ position: 'relative', width: '40px', height: '40px' }}>
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="15" fill="none" stroke="#E0E0E0" strokeWidth="3"/>
+          <circle cx="20" cy="20" r="15" fill="none" stroke="#6B1FFF" strokeWidth="3"
+            strokeLinecap="round" strokeDasharray="60 35"
             style={{ animation: 'spin 0.85s linear infinite', transformOrigin: 'center' }}
           />
         </svg>
       </div>
-      <p style={{ color: '#6B6960', fontSize: '14px' }}>The text is being written in your voice…</p>
+      <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em' }}>Writing in your voice…</p>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
@@ -103,50 +121,34 @@ export default function GeneratePage() {
     <div style={{ minHeight: '100vh' }}>
 
       {/* Header */}
-      <div style={{ marginBottom: '48px' }}>
-        <h1 style={{
-          fontFamily: 'Instrument Serif, serif',
-          fontSize: '30px', fontWeight: '400',
-          color: '#16150F', letterSpacing: '-0.5px', marginBottom: '4px',
-        }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontFamily: CPR, fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: '700', color: '#0E0E0E', letterSpacing: '-0.02em', marginBottom: '4px', textTransform: 'uppercase' }}>
           Generate
         </h1>
-        <p style={{ color: '#A09D95', fontSize: '14px' }}>
+        <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em' }}>
           New content is written from scratch — in your voice.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-        {/* ── LEFT: Controls ──────────────────────────────────── */}
-        <div style={{
-          backgroundColor: '#FFFFFF',
-          border: '1px solid #E8ECF4',
-          borderRadius: '12px',
-          padding: '28px',
-          boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-        }}>
-          <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '22px' }}>
+        {/* ── LEFT: Controls ── */}
+        <div style={{ ...CARD, padding: '24px' }}>
+          <h2 style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: '20px' }}>
             What needs to be written?
           </h2>
 
           {showGenerateTooltip && (
             <div style={{
               marginBottom: '18px',
-              backgroundColor: 'rgba(84,242,242,0.08)',
-              border: '1px solid rgba(84,242,242,0.25)',
-              borderRadius: '12px',
-              padding: '12px 14px',
-              color: '#042A2B',
-              fontSize: '13px',
-              lineHeight: 1.5,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              gap: '12px',
+              border: '1px solid #6B1FFF',
+              borderRadius: '2px', padding: '12px 14px',
+              fontFamily: JET, fontSize: '11px', lineHeight: 1.6,
+              display: 'flex', justifyContent: 'space-between',
+              alignItems: 'flex-start', gap: '12px', color: '#0E0E0E',
             }}>
               <div>
-                <div style={{ fontWeight: 700, marginBottom: 4 }}>How this works</div>
+                <div style={{ fontWeight: 700, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.1em' }}>How this works</div>
                 Describe what you need. Verbaly writes it from scratch in your style.
               </div>
               <button
@@ -155,14 +157,9 @@ export default function GeneratePage() {
                   setShowGenerateTooltip(false)
                 }}
                 style={{
-                  backgroundColor: '#042A2B',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '6px 12px',
-                  cursor: 'pointer',
-                  fontWeight: 700,
-                  fontFamily: 'DM Sans, sans-serif',
+                  backgroundColor: '#0E0E0E', color: '#FFFFFF', border: 'none',
+                  borderRadius: '2px', padding: '6px 12px', cursor: 'pointer',
+                  fontFamily: JET, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em',
                 }}
               >
                 Got it
@@ -171,8 +168,8 @@ export default function GeneratePage() {
           )}
 
           {/* Prompt */}
-          <div style={{ marginBottom: '22px' }}>
-            <label style={{ display: 'block', color: '#6B6960', fontSize: '13px', fontWeight: '500', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: '8px' }}>
               Topic / Prompt
             </label>
             <textarea
@@ -180,23 +177,16 @@ export default function GeneratePage() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="e.g. An essay intro on why remote work is here to stay"
               rows={5}
-              style={{
-                width: '100%', backgroundColor: '#F9F8F5',
-                border: '1px solid #E5E2D8', borderRadius: '10px',
-                padding: '16px', color: '#16150F',
-                fontSize: '14px', lineHeight: '1.65',
-                resize: 'vertical', outline: 'none',
-                minHeight: '110px', fontFamily: 'DM Sans, sans-serif',
-              }}
+              style={{ ...INPUT_STYLE, resize: 'vertical', minHeight: '110px' }}
             />
           </div>
 
           {/* Length */}
-          <div style={{ marginBottom: '22px' }}>
-            <label style={{ display: 'block', color: '#6B6960', fontSize: '13px', fontWeight: '500', marginBottom: '10px' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: '10px' }}>
               Length
             </label>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '6px' }}>
               {LENGTHS.map((btn) => {
                 const active = length === btn.value
                 return (
@@ -205,18 +195,18 @@ export default function GeneratePage() {
                     onClick={() => setLength(btn.value)}
                     style={{
                       flex: 1,
-                      backgroundColor: active ? '#042A2B' : '#F9F8F5',
-                      color: active ? '#FFFFFF' : '#6B6960',
-                      border: active ? 'none' : '1px solid #E5E2D8',
-                      borderRadius: '9px', padding: '10px 6px',
-                      fontSize: '13px', fontWeight: '600',
+                      backgroundColor: active ? '#0E0E0E' : '#FFFFFF',
+                      color: active ? '#FFFFFF' : '#888880',
+                      border: '1px solid #E0E0E0',
+                      borderRadius: '2px', padding: '10px 6px',
+                      fontFamily: JET, fontSize: '10px', fontWeight: active ? '500' : '400',
+                      textTransform: 'uppercase', letterSpacing: '.1em',
                       cursor: 'pointer', textAlign: 'center',
-                      fontFamily: 'DM Sans, sans-serif',
                       transition: 'all 150ms',
                     }}
                   >
                     <div>{btn.label}</div>
-                    <div style={{ fontSize: '11px', fontWeight: '400', marginTop: '2px', opacity: 0.7 }}>
+                    <div style={{ fontSize: '10px', fontWeight: '400', marginTop: '2px', opacity: 0.7 }}>
                       {btn.desc}
                     </div>
                   </button>
@@ -226,36 +216,35 @@ export default function GeneratePage() {
           </div>
 
           {/* Tone */}
-          <div style={{ marginBottom: '26px' }}>
+          <div style={{ marginBottom: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <label style={{ color: '#6B6960', fontSize: '13px', fontWeight: '500' }}>Tone</label>
+              <label style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.15em' }}>Tone</label>
               <span style={{
-                backgroundColor: 'rgba(84,242,242,0.1)',
-                border: '1px solid rgba(84,242,242,0.2)',
-                color: '#042A2B', fontSize: '12px', fontWeight: '600',
-                padding: '2px 10px', borderRadius: '100px',
+                fontFamily: JET, fontSize: '10px', fontWeight: '500',
+                textTransform: 'uppercase', letterSpacing: '.1em',
+                color: '#6B1FFF', border: '1px solid #6B1FFF',
+                borderRadius: '2px', padding: '2px 8px',
               }}>
                 {toneLabel}
               </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ color: '#A09D95', fontSize: '12px', whiteSpace: 'nowrap' }}>Formal</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.08em', whiteSpace: 'nowrap' }}>Formal</span>
               <input
                 type="range" min={0} max={100} value={tone}
                 onChange={(e) => setTone(Number(e.target.value))}
-                style={{ flex: 1 }}
+                style={{ flex: 1, accentColor: '#6B1FFF' }}
               />
-              <span style={{ color: '#A09D95', fontSize: '12px', whiteSpace: 'nowrap' }}>Casual</span>
+              <span style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.08em', whiteSpace: 'nowrap' }}>Casual</span>
             </div>
           </div>
 
           {/* Error */}
           {error && (
             <div style={{
-              backgroundColor: 'rgba(220,38,38,0.05)',
-              border: '1px solid rgba(220,38,38,0.18)',
-              borderRadius: '10px', padding: '10px 14px',
-              color: '#DC2626', fontSize: '13px', marginBottom: '14px',
+              border: '1px solid #DC2626', borderRadius: '2px',
+              padding: '10px 14px', fontFamily: JET,
+              color: '#DC2626', fontSize: '11px', marginBottom: '14px',
             }}>
               {error}
             </div>
@@ -265,12 +254,13 @@ export default function GeneratePage() {
             onClick={handleGenerate}
             disabled={loading || !prompt.trim()}
             style={{
-              backgroundColor: loading || !prompt.trim() ? 'rgba(4,42,43,0.3)' : '#042A2B',
-              color: '#FFFFFF', border: 'none',
-              borderRadius: '10px', padding: '12px 20px',
-              fontSize: '14px', fontWeight: '600',
+              backgroundColor: loading || !prompt.trim() ? '#E0E0E0' : '#0E0E0E',
+              color: loading || !prompt.trim() ? '#888880' : '#FFFFFF',
+              border: 'none', borderRadius: '2px', padding: '12px 20px',
+              fontFamily: JET, fontSize: '11px', fontWeight: '500',
+              textTransform: 'uppercase', letterSpacing: '.12em',
               cursor: loading || !prompt.trim() ? 'not-allowed' : 'pointer',
-              width: '100%', fontFamily: 'DM Sans, sans-serif',
+              width: '100%',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
               transition: 'background-color 200ms',
             }}
@@ -278,49 +268,36 @@ export default function GeneratePage() {
             {loading ? (
               <>
                 <span style={{
-                  width: '14px', height: '14px',
+                  width: '12px', height: '12px',
                   border: '2px solid rgba(255,255,255,0.3)',
                   borderTopColor: '#FFF', borderRadius: '50%',
                   animation: 'spin 0.8s linear infinite',
                 }} />
                 Generating…
               </>
-            ) : (
-              <>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-                </svg>
-                Generate in my voice
-              </>
-            )}
+            ) : 'Generate in my voice'}
           </button>
         </div>
 
-        {/* ── RIGHT: Output ────────────────────────────────────── */}
-        <div style={{
-          backgroundColor: '#FFFFFF',
-          border: '1px solid #E8ECF4',
-          borderRadius: '12px', overflow: 'hidden',
-          display: 'flex', flexDirection: 'column',
-          minHeight: '360px',
-          transition: 'border-color 400ms',
-          boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-        }}>
+        {/* ── RIGHT: Output ── */}
+        <div style={{ ...CARD, overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: '360px' }}>
           <div style={{
-            padding: '16px 20px', borderBottom: '1px solid #E5E2D8',
+            padding: '14px 18px', borderBottom: '1px solid #E0E0E0',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
-            <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600' }}>Generated text</h2>
+            <h2 style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '.15em' }}>
+              Generated text
+            </h2>
             {generatedText && (
               <button
                 onClick={handleCopy}
                 style={{
-                  backgroundColor: copied ? 'rgba(84,242,242,0.1)' : '#F9F8F5',
-                  border: `1px solid ${copied ? 'rgba(84,242,242,0.25)' : '#E5E2D8'}`,
-                  borderRadius: '7px', padding: '5px 12px',
-                  color: copied ? '#042A2B' : '#6B6960',
-                  fontSize: '13px', fontWeight: '500',
-                  cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+                  backgroundColor: 'transparent',
+                  border: '1px solid #E0E0E0',
+                  borderRadius: '2px', padding: '4px 12px',
+                  fontFamily: JET, color: copied ? '#6B1FFF' : '#888880',
+                  fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em',
+                  cursor: 'pointer', transition: 'all 150ms',
                 }}
               >
                 {copied ? '✓ Copied' : 'Copy'}
@@ -328,22 +305,17 @@ export default function GeneratePage() {
             )}
           </div>
 
-          <div style={{ flex: 1, padding: '24px' }}>
+          <div style={{ flex: 1, padding: '20px' }}>
             {loading ? (
               <Spinner />
             ) : generatedText ? (
-              <p style={{ color: '#16150F', fontSize: '15px', lineHeight: '1.8', whiteSpace: 'pre-wrap' }}>
+              <p style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '12px', lineHeight: '1.8', whiteSpace: 'pre-wrap' }}>
                 {generatedText}
               </p>
             ) : (
               <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}>
-                <svg width="40" height="40" viewBox="0 0 20 20" fill="none" style={{ marginBottom: '12px', opacity: 0.3 }}>
-                  <circle cx="10" cy="10" r="8.5" stroke="#042A2B" strokeWidth="1.4"/>
-                  <circle cx="10" cy="10" r="5.5" stroke="#042A2B" strokeWidth="1.4"/>
-                  <circle cx="10" cy="10" r="2.5" stroke="#042A2B" strokeWidth="1.4"/>
-                </svg>
-                <p style={{ color: '#A09D95', fontSize: '14px', textAlign: 'center' }}>
-                  The generated text will appear here.
+                <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', textAlign: 'center' }}>
+                  Generated text will appear here.
                 </p>
               </div>
             )}

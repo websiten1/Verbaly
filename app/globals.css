@@ -2,33 +2,17 @@
 
 /* ─── Design tokens ──────────────────────────────────────── */
 @theme inline {
-  /* Brutalist palette */
-  --color-ink:       #111111;
-  --color-paper:     #F5F2ED;
+  --color-ink:       #0E0E0E;
+  --color-paper:     #FFFFFF;
   --color-white:     #FFFFFF;
   --color-black:     #0E0E0E;
-  --color-gray:      #666666;
-  --color-ivory:     #EDE8DC;
+  --color-gray:      #888880;
   --color-violet:    #6B1FFF;
-  --color-yellow:    #D4F000;
-  --color-green:     #22C55E;
-
-  /* Legacy evergreen (dashboard only) */
-  --color-ev:        #042A2B;
-  --color-ev-dark:   #061517;
-  --color-ev-2:      #0D2225;
-  --color-ev-border: #1E3B3F;
-  --color-ev-tx:     #E4F5F5;
-  --color-ev-tx-2:   #9ECFCF;
-  --color-ev-tx-3:   #5E8E90;
-  --color-cyan:      #54F2F2;
-  --color-bg:        #F9F8F5;
+  --color-border:    #E0E0E0;
+  --color-bg:        #FFFFFF;
   --color-surface:   #FFFFFF;
-  --color-border:    #E5E2D8;
-  --color-border-2:  #F0EDE4;
-  --color-tx:        #16150F;
-  --color-tx-2:      #6B6960;
-  --color-tx-3:      #A09D95;
+  --color-tx:        #0E0E0E;
+  --color-tx-2:      #888880;
   --color-danger:    #DC2626;
   --color-success:   #059669;
 }
@@ -48,25 +32,27 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
-  background: #F0EDE6;
+  background: #FFFFFF;
   color: #0E0E0E;
-  font-family: var(--font-jet);
+  font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 ::selection {
-  background: #D4F000;
-  color: #111111;
+  background: #6B1FFF;
+  color: #FFFFFF;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #999999;
+  color: #BBBBBB;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -82,30 +68,10 @@ select:focus {
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #111111; }
+::-webkit-scrollbar-thumb { background: #0E0E0E; }
 ::-webkit-scrollbar-thumb:hover { background: #6B1FFF; }
 
-/* ─── Film grain overlay ─────────────────────────────────── */
-.grain {
-  position: relative;
-}
-.grain::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
-}
-
 /* ─── Animations ─────────────────────────────────────────── */
-
-@keyframes ringPulse {
-  0%, 100% { opacity: 0.055; }
-  50%       { opacity: 0.13;  }
-}
 
 @keyframes spin {
   to { transform: rotate(360deg); }
@@ -121,11 +87,6 @@ select:focus {
   to   { opacity: 1; }
 }
 
-@keyframes slideRight {
-  from { opacity: 0; transform: translateX(-12px); }
-  to   { opacity: 1; transform: translateX(0);      }
-}
-
 @keyframes scaleIn {
   from { opacity: 0; transform: scale(0.96); }
   to   { opacity: 1; transform: scale(1);    }
@@ -136,35 +97,9 @@ select:focus {
   50%       { opacity: 0; }
 }
 
-/* Typewriter reveal (clip from left) */
-@keyframes typeReveal {
-  from { clip-path: inset(0 100% 0 0); }
-  to   { clip-path: inset(0 0% 0 0); }
-}
-
-/* Feather / hand breathing */
-@keyframes breathe {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50%       { transform: translateY(-8px) scale(1.008); }
-}
-
-/* Glitch flicker */
-@keyframes glitchShift {
-  0%,  89%, 100% { clip-path: none; transform: none; opacity: 1; }
-  90%  { clip-path: inset(15% 0 70% 0); transform: translateX(-5px); }
-  92%  { clip-path: inset(55% 0 25% 0); transform: translateX(5px); }
-  94%  { clip-path: inset(80% 0 8% 0);  transform: translateX(-3px); }
-}
-
 .animate-fade-up  { animation: fadeUp  0.5s ease forwards; }
 .animate-fade-in  { animation: fadeIn  0.4s ease forwards; }
 .animate-scale-in { animation: scaleIn 0.35s ease forwards; }
 .animate-spin     { animation: spin 0.9s linear infinite; }
-.animate-breathe  { animation: breathe 5s ease-in-out infinite; }
 
-/* ─── Legacy dash-app utilities ─────────────────────────── */
-.ring-glow {
-  filter: drop-shadow(0 0 12px rgba(84, 242, 242, 0.25));
-}
-
-input[type='range'] { accent-color: #54F2F2; }
+input[type='range'] { accent-color: #6B1FFF; }

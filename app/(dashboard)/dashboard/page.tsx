@@ -4,6 +4,16 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
+const JET = "'JetBrains Mono', 'Courier New', monospace"
+const CPR = "'Courier Prime', 'Courier New', monospace"
+
+const CARD: React.CSSProperties = {
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #E0E0E0',
+  borderRadius: '2px',
+  padding: '20px 22px',
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient()
 
@@ -34,47 +44,52 @@ export default async function DashboardPage() {
   return (
     <div style={{ minHeight: '100vh' }}>
 
-      {/* ── Header ──────────────────────────────────────────── */}
-      <div style={{ marginBottom: '48px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+      {/* ── Header ── */}
+      <div style={{ marginBottom: '40px', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
         <div>
           <h1 style={{
-            fontFamily: 'Instrument Serif, serif',
-            fontSize: '30px', fontWeight: '400',
-            color: '#16150F', letterSpacing: '-0.5px',
-            marginBottom: '4px',
+            fontFamily: CPR,
+            fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: '700',
+            color: '#0E0E0E', letterSpacing: '-0.02em',
+            marginBottom: '4px', textTransform: 'uppercase',
           }}>
-            Welcome back, <em style={{ fontStyle: 'italic' }}>{firstNameOrEmail}</em>
+            Welcome back, {firstNameOrEmail}
           </h1>
-          <p style={{ color: '#A09D95', fontSize: '14px' }}>{user.email}</p>
+          <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em' }}>
+            {user.email}
+          </p>
         </div>
         <Link
           href="/rewrite"
           style={{
-            backgroundColor: '#042A2B',
+            fontFamily: JET,
+            backgroundColor: '#0E0E0E',
             color: '#FFFFFF',
-            padding: '11px 22px',
-            borderRadius: '9px',
+            padding: '10px 20px',
+            borderRadius: '2px',
             textDecoration: 'none',
-            fontSize: '14px', fontWeight: '600',
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            fontSize: '11px', fontWeight: '500',
+            textTransform: 'uppercase', letterSpacing: '.12em',
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            transition: 'background 150ms',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          Start a rewrite
+          New rewrite
         </Link>
       </div>
 
-      {/* ── Stats ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+      {/* ── Stats ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
         {[
           {
             label: 'Total Rewrites',
             value: totalRewrites,
             suffix: '',
             icon: (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#042A2B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B1FFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
                 <path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
               </svg>
@@ -85,7 +100,7 @@ export default async function DashboardPage() {
             value: avgMatchScore,
             suffix: '%',
             icon: (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#042A2B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B1FFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
               </svg>
             ),
@@ -95,9 +110,9 @@ export default async function DashboardPage() {
             value: writingSamples,
             suffix: '',
             icon: (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#042A2B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B1FFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
               </svg>
             ),
           },
@@ -106,76 +121,60 @@ export default async function DashboardPage() {
             value: styleStrength,
             suffix: '%',
             icon: (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#042A2B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B1FFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
               </svg>
             ),
           },
         ].map((stat) => (
-          <div key={stat.label} style={{
-            backgroundColor: '#FFFFFF',
-            border: '1px solid #E8ECF4',
-            borderRadius: '12px',
-            padding: '20px 22px',
-            boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-          }}>
+          <div key={stat.label} style={CARD}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
-              <span style={{ color: '#A09D95', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <span style={{
+                fontFamily: JET,
+                color: '#888880', fontSize: '10px',
+                textTransform: 'uppercase', letterSpacing: '.15em',
+              }}>
                 {stat.label}
               </span>
-              <div style={{
-                width: '32px', height: '32px',
-                backgroundColor: 'rgba(84,242,242,0.1)',
-                border: '1px solid rgba(84,242,242,0.2)',
-                borderRadius: '9px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                {stat.icon}
-              </div>
+              {stat.icon}
             </div>
-            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '32px', fontWeight: '700', color: '#16150F', letterSpacing: '-1.5px', lineHeight: 1 }}>
+            <div style={{ fontFamily: CPR, fontSize: '32px', fontWeight: '700', color: '#0E0E0E', letterSpacing: '-1.5px', lineHeight: 1 }}>
               {stat.value}{stat.suffix}
             </div>
           </div>
         ))}
       </div>
 
-      {/* ── Quick actions ─────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+      {/* ── Quick actions ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-10">
         {[
-          { href: '/rewrite',  label: 'Rewrite text',    desc: 'Paste AI text — your voice is put back in.', emoji: '↺' },
-          { href: '/generate', label: 'Generate content', desc: 'New text is written from scratch, in your style.', emoji: '✦' },
-          { href: '/profile',  label: 'My style profile', desc: 'Your writing is uploaded — your profile is built from it.', emoji: '◈' },
+          { href: '/rewrite',  label: 'Rewrite text',     desc: 'Paste AI text — your voice is put back in.',             sym: '↺' },
+          { href: '/generate', label: 'Generate content', desc: 'New text is written from scratch, in your style.',        sym: '✦' },
+          { href: '/profile',  label: 'Style profile',    desc: 'Your writing is uploaded — your profile is built from it.', sym: '◈' },
         ].map((action) => (
           <Link
             key={action.href}
             href={action.href}
             style={{
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E8ECF4',
-              borderRadius: '12px',
-              padding: '20px',
-              boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
+              ...CARD,
               textDecoration: 'none',
-              display: 'flex', alignItems: 'center', gap: '14px',
-              transition: 'border-color 150ms, box-shadow 150ms',
+              display: 'flex', alignItems: 'flex-start', gap: '14px',
+              transition: 'border-color 150ms',
             }}
           >
             <div style={{
-              width: '40px', height: '40px',
-              backgroundColor: 'rgba(84,242,242,0.08)',
-              border: '1px solid rgba(84,242,242,0.18)',
-              borderRadius: '10px',
+              width: '32px', height: '32px', flexShrink: 0,
+              border: '1px solid #E0E0E0',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '18px', color: '#042A2B', flexShrink: 0,
+              fontFamily: JET, fontSize: '16px', color: '#6B1FFF',
             }}>
-              {action.emoji}
+              {action.sym}
             </div>
             <div>
-              <div style={{ color: '#16150F', fontSize: '14px', fontWeight: '600', marginBottom: '2px' }}>
+              <div style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: '4px' }}>
                 {action.label}
               </div>
-              <div style={{ color: '#A09D95', fontSize: '12px' }}>
+              <div style={{ fontFamily: JET, color: '#888880', fontSize: '11px', lineHeight: 1.5 }}>
                 {action.desc}
               </div>
             </div>
@@ -183,47 +182,34 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      {/* ── Recent rewrites ───────────────────────────────────── */}
-      <div style={{
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E8ECF4',
-        borderRadius: '12px',
-        overflow: 'hidden',
-        boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-      }}>
+      {/* ── Recent rewrites ── */}
+      <div style={{ ...CARD, padding: 0, overflow: 'hidden' }}>
         <div style={{
-          padding: '18px 24px',
-          borderBottom: '1px solid #E5E2D8',
+          padding: '16px 20px',
+          borderBottom: '1px solid #E0E0E0',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         }}>
-          <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600' }}>Recent rewrites</h2>
-          <Link href="/history" style={{ color: '#54F2F2', textDecoration: 'none', fontSize: '13px', fontWeight: '500' }}>
+          <h2 style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '.15em' }}>
+            Recent rewrites
+          </h2>
+          <Link href="/history" style={{ fontFamily: JET, color: '#6B1FFF', textDecoration: 'none', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em' }}>
             View all →
           </Link>
         </div>
 
         {(!recentRewrites || recentRewrites.length === 0) ? (
           <div style={{ padding: '60px 24px', textAlign: 'center' }}>
-            <div style={{
-              width: '52px', height: '52px',
-              backgroundColor: 'rgba(84,242,242,0.08)',
-              border: '1px solid rgba(84,242,242,0.18)',
-              borderRadius: '14px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 16px', fontSize: '22px', color: '#54F2F2',
-            }}>↺</div>
-            <p style={{ color: '#6B6960', fontSize: '15px', marginBottom: '6px', fontWeight: '500' }}>
+            <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: '16px' }}>
               No rewrites yet
-            </p>
-            <p style={{ color: '#A09D95', fontSize: '13px', marginBottom: '20px' }}>
-              Paste any AI text here. It gets rewritten in your voice.
             </p>
             <Link
               href="/rewrite"
               style={{
-                backgroundColor: '#042A2B', color: '#FFFFFF',
-                padding: '10px 24px', borderRadius: '8px',
-                textDecoration: 'none', fontSize: '14px', fontWeight: '600',
+                fontFamily: JET,
+                backgroundColor: '#0E0E0E', color: '#FFFFFF',
+                padding: '10px 20px', borderRadius: '2px',
+                textDecoration: 'none', fontSize: '11px',
+                textTransform: 'uppercase', letterSpacing: '.12em',
               }}
             >
               Start your first rewrite
@@ -234,12 +220,12 @@ export default async function DashboardPage() {
             {/* Mobile cards */}
             <div className="block md:hidden">
               {recentRewrites.map((rw) => (
-                <div key={rw.id} style={{ padding: '16px 24px', borderBottom: '1px solid #F0EDE4' }}>
-                  <div style={{ color: '#A09D95', fontSize: '12px', marginBottom: '6px' }}>
+                <div key={rw.id} style={{ padding: '14px 20px', borderBottom: '1px solid #F0F0F0' }}>
+                  <div style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: '6px' }}>
                     {new Date(rw.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </div>
                   <p style={{
-                    color: '#6B6960', fontSize: '13px', lineHeight: '1.5', marginBottom: '10px',
+                    fontFamily: JET, color: '#888880', fontSize: '11px', lineHeight: '1.5', marginBottom: '10px',
                     overflow: 'hidden', display: '-webkit-box',
                     WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const,
                   }}>
@@ -247,15 +233,15 @@ export default async function DashboardPage() {
                   </p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{
-                      backgroundColor: 'rgba(84,242,242,0.1)',
-                      color: '#042A2B', padding: '3px 9px', borderRadius: '100px',
-                      fontSize: '12px', fontWeight: '700',
-                      border: '1px solid rgba(84,242,242,0.25)',
+                      fontFamily: JET, fontSize: '10px', fontWeight: '500',
+                      textTransform: 'uppercase', letterSpacing: '.15em',
+                      color: '#6B1FFF', border: '1px solid #6B1FFF',
+                      borderRadius: '2px', padding: '2px 6px',
                     }}>
                       {rw.match_score}%
                     </span>
-                    <span style={{ color: '#A09D95', fontSize: '12px' }}>
-                      Intensity {rw.intensity}/10
+                    <span style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.08em' }}>
+                      {rw.intensity}/10
                     </span>
                   </div>
                 </div>
@@ -266,37 +252,39 @@ export default async function DashboardPage() {
             <div className="hidden md:block">
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ borderBottom: '1px solid #E5E2D8' }}>
+                  <tr style={{ borderBottom: '1px solid #0E0E0E' }}>
                     {['Date', 'Original text', 'Match', 'Intensity'].map((col) => (
                       <th key={col} style={{
-                        padding: '11px 24px',
+                        padding: '10px 20px',
                         textAlign: 'left',
-                        color: '#A09D95', fontSize: '11px', fontWeight: '600',
-                        textTransform: 'uppercase', letterSpacing: '0.08em',
+                        fontFamily: JET,
+                        color: '#888880', fontSize: '10px',
+                        textTransform: 'uppercase', letterSpacing: '.15em',
+                        fontWeight: '400',
                       }}>{col}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {recentRewrites.map((rw) => (
-                    <tr key={rw.id} style={{ borderBottom: '1px solid #F0EDE4' }}>
-                      <td style={{ padding: '14px 24px', color: '#A09D95', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                    <tr key={rw.id} style={{ borderBottom: '1px solid #F0F0F0' }}>
+                      <td style={{ padding: '13px 20px', fontFamily: JET, color: '#888880', fontSize: '11px', whiteSpace: 'nowrap' }}>
                         {new Date(rw.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </td>
-                      <td style={{ padding: '14px 24px', color: '#6B6960', fontSize: '13px', maxWidth: '320px' }}>
+                      <td style={{ padding: '13px 20px', fontFamily: JET, color: '#888880', fontSize: '11px', maxWidth: '320px' }}>
                         {rw.original_text?.substring(0, 90)}{rw.original_text?.length > 90 ? '…' : ''}
                       </td>
-                      <td style={{ padding: '14px 24px' }}>
+                      <td style={{ padding: '13px 20px' }}>
                         <span style={{
-                          backgroundColor: 'rgba(84,242,242,0.1)',
-                          color: '#042A2B', padding: '4px 10px', borderRadius: '100px',
-                          fontSize: '13px', fontWeight: '700',
-                          border: '1px solid rgba(84,242,242,0.25)',
+                          fontFamily: JET, fontSize: '10px', fontWeight: '500',
+                          textTransform: 'uppercase', letterSpacing: '.15em',
+                          color: '#6B1FFF', border: '1px solid #6B1FFF',
+                          borderRadius: '2px', padding: '2px 6px',
                         }}>
                           {rw.match_score}%
                         </span>
                       </td>
-                      <td style={{ padding: '14px 24px', color: '#A09D95', fontSize: '13px' }}>
+                      <td style={{ padding: '13px 20px', fontFamily: JET, color: '#888880', fontSize: '11px' }}>
                         {rw.intensity}/10
                       </td>
                     </tr>

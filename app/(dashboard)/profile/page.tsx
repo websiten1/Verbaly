@@ -5,29 +5,46 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import type { WritingSample, StyleTrait } from '@/lib/types'
 
-interface PresetProfile { name: string; description: string; icon: string }
+const JET = "'JetBrains Mono', 'Courier New', monospace"
+const CPR = "'Courier Prime', 'Courier New', monospace"
+
+const CARD: React.CSSProperties = {
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #E0E0E0',
+  borderRadius: '2px',
+}
+
+const INPUT_STYLE: React.CSSProperties = {
+  width: '100%', backgroundColor: '#FFFFFF',
+  border: '1px solid #E0E0E0', borderRadius: '2px',
+  padding: '12px 14px', color: '#0E0E0E',
+  fontFamily: JET, fontSize: '11px',
+  letterSpacing: '.05em', outline: 'none',
+}
+
+interface PresetProfile { name: string; description: string; sym: string }
 
 const PRESET_PROFILES: PresetProfile[] = [
-  { name: 'The Academic',       icon: '🎓', description: 'Formal sentences with citations, passive voice, and hedging — used in academic disciplines.' },
-  { name: 'The Casual Student', icon: '😊', description: 'Relaxed and conversational. Contractions are used throughout, and short sentences are the default.' },
-  { name: 'The Creative Writer', icon: '✍️', description: 'Expressive and bold. Metaphors, em-dashes, and sensory language are used — and the rhythm varies.' },
-  { name: 'The Professional',   icon: '💼', description: 'Clear and direct. Active voice is used, and statements are made without filler.' },
+  { name: 'The Academic',        sym: '◆', description: 'Formal sentences with citations, passive voice, and hedging — used in academic disciplines.' },
+  { name: 'The Casual Student',  sym: '◇', description: 'Relaxed and conversational. Contractions are used throughout, and short sentences are the default.' },
+  { name: 'The Creative Writer', sym: '◈', description: 'Expressive and bold. Metaphors, em-dashes, and sensory language are used — and the rhythm varies.' },
+  { name: 'The Professional',    sym: '◉', description: 'Clear and direct. Active voice is used, and statements are made without filler.' },
 ]
 
-const TRAIT_CONFIG = [
-  { key: 'vocabulary',  label: 'Vocabulary Fingerprint', desc: 'Your most-used words, mapped',               accent: '#54F2F2', bg: 'rgba(84,242,242,0.08)',  border: 'rgba(84,242,242,0.2)' },
-  { key: 'phrases',     label: 'Favorite Phrases',       desc: 'Expressions that appear again and again',     accent: '#059669', bg: 'rgba(5,150,105,0.08)',   border: 'rgba(5,150,105,0.2)'  },
-  { key: 'punctuation', label: 'Punctuation Patterns',   desc: 'The way commas, dashes, and stops are used',  accent: '#7C3AED', bg: 'rgba(124,58,237,0.08)',  border: 'rgba(124,58,237,0.2)' },
-  { key: 'structure',   label: 'Sentence Structure',     desc: 'Sentence length and the rhythm behind it',    accent: '#D97706', bg: 'rgba(217,119,6,0.08)',   border: 'rgba(217,119,6,0.2)'  },
-  { key: 'voice',       label: 'Voice Markers',          desc: 'Tone, formality, and the voice behind the text', accent: '#DB2777', bg: 'rgba(219,39,119,0.08)',  border: 'rgba(219,39,119,0.2)' },
-  { key: 'never_does',  label: 'Never Does',             desc: 'Patterns that never appeared in your writing', accent: '#042A2B', bg: 'rgba(4,42,43,0.06)',     border: 'rgba(4,42,43,0.15)'   },
-]
+const TRAIT_LABELS: Record<string, { label: string; desc: string }> = {
+  vocabulary:  { label: 'Vocabulary Fingerprint', desc: 'Your most-used words, mapped' },
+  phrases:     { label: 'Favorite Phrases',       desc: 'Expressions that appear again and again' },
+  punctuation: { label: 'Punctuation Patterns',   desc: 'The way commas, dashes, and stops are used' },
+  structure:   { label: 'Sentence Structure',     desc: 'Sentence length and the rhythm behind it' },
+  voice:       { label: 'Voice Markers',          desc: 'Tone, formality, and the voice behind the text' },
+  never_does:  { label: 'Never Does',             desc: 'Patterns that never appeared in your writing' },
+}
 
 function Spinner({ text = 'Working…' }: { text?: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontFamily: JET, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em' }}>
       <span style={{
-        width: '14px', height: '14px',
+        width: '12px', height: '12px',
         border: '2px solid rgba(255,255,255,0.3)',
         borderTopColor: '#FFF', borderRadius: '50%',
         animation: 'spin 0.8s linear infinite', display: 'inline-block',
@@ -115,12 +132,12 @@ export default function ProfilePage() {
       const usesSemi = typeof r.uses_semicolons === 'boolean' ? r.uses_semicolons : null
 
       return [
-        `Overall punctuation style: ${overall ?? '—'}`,
+        `Overall: ${overall ?? '—'}`,
         usesEm !== null ? `Em-dashes: ${usesEm ? 'yes' : 'no'}` : '—',
         usesEll !== null ? `Ellipses: ${usesEll ? 'yes' : 'no'}` : '—',
         usesSemi !== null ? `Semicolons: ${usesSemi ? 'yes' : 'no'}` : '—',
-        `Omission patterns: ${omissions.slice(0, 3).join(', ') || '—'}`,
-        `Addition patterns: ${additions.slice(0, 3).join(', ') || '—'}`,
+        `Omissions: ${omissions.slice(0, 3).join(', ') || '—'}`,
+        `Additions: ${additions.slice(0, 3).join(', ') || '—'}`,
         `Deviations: ${deviations.slice(0, 3).join(', ') || '—'}`,
       ].filter((x) => x !== '—')
     }
@@ -173,20 +190,9 @@ export default function ProfilePage() {
       supabase.from('style_traits').select('*').eq('user_id', uid).order('score', { ascending: false }),
       supabase.from('profiles').select('preset_type,onboarding_complete').eq('user_id', uid).maybeSingle(),
     ])
-    if (samplesRes.error) {
-      console.error('loadData: writing_samples failed', samplesRes.error)
-      setError('Your writing samples could not be loaded. Please try again.')
-      return
-    }
-    if (traitsRes.error) {
-      console.error('loadData: style_traits failed', traitsRes.error)
-      setError('Your style traits could not be loaded. Please try again.')
-      return
-    }
-    if (profileRes.error) {
-      // Keep the page usable even if preset_type is missing/misconfigured.
-      console.error('loadData: profiles(preset_type) failed', profileRes.error)
-    }
+    if (samplesRes.error) { setError('Your writing samples could not be loaded. Please try again.'); return }
+    if (traitsRes.error)  { setError('Your style traits could not be loaded. Please try again.'); return }
+    if (profileRes.error) { console.error('loadData: profiles(preset_type) failed', profileRes.error) }
     setError(null)
     const nextSamples = samplesRes.data ?? []
     setSamples(nextSamples)
@@ -207,29 +213,21 @@ export default function ProfilePage() {
     getUser()
   }, [loadData, router, supabase])
 
-  // Mark onboarding complete once the user uploads enough words.
   useEffect(() => {
     const shouldComplete = onboardingComplete === false && totalWords >= 500 && userId
     if (!shouldComplete) return
-
     const run = async () => {
       try {
         const { error: e } = await supabase.from('profiles').upsert(
           { user_id: userId as string, onboarding_complete: true },
           { onConflict: 'user_id' },
         )
-        if (e) {
-          console.error('onboarding_complete upsert failed', e)
-          return
-        }
+        if (e) { console.error('onboarding_complete upsert failed', e); return }
         setOnboardingComplete(true)
         setShowOnboardingSuccess(true)
         setTimeout(() => setShowOnboardingSuccess(false), 6000)
-      } catch (err) {
-        console.error('onboarding_complete update failed', err)
-      }
+      } catch (err) { console.error('onboarding_complete update failed', err) }
     }
-
     run()
   }, [onboardingComplete, totalWords, userId, supabase])
 
@@ -238,17 +236,12 @@ export default function ProfilePage() {
     setPresetSaving(true)
     try {
       const { error: e } = await supabase.from('profiles').upsert(
-        { user_id: userId, preset_type: name },
-        { onConflict: 'user_id' },
-      )
+        { user_id: userId, preset_type: name }, { onConflict: 'user_id' })
       if (e) throw e
       setActivePreset(name)
       flash(`The "${name}" profile is now active.`)
-    } catch {
-      setError('Failed to save preset. Please try again.')
-    } finally {
-      setPresetSaving(false)
-    }
+    } catch { setError('Failed to save preset. Please try again.') }
+    finally { setPresetSaving(false) }
   }
 
   const handleClearPreset = async () => {
@@ -256,17 +249,12 @@ export default function ProfilePage() {
     setPresetSaving(true)
     try {
       const { error: e } = await supabase.from('profiles').upsert(
-        { user_id: userId, preset_type: null },
-        { onConflict: 'user_id' },
-      )
+        { user_id: userId, preset_type: null }, { onConflict: 'user_id' })
       if (e) throw e
       setActivePreset(null)
       flash('Your personal profile is now active.')
-    } catch {
-      setError('Failed to switch back to personal profile. Please try again.')
-    } finally {
-      setPresetSaving(false)
-    }
+    } catch { setError('Failed to switch back to personal profile. Please try again.') }
+    finally { setPresetSaving(false) }
   }
 
   const handleUpload = async () => {
@@ -290,9 +278,7 @@ export default function ProfilePage() {
       const { error: e } = await supabase.from('writing_samples').delete().eq('id', id).eq('user_id', userId)
       if (e) throw e
       await loadData(userId)
-    } catch {
-      setError('Failed to delete sample. Please try again.')
-    }
+    } catch { setError('Failed to delete sample. Please try again.') }
   }
 
   const handleAnalyze = async () => {
@@ -304,18 +290,13 @@ export default function ProfilePage() {
         body: JSON.stringify({ userId, samples: samples.map((s) => s.content) }),
       })
       const data = await res.json().catch(() => ({}))
-      if (!res.ok) {
-        console.error('handleAnalyze: analyze-style failed', { status: res.status, data })
-        setError(data.error || 'The style analysis failed. Please try again.')
-        return
-      }
+      if (!res.ok) { setError(data.error || 'The style analysis failed. Please try again.'); return }
       parseTraits(data.traits ?? [])
       flash('Style analysis done.')
     } catch (e) {
       console.error('handleAnalyze: fetch error', e)
       setError('Something went wrong. Please try again.')
-    }
-    finally { setAnalyzing(false) }
+    } finally { setAnalyzing(false) }
   }
 
   const STYLE_DIMENSIONS = ['vocabulary', 'phrases', 'punctuation', 'structure', 'voice', 'never_does']
@@ -323,45 +304,33 @@ export default function ProfilePage() {
 
   const styleStrengthPct = Math.min(100, Math.round((totalWords / 3000) * 100))
   const milestoneLabel =
-    totalWords < 500
-      ? 'Starter — basic patterns were found'
-      : totalWords < 1500
-        ? 'Developing — your voice is getting clearer'
-        : totalWords < 2500
-          ? 'Strong — most patterns were captured'
-          : 'Complete — your full profile is active'
+    totalWords < 500  ? 'Starter — basic patterns were found' :
+    totalWords < 1500 ? 'Developing — your voice is getting clearer' :
+    totalWords < 2500 ? 'Strong — most patterns were captured' :
+                        'Complete — your full profile is active'
 
   const shouldShowOnboarding = onboardingComplete === false && totalWords < 500
   const showUploadTour = shouldShowOnboarding && onboardingStage === 1
 
-  const INPUT: React.CSSProperties = {
-    width: '100%', backgroundColor: '#F9F8F5', border: '1px solid #E5E2D8',
-    borderRadius: '10px', padding: '16px', color: '#16150F',
-    fontSize: '14px', outline: 'none', fontFamily: 'DM Sans, sans-serif',
-  }
-
   return (
     <div style={{ minHeight: '100vh' }}>
-      <style>{`
-        @keyframes vbPulse {
-          0% { box-shadow: 0 0 0 0 rgba(84,242,242,0.28), 0 2px 12px rgba(26,110,255,0.08); }
-          50% { box-shadow: 0 0 0 6px rgba(84,242,242,0.22), 0 0 40px rgba(84,242,242,0.18); }
-          100% { box-shadow: 0 0 0 0 rgba(84,242,242,0.28), 0 2px 12px rgba(26,110,255,0.08); }
-        }
-      `}</style>
 
-      {/* Onboarding overlay (first login) */}
+      {/* Onboarding overlay */}
       {shouldShowOnboarding && onboardingStage === 0 && (
         <div style={{
-          position: 'fixed', inset: 0, background: '#042A2B', color: '#FFFFFF',
+          position: 'fixed', inset: 0, background: '#FFFFFF', color: '#0E0E0E',
           zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          padding: '40px 20px'
+          padding: '40px clamp(20px, 5vw, 80px)',
+          borderLeft: '4px solid #6B1FFF',
         }}>
-          <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'left' }}>
-            <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: '46px', fontWeight: 400, marginBottom: '14px', letterSpacing: '-0.6px' }}>
+          <div style={{ maxWidth: '640px' }}>
+            <p style={{ fontFamily: JET, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.25em', color: '#888880', marginBottom: '20px' }}>
+              Getting started
+            </p>
+            <h1 style={{ fontFamily: CPR, fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 700, marginBottom: '16px', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
               Your writing is read — and your voice is mapped from it.
             </h1>
-            <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: '16px', lineHeight: 1.7, marginBottom: '28px' }}>
+            <p style={{ fontFamily: JET, color: '#888880', fontSize: '12px', lineHeight: 1.7, marginBottom: '28px' }}>
               Verbaly reads your writing before it can sound like you. Upload at least 3 samples to get started.
             </p>
             <button
@@ -370,9 +339,11 @@ export default function ProfilePage() {
                 document.getElementById('vb-upload-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
               }}
               style={{
-                backgroundColor: '#54F2F2', color: '#042A2B', border: 'none',
-                borderRadius: '12px', padding: '14px 22px', fontSize: '16px',
-                fontWeight: 800, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '10px',
+                backgroundColor: '#0E0E0E', color: '#FFFFFF', border: 'none',
+                borderRadius: '2px', padding: '12px 24px',
+                fontFamily: JET, fontSize: '11px', fontWeight: 500,
+                textTransform: 'uppercase', letterSpacing: '.14em',
+                cursor: 'pointer',
               }}
             >
               Upload my writing →
@@ -384,21 +355,21 @@ export default function ProfilePage() {
       {/* Completion banner */}
       {showOnboardingSuccess && (
         <div style={{
-          backgroundColor: 'rgba(84,242,242,0.08)', border: '1px solid rgba(84,242,242,0.2)',
-          borderRadius: '10px', padding: '14px 16px', color: '#042A2B', fontSize: '14px',
+          border: '1px solid #6B1FFF', borderRadius: '2px',
+          padding: '12px 16px', fontFamily: JET,
+          color: '#6B1FFF', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em',
           marginBottom: '20px', marginTop: '20px',
-          fontWeight: 700,
         }}>
           Your style profile is active — Verbaly writes like you now.
         </div>
       )}
 
       {/* Header */}
-      <div style={{ marginBottom: '48px' }}>
-        <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: '30px', fontWeight: '400', color: '#16150F', letterSpacing: '-0.5px', marginBottom: '4px' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontFamily: CPR, fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: '700', color: '#0E0E0E', letterSpacing: '-0.02em', marginBottom: '4px', textTransform: 'uppercase' }}>
           Style Profile
         </h1>
-        <p style={{ color: '#A09D95', fontSize: '14px' }}>
+        <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em' }}>
           Upload your writing. Verbaly reads it, and your voice is learned from it.
         </p>
       </div>
@@ -406,96 +377,99 @@ export default function ProfilePage() {
       {/* Notice */}
       {notice && (
         <div style={{
-          backgroundColor: 'rgba(84,242,242,0.08)', border: '1px solid rgba(84,242,242,0.2)',
-          borderRadius: '10px', padding: '11px 16px', color: '#042A2B',
-          fontSize: '13px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px',
+          border: '1px solid #6B1FFF', borderRadius: '2px',
+          padding: '10px 14px', fontFamily: JET,
+          color: '#6B1FFF', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em',
+          marginBottom: '20px',
         }}>
-          <span style={{ color: '#54F2F2' }}>✓</span> {notice}
+          ✓ {notice}
         </div>
       )}
 
       {/* Profile strength */}
-      <div style={{
-        backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4',
-        borderRadius: '12px', padding: '20px 24px', marginBottom: '48px',
-        boxShadow: '0 2px 12px rgba(26,110,255,0.08)',
-      }}>
+      <div style={{ ...CARD, padding: '18px 22px', marginBottom: '32px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-          <span style={{ color: '#16150F', fontSize: '14px', fontWeight: '600' }}>Profile strength</span>
-          <span style={{ color: '#042A2B', fontSize: '14px', fontWeight: '700' }}>{styleStrengthPct}%</span>
+          <span style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.15em' }}>
+            Profile strength
+          </span>
+          <span style={{ fontFamily: JET, color: '#6B1FFF', fontSize: '11px', fontWeight: '500', letterSpacing: '.1em' }}>
+            {styleStrengthPct}%
+          </span>
         </div>
-        <div style={{ backgroundColor: '#F0EDE4', borderRadius: '100px', height: '6px', overflow: 'hidden' }}>
+        <div style={{ backgroundColor: '#F0F0F0', height: '4px', overflow: 'hidden' }}>
           <div style={{
-            backgroundColor: '#54F2F2', height: '100%',
-            width: `${styleStrengthPct}%`, borderRadius: '100px',
+            backgroundColor: '#6B1FFF', height: '100%',
+            width: `${styleStrengthPct}%`,
             transition: 'width 0.8s ease',
           }} />
         </div>
-        <p style={{ color: '#A09D95', fontSize: '12px', marginTop: '8px' }}>
-          {totalWords} words were read — upload more writing to strengthen your profile
-          <br />
-          {milestoneLabel}
+        <p style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em', marginTop: '8px', lineHeight: 1.6 }}>
+          {totalWords} words uploaded · {milestoneLabel}
         </p>
       </div>
 
       {/* Preset profiles */}
-      <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', padding: '24px', marginBottom: '48px', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+      <div style={{ ...CARD, padding: '20px', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
           <div>
-            <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>Preset Profiles</h2>
-            <p style={{ color: '#A09D95', fontSize: '13px' }}>
-              {activePreset ? `The "${activePreset}" profile is active.` : 'Your personal style profile is active.'}
+            <h2 style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: '4px' }}>
+              Preset Profiles
+            </h2>
+            <p style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.1em' }}>
+              {activePreset ? `"${activePreset}" is active.` : 'Your personal style profile is active.'}
             </p>
           </div>
           {activePreset && (
             <button onClick={handleClearPreset} disabled={presetSaving}
               style={{
-                background: 'transparent', border: '1px solid #E5E2D8',
-                borderRadius: '8px', padding: '6px 14px',
-                color: '#6B6960', fontSize: '13px', cursor: 'pointer',
-                fontFamily: 'DM Sans, sans-serif',
+                background: 'transparent', border: '1px solid #E0E0E0',
+                borderRadius: '2px', padding: '6px 14px',
+                fontFamily: JET, color: '#888880', fontSize: '10px',
+                textTransform: 'uppercase', letterSpacing: '.1em',
+                cursor: 'pointer',
               }}>
-              Switch to my profile
+              Use my profile
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {PRESET_PROFILES.map((p) => {
             const active = activePreset === p.name
             return (
               <div key={p.name} style={{
-                border: active ? '1px solid rgba(84,242,242,0.35)' : '1px solid #E5E2D8',
-                borderRadius: '12px', padding: '18px',
-                backgroundColor: active ? 'rgba(84,242,242,0.04)' : '#F9F8F5',
-                position: 'relative',
+                border: active ? '1px solid #6B1FFF' : '1px solid #E0E0E0',
+                borderLeft: active ? '3px solid #6B1FFF' : '1px solid #E0E0E0',
+                borderRadius: '2px', padding: '16px',
+                backgroundColor: '#FFFFFF', position: 'relative',
               }}>
                 {active && (
                   <span style={{
                     position: 'absolute', top: '12px', right: '12px',
-                    backgroundColor: 'rgba(84,242,242,0.15)', color: '#042A2B',
-                    fontSize: '11px', fontWeight: '700', padding: '2px 8px',
-                    borderRadius: '100px', border: '1px solid rgba(84,242,242,0.3)',
+                    fontFamily: JET, fontSize: '10px', fontWeight: '500',
+                    textTransform: 'uppercase', letterSpacing: '.15em',
+                    color: '#6B1FFF', border: '1px solid #6B1FFF',
+                    borderRadius: '2px', padding: '2px 6px',
                   }}>Active</span>
                 )}
-                <div style={{ fontSize: '22px', marginBottom: '8px' }}>{p.icon}</div>
-                <div style={{ color: '#16150F', fontSize: '14px', fontWeight: '600', marginBottom: '6px' }}>
+                <div style={{ fontFamily: JET, fontSize: '16px', color: '#6B1FFF', marginBottom: '8px' }}>{p.sym}</div>
+                <div style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: '6px' }}>
                   {p.name}
                 </div>
-                <p style={{ color: '#6B6960', fontSize: '13px', lineHeight: '1.55', marginBottom: '14px' }}>
+                <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', lineHeight: '1.6', marginBottom: '14px' }}>
                   {p.description}
                 </p>
                 <button
                   onClick={() => handleSelectPreset(p.name)}
                   disabled={presetSaving || active}
                   style={{
-                    backgroundColor: active ? 'rgba(84,242,242,0.12)' : '#042A2B',
-                    color: active ? '#042A2B' : '#FFFFFF',
-                    border: active ? '1px solid rgba(84,242,242,0.3)' : 'none',
-                    borderRadius: '8px', padding: '7px 16px',
-                    fontSize: '13px', fontWeight: '600',
+                    backgroundColor: active ? 'transparent' : '#0E0E0E',
+                    color: active ? '#6B1FFF' : '#FFFFFF',
+                    border: active ? '1px solid #6B1FFF' : 'none',
+                    borderRadius: '2px', padding: '7px 16px',
+                    fontFamily: JET, fontSize: '10px', fontWeight: '500',
+                    textTransform: 'uppercase', letterSpacing: '.1em',
                     cursor: active ? 'default' : 'pointer',
-                    fontFamily: 'DM Sans, sans-serif',
                   }}>
                   {active ? 'Active' : 'Use this profile'}
                 </button>
@@ -506,83 +480,74 @@ export default function ProfilePage() {
       </div>
 
       {/* Upload + Traits grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {/* Upload */}
         <div>
-        <div
-          id="vb-upload-card"
-          style={{
-            backgroundColor: '#FFFFFF',
-            border: showUploadTour ? '2px solid rgba(84,242,242,0.9)' : '1px solid #E8ECF4',
-            borderRadius: '12px',
-            padding: '24px',
-            marginBottom: '16px',
-            boxShadow: showUploadTour ? '0 0 0 6px rgba(84,242,242,0.15), 0 2px 12px rgba(26,110,255,0.08)' : '0 2px 12px rgba(26,110,255,0.08)',
-            animation: showUploadTour ? 'vbPulse 1.8s ease-in-out infinite' : undefined,
-            position: 'relative',
-          }}
-        >
-            <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600', marginBottom: '20px' }}>
+          <div
+            id="vb-upload-card"
+            style={{
+              ...CARD,
+              padding: '20px',
+              marginBottom: '12px',
+              borderLeft: showUploadTour ? '3px solid #6B1FFF' : '1px solid #E0E0E0',
+              position: 'relative',
+            }}
+          >
+            <h2 style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: '18px' }}>
               Upload a writing sample
             </h2>
 
-          {showUploadTour && (
-            <div style={{
-              position: 'absolute',
-              top: '14px',
-              right: '14px',
-              background: 'rgba(84,242,242,0.10)',
-              border: '1px solid rgba(84,242,242,0.35)',
-              borderRadius: '10px',
-              padding: '10px 12px',
-              color: '#042A2B',
-              fontSize: '13px',
-              lineHeight: 1.45,
-              maxWidth: '320px',
-              fontWeight: 600,
-            }}>
-              Upload essays, assignments, emails — anything you wrote. The more that is uploaded, the better Verbaly sounds like you.
-            </div>
-          )}
+            {showUploadTour && (
+              <div style={{
+                position: 'absolute', top: '14px', right: '14px',
+                border: '1px solid #6B1FFF', borderRadius: '2px',
+                padding: '10px 12px', fontFamily: JET,
+                color: '#0E0E0E', fontSize: '11px', lineHeight: 1.5,
+                maxWidth: '280px', backgroundColor: '#FFFFFF',
+              }}>
+                Upload essays, assignments, emails — anything you wrote. The more that is uploaded, the better Verbaly sounds like you.
+              </div>
+            )}
 
             <div style={{ marginBottom: '14px' }}>
-              <label style={{ display: 'block', color: '#6B6960', fontSize: '13px', fontWeight: '500', marginBottom: '7px' }}>
+              <label style={{ display: 'block', fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: '7px' }}>
                 Filename / Title
               </label>
               <input type="text" value={filename} onChange={(e) => setFilename(e.target.value)}
-                placeholder="e.g. My Blog Post" style={INPUT} />
+                placeholder="e.g. My Blog Post" style={INPUT_STYLE} />
             </div>
 
             <div style={{ marginBottom: '14px' }}>
-              <label style={{ display: 'block', color: '#6B6960', fontSize: '13px', fontWeight: '500', marginBottom: '7px' }}>
+              <label style={{ display: 'block', fontFamily: JET, color: '#888880', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: '7px' }}>
                 Content
               </label>
               <textarea value={content} onChange={(e) => setContent(e.target.value)}
-                placeholder="Paste your writing here — emails, essays, blog posts. The more real it is, the better."
-                rows={8} style={{ ...INPUT, lineHeight: '1.6', resize: 'vertical', minHeight: '120px', padding: '16px' }}
+                placeholder="Paste your writing here — emails, essays, blog posts."
+                rows={8} style={{ ...INPUT_STYLE, lineHeight: '1.65', resize: 'vertical', minHeight: '120px' }}
               />
               {content && (
-                <div style={{ color: '#A09D95', fontSize: '12px', textAlign: 'right', marginTop: '4px' }}>
+                <div style={{ fontFamily: JET, color: '#888880', fontSize: '10px', textAlign: 'right', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '.1em' }}>
                   {content.split(/\s+/).filter(Boolean).length} words
                 </div>
               )}
             </div>
 
             {error && (
-              <div style={{ backgroundColor: 'rgba(220,38,38,0.05)', border: '1px solid rgba(220,38,38,0.18)', borderRadius: '10px', padding: '10px 14px', color: '#DC2626', fontSize: '13px', marginBottom: '12px' }}>
+              <div style={{ border: '1px solid #DC2626', borderRadius: '2px', padding: '10px 14px', fontFamily: JET, color: '#DC2626', fontSize: '11px', marginBottom: '12px' }}>
                 {error}
               </div>
             )}
 
             <button onClick={handleUpload} disabled={uploading}
               style={{
-                backgroundColor: uploading ? 'rgba(4,42,43,0.3)' : '#042A2B',
-                color: '#FFFFFF', border: 'none', borderRadius: '9px',
-                padding: '11px 20px', fontSize: '14px', fontWeight: '600',
+                backgroundColor: uploading ? '#E0E0E0' : '#0E0E0E',
+                color: uploading ? '#888880' : '#FFFFFF',
+                border: 'none', borderRadius: '2px',
+                padding: '11px 20px', fontFamily: JET, fontSize: '11px', fontWeight: '500',
+                textTransform: 'uppercase', letterSpacing: '.12em',
                 cursor: uploading ? 'not-allowed' : 'pointer', width: '100%',
-                fontFamily: 'DM Sans, sans-serif', display: 'flex',
-                alignItems: 'center', justifyContent: 'center',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
               {uploading ? <Spinner text="Uploading…" /> : 'Upload sample'}
             </button>
@@ -590,24 +555,26 @@ export default function ProfilePage() {
 
           {/* Samples list */}
           {samples.length > 0 && (
-            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
-              <div style={{ padding: '14px 20px', borderBottom: '1px solid #E5E2D8' }}>
-                <span style={{ color: '#16150F', fontSize: '14px', fontWeight: '600' }}>
+            <div style={{ ...CARD, overflow: 'hidden' }}>
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid #E0E0E0' }}>
+                <span style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.12em' }}>
                   Samples ({samples.length})
                 </span>
               </div>
               {samples.map((s) => (
                 <div key={s.id} style={{
-                  padding: '12px 20px', borderBottom: '1px solid #F0EDE4',
+                  padding: '11px 16px', borderBottom: '1px solid #F0F0F0',
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 }}>
                   <div>
-                    <div style={{ color: '#16150F', fontSize: '14px', fontWeight: '500' }}>{s.filename}</div>
-                    <div style={{ color: '#A09D95', fontSize: '12px', marginTop: '2px' }}>{s.word_count} words</div>
+                    <div style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px' }}>{s.filename}</div>
+                    <div style={{ fontFamily: JET, color: '#888880', fontSize: '10px', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '.08em' }}>
+                      {s.word_count} words
+                    </div>
                   </div>
                   <button onClick={() => handleDeleteSample(s.id)} style={{
-                    background: 'transparent', border: 'none', color: '#A09D95',
-                    cursor: 'pointer', fontSize: '18px', padding: '4px 8px', lineHeight: 1,
+                    background: 'transparent', border: 'none', fontFamily: JET,
+                    color: '#888880', cursor: 'pointer', fontSize: '16px', padding: '4px 8px', lineHeight: 1,
                   }}>×</button>
                 </div>
               ))}
@@ -617,68 +584,71 @@ export default function ProfilePage() {
 
         {/* Style traits */}
         <div>
-          <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8ECF4', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(26,110,255,0.08)' }}>
+          <div style={{ ...CARD, overflow: 'hidden' }}>
             <div style={{
-              padding: '16px 20px', borderBottom: '1px solid #E5E2D8',
+              padding: '14px 16px', borderBottom: '1px solid #E0E0E0',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
-              <h2 style={{ color: '#16150F', fontSize: '15px', fontWeight: '600' }}>Style traits</h2>
+              <h2 style={{ fontFamily: JET, color: '#0E0E0E', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '.15em' }}>
+                Style traits
+              </h2>
               <button
                 onClick={handleAnalyze}
                 disabled={analyzing || samples.length === 0}
                 style={{
-                  backgroundColor: analyzing || samples.length === 0 ? 'rgba(4,42,43,0.15)' : '#042A2B',
-                  color: analyzing || samples.length === 0 ? 'rgba(4,42,43,0.4)' : '#FFFFFF',
-                  border: 'none', borderRadius: '8px', padding: '7px 16px',
-                  fontSize: '13px', fontWeight: '600',
+                  backgroundColor: analyzing || samples.length === 0 ? '#E0E0E0' : '#0E0E0E',
+                  color: analyzing || samples.length === 0 ? '#888880' : '#FFFFFF',
+                  border: 'none', borderRadius: '2px', padding: '7px 14px',
+                  fontFamily: JET, fontSize: '10px', fontWeight: '500',
+                  textTransform: 'uppercase', letterSpacing: '.1em',
                   cursor: analyzing || samples.length === 0 ? 'not-allowed' : 'pointer',
-                  fontFamily: 'DM Sans, sans-serif', display: 'flex', alignItems: 'center', gap: '6px',
+                  display: 'flex', alignItems: 'center', gap: '6px',
                 }}>
                 {analyzing ? <Spinner text="Analyzing…" /> : 'Analyze style'}
               </button>
             </div>
 
             {!hasStyleData ? (
-              <div style={{ padding: '56px 24px', textAlign: 'center' }}>
-                <svg width="40" height="40" viewBox="0 0 20 20" fill="none" style={{ margin: '0 auto 16px', opacity: 0.2 }}>
-                  <circle cx="10" cy="10" r="8.5" stroke="#042A2B" strokeWidth="1.4"/>
-                  <circle cx="10" cy="10" r="5.5" stroke="#042A2B" strokeWidth="1.4"/>
-                  <circle cx="10" cy="10" r="2.5" stroke="#042A2B" strokeWidth="1.4"/>
-                </svg>
-                <p style={{ color: '#6B6960', fontSize: '15px', fontWeight: '500', marginBottom: '6px' }}>
+              <div style={{ padding: '48px 20px', textAlign: 'center' }}>
+                <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: '4px' }}>
                   No style data yet
                 </p>
-                <p style={{ color: '#A09D95', fontSize: '13px' }}>
-                  Upload samples, then click Analyze Style. Your writing fingerprint will be shown.
+                <p style={{ fontFamily: JET, color: '#888880', fontSize: '11px' }}>
+                  Upload samples, then click Analyze Style.
                 </p>
               </div>
             ) : (
-              <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {TRAIT_CONFIG.map(({ key, label, desc, accent, bg, border }) => {
-                  const items = traitMap[key] ?? []
-                  const displayItems = traitToDisplayItems(key, items)
+              <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {STYLE_DIMENSIONS.map((key) => {
+                  const displayItems = traitToDisplayItems(key, traitMap[key])
                   if (displayItems.length === 0) return null
+                  const cfg = TRAIT_LABELS[key]
                   return (
-                    <div key={key} style={{ backgroundColor: bg, border: `1px solid ${border}`, borderRadius: '12px', padding: '16px' }}>
+                    <div key={key} style={{ border: '1px solid #E0E0E0', borderRadius: '2px', padding: '14px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
                         <div>
-                          <div style={{ fontSize: '12px', fontWeight: '700', letterSpacing: '0.06em', color: accent, textTransform: 'uppercase', marginBottom: '2px' }}>
-                            {label}
+                          <div style={{ fontFamily: JET, fontSize: '10px', fontWeight: '500', letterSpacing: '.15em', color: '#6B1FFF', textTransform: 'uppercase', marginBottom: '2px' }}>
+                            {cfg.label}
                           </div>
-                          <div style={{ fontSize: '11px', color: '#A09D95' }}>{desc}</div>
+                          <div style={{ fontFamily: JET, fontSize: '10px', color: '#888880', letterSpacing: '.05em' }}>{cfg.desc}</div>
                         </div>
-                        <span style={{ backgroundColor: 'rgba(255,255,255,0.6)', border: `1px solid ${border}`, borderRadius: '100px', padding: '2px 8px', fontSize: '11px', color: accent, fontWeight: '600' }}>
+                        <span style={{
+                          fontFamily: JET, fontSize: '10px', fontWeight: '500',
+                          textTransform: 'uppercase', letterSpacing: '.15em',
+                          color: '#6B1FFF', border: '1px solid #6B1FFF',
+                          borderRadius: '2px', padding: '2px 6px',
+                        }}>
                           {displayItems.length}
                         </span>
                       </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
                         {displayItems.map((item, i) => (
                           <span key={i} style={{
-                            backgroundColor: 'rgba(255,255,255,0.7)',
-                            border: `1px solid ${border}`,
-                            borderRadius: key === 'vocabulary' || key === 'phrases' || key === 'never_does' ? '100px' : '7px',
-                            padding: key === 'punctuation' || key === 'structure' || key === 'voice' ? '5px 10px' : '4px 10px',
-                            fontSize: '12px', color: '#16150F',
+                            border: '1px solid #E0E0E0',
+                            borderRadius: '2px',
+                            padding: '4px 9px',
+                            fontFamily: JET, fontSize: '10px', color: '#888880',
+                            textTransform: 'uppercase', letterSpacing: '.08em',
                           }}>
                             {item}
                           </span>
