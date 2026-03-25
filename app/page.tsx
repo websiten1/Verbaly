@@ -290,8 +290,11 @@ const CSS = `
   }
 
   /* ── keyframes ─────────────────────────────── */
-  @keyframes lp-blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
-  @keyframes lp-fadein { from{opacity:0;} to{opacity:1;} }
+  @keyframes lp-blink      { 0%,100%{opacity:1;} 50%{opacity:0;} }
+  @keyframes lp-fadein     { from{opacity:0;} to{opacity:1;} }
+  @keyframes lp-success-in { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+  @keyframes lp-check-pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.25);} }
+  @keyframes lp-count-up   { from{opacity:0;transform:translateY(7px);} to{opacity:1;transform:translateY(0);} }
 
   /* ── responsive ────────────────────────────── */
   @media (max-width: 640px) {
@@ -481,12 +484,21 @@ export default function LandingPage() {
 
           {joinState === 'success' ? (
             <div style={{
-              border: '1px solid #7B5CF0', padding: '14px 16px', marginBottom: '12px',
-              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-              fontSize: '11px', textTransform: 'uppercase' as const, letterSpacing: '.12em',
-              color: '#7B5CF0',
+              display: 'flex', alignItems: 'center', gap: '10px',
+              backgroundColor: '#0E0E0E', padding: '13px 18px', marginBottom: '12px',
+              borderRadius: '2px',
+              animation: 'lp-success-in 0.4s ease-out forwards',
             }}>
-              ✓&nbsp;&nbsp;You&apos;re on the list. Check your email.
+              <span style={{
+                color: '#CCFF00', fontSize: '15px', lineHeight: 1, flexShrink: 0,
+                display: 'inline-block',
+                animation: 'lp-check-pulse 0.5s ease-out 0.15s both',
+              }}>✓</span>
+              <span style={{
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '11px', textTransform: 'uppercase' as const,
+                letterSpacing: '.12em', color: '#CCFF00', fontWeight: '500',
+              }}>You&apos;re in. Welcome to the waitlist.</span>
             </div>
           ) : (
             <>
@@ -518,7 +530,10 @@ export default function LandingPage() {
           )}
 
           <p className="lp-counter" aria-label={`${count} people already waiting`}>
-            &#10022;&nbsp;{count} People Already Waiting
+            &#10022;&nbsp;<span
+              key={count}
+              style={{ display: 'inline-block', animation: 'lp-count-up 0.35s ease-out' }}
+            >{count}</span> People Already Waiting
           </p>
         </div>
 
