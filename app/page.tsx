@@ -238,21 +238,21 @@ const CSS = `
   .lp-voice-lines {
     display: flex; flex-direction: column;
     justify-content: center;
-    gap: clamp(6px, 1.5vh, 18px);
+    gap: 0;
   }
 
-  /* font size: ~25% smaller than before */
+  /* font size: ~15–20% larger than previous iteration */
   .lp-voice-line {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(28px, min(7.8vw, 16vh), 114px);
+    font-size: clamp(33px, min(9.2vw, 19vh), 134px);
     font-weight: 700; text-transform: uppercase;
-    letter-spacing: -.02em; line-height: 1.05;
+    letter-spacing: -.02em; line-height: 0.9;
     white-space: nowrap;
   }
 
   .lp-vl-lime          { color: #CCFF00; }
-  .lp-vl-white-outline { color: transparent; -webkit-text-stroke: 2px #FFFFFF; }
-  .lp-vl-purple-outline{ color: transparent; -webkit-text-stroke: 2px #7B5CF0; }
+  .lp-vl-white-outline { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.15); }
+  .lp-vl-purple-outline{ color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.15); }
 
   /* scroll reveal — slide from left */
   .lp-vl-lime          { opacity: 0; transform: translateX(-40px); transition: opacity .6s ease, transform .6s ease; }
