@@ -228,16 +228,14 @@ const CSS = `
   /* ── YOUR VOICE section — black bg only ─────── */
   .lp-voice {
     background: #0A0A0A;
-    height: 100vh;
     display: flex; flex-direction: column;
-    padding: 0 clamp(16px, 4vw, 48px);
+    padding: clamp(48px, 7vh, 96px) clamp(40px, 8vw, 120px);
     overflow: hidden;
     border-top: 1px solid rgba(255,255,255,0.06);
   }
 
   /* three lines packed tight */
   .lp-voice-lines {
-    flex: 1;
     display: flex; flex-direction: column;
     justify-content: center;
     gap: clamp(6px, 1.5vh, 18px);
@@ -252,9 +250,8 @@ const CSS = `
     white-space: nowrap;
   }
 
-  /* solid fills — no outlines */
   .lp-vl-lime          { color: #CCFF00; }
-  .lp-vl-white-outline { color: #FFFFFF; }
+  .lp-vl-white-outline { color: transparent; -webkit-text-stroke: 2px #FFFFFF; }
   .lp-vl-purple-outline{ color: #7B5CF0; }
 
   /* scroll reveal — slide from left */
@@ -301,8 +298,7 @@ const CSS = `
     .lp-browser-body { flex-direction: column; }
     .lp-col + .lp-col { border-left: none; border-top: 1px solid #E0E0E0; }
     #lp-col-you { transform: translateX(0); }
-    .lp-voice { height: auto; min-height: 100vh; }
-    .lp-voice-lines { justify-content: center; }
+    .lp-voice { padding-left: clamp(20px, 5vw, 60px); padding-right: clamp(20px, 5vw, 60px); }
   }
   @media (max-width: 480px) {
     .lp-form-row { flex-direction: column; }
