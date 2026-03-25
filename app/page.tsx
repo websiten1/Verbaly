@@ -457,10 +457,11 @@ export default function LandingPage() {
     setJoinState('loading')
     setJoinError(null)
     try {
-      await fetch(`https://magic.beehiiv.com/v1/5dbf8d69-9f54-4ee0-9658-260b88b823cb?email=${encodeURIComponent(email)}`, {
-        method: 'GET',
-        mode: 'no-cors',
-      })
+      const iframe = document.createElement('iframe')
+      iframe.style.display = 'none'
+      iframe.src = `https://magic.beehiiv.com/v1/5dbf8d69-9f54-4ee0-9658-260b88b823cb?email=${encodeURIComponent(email)}`
+      document.body.appendChild(iframe)
+      setTimeout(() => iframe.remove(), 3000)
       setJoinState('success')
       setCount(c => c + 1)
     } catch {
