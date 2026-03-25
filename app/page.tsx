@@ -1,6 +1,6 @@
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import Link from 'next/link'
+import WaitlistForm from '@/components/WaitlistForm'
 
 /* ─── Concentric ring decorative background ─────────────── */
 function ConcentricRings({ opacity = 1 }: { opacity?: number }) {
@@ -80,16 +80,6 @@ function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: stri
   )
 }
 
-/* ─── Check icon ─────────────────────────────────────────── */
-function Check({ colored = false }: { colored?: boolean }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-      <circle cx="8" cy="8" r="7.5" fill={colored ? 'rgba(84,242,242,0.15)' : 'rgba(4,42,43,0.07)'}/>
-      <polyline points="4.5 8 7 10.5 11.5 5.5" stroke={colored ? '#54F2F2' : '#042A2B'} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )
-}
-
 export default function LandingPage() {
   return (
     <div style={{ backgroundColor: '#F9F8F5' }}>
@@ -150,47 +140,33 @@ export default function LandingPage() {
             fontSize: 'clamp(16px, 2vw, 19px)',
             lineHeight: '1.65',
             maxWidth: '560px',
-            margin: '0 auto 48px',
+            margin: '0 auto 20px',
           }}>
             <span style={{ color: '#E4F5F5', fontWeight: '500' }}>Verbaly</span> analyzes your writing and transforms any AI-generated text into something that sounds unmistakably, authentically like you.
           </p>
 
-          {/* CTAs */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginBottom: '56px' }}>
-            <Link
-              href="/signup"
-              style={{
-                backgroundColor: '#54F2F2',
-                color: '#042A2B',
-                padding: '14px 32px',
-                borderRadius: '10px',
-                textDecoration: 'none',
-                fontSize: '16px',
-                fontWeight: '700',
-                letterSpacing: '-0.3px',
-              }}
-            >
-              Start writing free →
-            </Link>
-            <Link
-              href="/pricing"
-              style={{
-                backgroundColor: 'transparent',
-                color: '#9ECFCF',
-                padding: '14px 28px',
-                borderRadius: '10px',
-                textDecoration: 'none',
-                fontSize: '16px',
-                fontWeight: '500',
-                border: '1px solid #1E3B3F',
-              }}
-            >
-              See pricing
-            </Link>
+          {/* Pre-launch line */}
+          <p style={{
+            color: '#54F2F2',
+            fontSize: '14px',
+            fontWeight: '500',
+            marginBottom: '44px',
+            letterSpacing: '0.01em',
+          }}>
+            Currently in pre-launch. Join the waitlist for free early access.
+          </p>
+
+          {/* Waitlist form */}
+          <div id="waitlist" style={{ scrollMarginTop: '80px' }}>
+            <WaitlistForm />
           </div>
 
-          <p style={{ color: '#5E8E90', fontSize: '13px' }}>
-            No credit card required · 3 free rewrites per month
+          {/* Below-form trust lines */}
+          <p style={{ color: '#5E8E90', fontSize: '13px', marginTop: '16px' }}>
+            Free Pro access for the first 500 people. No credit card ever required.
+          </p>
+          <p style={{ color: '#9ECFCF', fontSize: '14px', marginTop: '10px' }}>
+            🙋 247 people already waiting
           </p>
         </div>
 
@@ -338,9 +314,46 @@ export default function LandingPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════
-          FEATURES
+          WHO IS THIS FOR
       ════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid #E5E2D8', borderBottom: '1px solid #E5E2D8' }}>
+        <div style={{ maxWidth: '700px', margin: '0 auto', padding: '64px 24px', textAlign: 'center' }}>
+          <p style={{ color: '#54F2F2', fontSize: '13px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '40px' }}>
+            Who it&apos;s for
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {[
+              { icon: '✍️', label: 'Bloggers & content creators' },
+              { icon: '🎓', label: 'Students & academics' },
+              { icon: '💼', label: 'Professionals & marketers' },
+            ].map(({ icon, label }) => (
+              <div
+                key={label}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '28px 20px',
+                  backgroundColor: '#F9F8F5',
+                  border: '1px solid #E5E2D8',
+                  borderRadius: '12px',
+                }}
+              >
+                <span style={{ fontSize: '28px' }}>{icon}</span>
+                <span style={{ color: '#16150F', fontSize: '14px', fontWeight: '600', textAlign: 'center', lineHeight: '1.4' }}>
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          FEATURES
+      ════════════════════════════════════════════════════════ */}
+      <section style={{ borderBottom: '1px solid #E5E2D8' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '100px 24px' }}>
           <div style={{ textAlign: 'center', marginBottom: '64px' }}>
             <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 'clamp(32px, 4.5vw, 48px)', fontWeight: '400', color: '#16150F', letterSpacing: '-1.5px' }}>
@@ -452,8 +465,8 @@ export default function LandingPage() {
               <p style={{ color: '#9ECFCF', fontSize: '16px', lineHeight: '1.65', marginBottom: '36px' }}>
                 Verbaly doesn&apos;t just swap words. It understands how you actually write — from the vocabulary you reach for to the rhythms you unconsciously create.
               </p>
-              <Link
-                href="/signup"
+              <a
+                href="#waitlist"
                 style={{
                   display: 'inline-flex',
                   backgroundColor: '#54F2F2',
@@ -465,8 +478,8 @@ export default function LandingPage() {
                   fontWeight: '700',
                 }}
               >
-                Analyze your style →
-              </Link>
+                Join the waitlist →
+              </a>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -521,124 +534,56 @@ export default function LandingPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════
-          PRICING
+          FAQ
       ════════════════════════════════════════════════════════ */}
-      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '100px 24px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+      <section style={{ maxWidth: '700px', margin: '0 auto', padding: '100px 24px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
           <p style={{ color: '#54F2F2', fontSize: '13px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px' }}>
-            Pricing
+            FAQ
           </p>
-          <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 'clamp(34px, 5vw, 52px)', fontWeight: '400', color: '#16150F', letterSpacing: '-1.5px', marginBottom: '16px' }}>
-            Start free. Upgrade when you&apos;re ready.
+          <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 'clamp(30px, 4vw, 44px)', fontWeight: '400', color: '#16150F', letterSpacing: '-1.5px' }}>
+            Good questions.
           </h2>
-          <p style={{ color: '#6B6960', fontSize: '17px' }}>No tricks. No hidden fees.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ maxWidth: '880px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {[
             {
-              name: 'Free',
-              price: '$0',
-              period: 'forever',
-              desc: 'Perfect for trying it out.',
-              features: ['3 rewrites per month', '1 writing sample', 'Basic style analysis', 'Email support'],
-              cta: 'Get started',
-              highlight: false,
+              q: 'Is this just an AI detection bypass tool?',
+              a: 'No. Verbaly isn\'t about hiding AI — it\'s about making any text sound like you wrote it. Whether you started with AI or a blank page, the output reflects your voice, your style, your rhythm.',
             },
             {
-              name: 'Student',
-              price: '$7',
-              period: '/month',
-              desc: 'For students who write constantly.',
-              features: ['Unlimited rewrites', '5 writing samples', 'Full style DNA analysis', 'All tones & formats', 'Rewrite history', 'Priority support'],
-              cta: 'Start Student plan',
-              highlight: true,
+              q: 'When is Verbaly launching?',
+              a: 'Soon. Everyone on the waitlist gets notified first and the first 500 get free Pro access at launch.',
             },
             {
-              name: 'Academic Pro',
-              price: '$18',
-              period: '/month',
-              desc: 'For serious academic writers.',
-              features: ['Everything in Student', '15 writing samples', 'Advanced style profiling', 'Generate from scratch', 'Export history', 'Dedicated support'],
-              cta: 'Start Pro plan',
-              highlight: false,
+              q: 'Is it really free?',
+              a: 'Yes. Joining the waitlist is free, no credit card needed. We\'ll have a free tier at launch too.',
             },
-          ].map((plan) => (
+          ].map(({ q, a }) => (
             <div
-              key={plan.name}
+              key={q}
               style={{
-                backgroundColor: plan.highlight ? '#042A2B' : '#FFFFFF',
-                border: plan.highlight ? '1px solid #1E3B3F' : '1px solid #E5E2D8',
-                borderRadius: '16px',
-                padding: '32px',
-                position: 'relative',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E8ECF4',
+                borderRadius: '12px',
+                padding: '28px',
+                boxShadow: '0 2px 12px rgba(26,110,255,0.06)',
               }}
             >
-              {plan.highlight && (
-                <div style={{
-                  position: 'absolute', top: '-13px', left: '50%', transform: 'translateX(-50%)',
-                  backgroundColor: '#54F2F2', color: '#042A2B',
-                  padding: '4px 16px', borderRadius: '100px',
-                  fontSize: '12px', fontWeight: '700', whiteSpace: 'nowrap',
-                }}>
-                  Most popular
-                </div>
-              )}
-
-              <div style={{ marginBottom: '24px' }}>
-                <h3 style={{ color: plan.highlight ? '#E4F5F5' : '#16150F', fontSize: '18px', fontWeight: '600', marginBottom: '6px' }}>
-                  {plan.name}
-                </h3>
-                <p style={{ color: plan.highlight ? '#5E8E90' : '#6B6960', fontSize: '13px', marginBottom: '20px' }}>
-                  {plan.desc}
-                </p>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                  <span style={{
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '40px', fontWeight: '700', letterSpacing: '-2px',
-                    color: plan.highlight ? '#54F2F2' : '#16150F',
-                  }}>
-                    {plan.price}
-                  </span>
-                  <span style={{ color: plan.highlight ? '#5E8E90' : '#A09D95', fontSize: '14px' }}>
-                    {plan.period}
-                  </span>
-                </div>
-              </div>
-
-              <Link
-                href="/signup"
-                style={{
-                  display: 'block',
-                  textAlign: 'center',
-                  padding: '12px 24px',
-                  borderRadius: '9px',
-                  textDecoration: 'none',
-                  fontSize: '14px', fontWeight: '600',
-                  marginBottom: '28px',
-                  backgroundColor: plan.highlight ? '#54F2F2' : 'transparent',
-                  color: plan.highlight ? '#042A2B' : '#16150F',
-                  border: plan.highlight ? 'none' : '1px solid #E5E2D8',
-                }}
-              >
-                {plan.cta}
-              </Link>
-
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {plan.features.map((f) => (
-                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: plan.highlight ? '#9ECFCF' : '#6B6960' }}>
-                    <Check colored={plan.highlight} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+              <h3 style={{ color: '#16150F', fontSize: '16px', fontWeight: '600', marginBottom: '10px', letterSpacing: '-0.2px' }}>
+                {q}
+              </h3>
+              <p style={{ color: '#6B6960', fontSize: '15px', lineHeight: '1.65', margin: 0 }}>
+                {a}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ════════════════════════════════════════════════════════
-          CTA
+          FINAL CTA
       ════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#061517', position: 'relative', overflow: 'hidden' }}>
         <ConcentricRings opacity={0.6} />
@@ -655,28 +600,25 @@ export default function LandingPage() {
             color: '#E4F5F5',
             letterSpacing: '-1.5px',
             lineHeight: '1.08',
-            marginBottom: '24px',
+            marginBottom: '16px',
           }}>
-            Ready to write like yourself again?
+            Be first. Get free Pro access at launch.
           </h2>
-          <p style={{ color: '#9ECFCF', fontSize: '17px', lineHeight: '1.65', marginBottom: '44px' }}>
-            Start free. No card required. Your voice is waiting.
+          <p style={{ color: '#9ECFCF', fontSize: '15px', marginBottom: '12px' }}>
+            Join writers, students, bloggers and marketers who want their voice back.
           </p>
-          <Link
-            href="/signup"
-            style={{
-              display: 'inline-flex',
-              backgroundColor: '#54F2F2',
-              color: '#042A2B',
-              padding: '16px 40px',
-              borderRadius: '10px',
-              textDecoration: 'none',
-              fontSize: '17px', fontWeight: '700',
-              letterSpacing: '-0.3px',
-            }}
-          >
-            Start for free →
-          </Link>
+          <p style={{ color: '#5E8E90', fontSize: '13px', marginBottom: '40px' }}>
+            Currently in pre-launch · No credit card ever required
+          </p>
+
+          <WaitlistForm />
+
+          <p style={{ color: '#5E8E90', fontSize: '13px', marginTop: '16px' }}>
+            Free Pro access for the first 500 people.
+          </p>
+          <p style={{ color: '#9ECFCF', fontSize: '14px', marginTop: '10px' }}>
+            🙋 247 people already waiting
+          </p>
         </div>
       </section>
 
