@@ -57,8 +57,8 @@ const CSS = `
   .lp-main {
     background: #FFFFFF;
     display: flex; flex-direction: row;
-    align-items: center; min-height: 100vh;
-    padding: 80px clamp(16px, 4vw, 48px) 60px;
+    align-items: center;
+    padding: 72px clamp(16px, 4vw, 48px) 48px;
     gap: clamp(20px, 4vw, 60px);
   }
 
@@ -132,7 +132,7 @@ const CSS = `
     font-family: 'JetBrains Mono', 'Courier New', monospace;
   }
 
-  /* right column — terminal panel */
+  /* right column — passport card */
   .lp-hero-right {
     flex: 1; min-width: 0;
     opacity: 0; transform: translateX(16px);
@@ -140,62 +140,71 @@ const CSS = `
   }
   .lp-hero-right.in { opacity: 1; transform: translateX(0); }
 
-  .lp-panel { border: 1px solid #E0E0E0; }
-  .lp-panel-bar {
-    background: #F5F5F5; padding: 7px 12px;
-    display: flex; align-items: center; gap: 8px;
-    border-bottom: 1px solid #E0E0E0;
-  }
-  .lp-panel-dots { display: flex; gap: 5px; flex-shrink: 0; }
-  .lp-pdot { width: 9px; height: 9px; border-radius: 50%; }
-  .lp-pdot-r { background: #FF5F57; }
-  .lp-pdot-y { background: #FFBD2E; }
-  .lp-pdot-g { background: #28C840; }
-  .lp-panel-fname {
+  /* passport card shell */
+  .lp-passport {
+    border: 1px solid #0E0E0E;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 9px; color: rgba(0,0,0,0.3); letter-spacing: .12em;
-    text-transform: uppercase; margin-left: auto;
+    overflow: hidden;
   }
-  .lp-pane-ai {
-    background: #0E0E0E;
-    padding: clamp(12px, 1.8vw, 20px) clamp(14px, 2vw, 22px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+  .lp-pp-hdr {
+    background: #0E0E0E; padding: 8px 14px;
+    display: flex; align-items: center; justify-content: space-between;
   }
-  .lp-pane-you {
-    background: #FFFFFF;
-    padding: clamp(12px, 1.8vw, 20px) clamp(14px, 2vw, 22px);
-  }
-  .lp-pane-tag {
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  .lp-pp-hdr-left { display: flex; align-items: center; gap: 8px; }
+  .lp-pp-hdot { width: 7px; height: 7px; border-radius: 50%; background: #7B5CF0; }
+  .lp-pp-doc {
     font-size: 9px; text-transform: uppercase; letter-spacing: .18em;
-    margin-bottom: 8px;
+    color: rgba(255,255,255,0.45);
   }
-  .lp-pane-tag-muted  { color: rgba(255,255,255,0.2); }
-  .lp-pane-tag-active { color: #7B5CF0; }
-  .lp-pane-hdr {
-    display: flex; align-items: center;
-    justify-content: space-between; margin-bottom: 8px;
+  .lp-pp-issuer {
+    font-size: 9px; text-transform: uppercase; letter-spacing: .15em;
+    color: rgba(255,255,255,0.22);
   }
-  .lp-pane-body-ai {
-    font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(10px, 1vw, 12px); line-height: 1.65;
-    color: rgba(255,255,255,0.18);
+
+  /* body: portrait left, fields right */
+  .lp-pp-body {
+    display: flex; border-bottom: 1px solid #E0E0E0;
   }
-  .lp-pane-body-you {
-    font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(10px, 1vw, 12px); line-height: 1.65;
-    color: #0E0E0E;
+  .lp-pp-portrait {
+    width: 96px; flex-shrink: 0;
+    border-right: 1px solid #E0E0E0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 14px 8px;
+    background: #FAFAFA;
   }
-  .lp-pane-cur {
-    display: inline-block; width: 2px; height: 12px;
-    background: #7B5CF0; vertical-align: middle; margin-left: 1px;
-    animation: lp-blink .8s step-end infinite;
+  .lp-pp-fields {
+    flex: 1; padding: 12px 16px;
+    display: flex; flex-direction: column; gap: 6px;
   }
-  .lp-pane-badge {
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 9px; text-transform: uppercase; letter-spacing: .1em;
-    color: #FFFFFF; background: #7B5CF0;
-    padding: 2px 7px; border-radius: 2px; white-space: nowrap;
+  .lp-pp-field {
+    display: flex; gap: 6px; align-items: baseline;
+    opacity: 0;
+  }
+  .lp-hero-right.in .lp-pp-field:nth-child(1) { animation: lp-fadein .25s ease 0.05s forwards; }
+  .lp-hero-right.in .lp-pp-field:nth-child(2) { animation: lp-fadein .25s ease 0.2s  forwards; }
+  .lp-hero-right.in .lp-pp-field:nth-child(3) { animation: lp-fadein .25s ease 0.35s forwards; }
+  .lp-hero-right.in .lp-pp-field:nth-child(4) { animation: lp-fadein .25s ease 0.5s  forwards; }
+  .lp-hero-right.in .lp-pp-field:nth-child(5) { animation: lp-fadein .25s ease 0.65s forwards; }
+  .lp-hero-right.in .lp-pp-field:nth-child(6) { animation: lp-fadein .25s ease 0.8s  forwards; }
+  .lp-pp-lbl {
+    font-size: 8px; text-transform: uppercase; letter-spacing: .14em;
+    color: rgba(0,0,0,0.28); white-space: nowrap; flex-shrink: 0;
+    min-width: 108px;
+  }
+  .lp-pp-val {
+    font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
+    color: #0E0E0E; font-weight: 500;
+  }
+  .lp-pp-val-accent { color: #7B5CF0; }
+
+  /* MRZ line */
+  .lp-pp-mrz {
+    padding: 7px 14px;
+    font-size: 8.5px; letter-spacing: .06em;
+    color: rgba(0,0,0,0.18); white-space: nowrap;
+    overflow: hidden; font-family: 'Courier New', monospace;
+    border-top: 1px dashed #E0E0E0;
+    background: #FAFAFA;
   }
 
   /* form block */
@@ -384,11 +393,13 @@ const CSS = `
 
   /* ── responsive ────────────────────────────── */
   @media (max-width: 860px) {
-    .lp-main { flex-direction: column; padding-top: 90px; gap: 36px; min-height: auto; padding-bottom: 60px; }
+    .lp-main { flex-direction: column; padding-top: 80px; gap: 32px; padding-bottom: 48px; }
     .lp-hero-left { align-items: center; text-align: center; }
     .lp-sub { max-width: 100%; }
     .lp-hero-right { width: 100%; transform: translateX(0); }
     .lp-form-block { width: 100%; }
+    .lp-pp-portrait { width: 80px; }
+    .lp-pp-lbl { min-width: 90px; }
   }
   @media (max-width: 640px) {
     .lp-browser-body { flex-direction: column; }
@@ -590,7 +601,9 @@ export default function LandingPage() {
 
           {/* Subheadline */}
           <p ref={subRef} className="lp-sub">
-            Verbaly analyzes your <span className="lp-sub-code">writing_patterns</span> and rewrites any AI&nbsp;text to sound unmistakably like you.
+            Verbaly reads your <span className="lp-sub-code">writing_patterns</span>, builds a{' '}
+            <span className="lp-sub-code">voice_model</span>, then rewrites any AI&nbsp;text to sound
+            unmistakably like <span className="lp-sub-code">you</span>.
           </p>
 
           {/* Waitlist form */}
@@ -638,41 +651,85 @@ export default function LandingPage() {
 
         </div>{/* /lp-hero-left */}
 
-        {/* Right column — split terminal panel */}
+        {/* Right column — passport card */}
         <div ref={rightRef} className="lp-hero-right">
-          <div className="lp-panel">
-            <div className="lp-panel-bar" aria-hidden="true">
-              <div className="lp-panel-dots">
-                <span className="lp-pdot lp-pdot-r" />
-                <span className="lp-pdot lp-pdot-y" />
-                <span className="lp-pdot lp-pdot-g" />
+          <div className="lp-passport" role="img" aria-label="Verbaly Voice ID passport card">
+
+            {/* Header bar */}
+            <div className="lp-pp-hdr">
+              <div className="lp-pp-hdr-left">
+                <span className="lp-pp-hdot" aria-hidden="true" />
+                <span className="lp-pp-doc">Voice&nbsp;ID&nbsp;Document</span>
               </div>
-              <span className="lp-panel-fname">verbaly_output.txt</span>
+              <span className="lp-pp-issuer">Verbaly&nbsp;/&nbsp;Auth</span>
             </div>
 
-            {/* AI pane */}
-            <div className="lp-pane-ai">
-              <div className="lp-pane-tag lp-pane-tag-muted">// AI_OUTPUT.txt</div>
-              <p className="lp-pane-body-ai">
-                In today&rsquo;s competitive landscape, leveraging cutting-edge artificial
-                intelligence solutions enables organizations to optimize operational
-                efficiency and maximize stakeholder value through data-driven
-                decision-making processes.
-              </p>
+            {/* Portrait + fields */}
+            <div className="lp-pp-body">
+
+              {/* SVG portrait — half human / half robotic */}
+              <div className="lp-pp-portrait" aria-hidden="true">
+                <svg viewBox="0 0 100 120" width="80" height="96" fill="none">
+                  {/* center divider */}
+                  <line x1="50" y1="4" x2="50" y2="116" stroke="#7B5CF0" strokeWidth="0.6" strokeDasharray="2.5 2"/>
+
+                  {/* left half — human */}
+                  <path d="M50,10 C34,10 22,20 20,42 C18,58 22,76 32,88 L50,92"
+                        stroke="#0E0E0E" strokeWidth="1.4" strokeLinecap="round"/>
+                  <path d="M20,48 C15,51 15,57 20,59" stroke="#0E0E0E" strokeWidth="1.4" strokeLinecap="round"/>
+                  <line x1="38" y1="92" x2="38" y2="108" stroke="#0E0E0E" strokeWidth="1.4"/>
+                  <line x1="50" y1="108" x2="38" y2="108" stroke="#0E0E0E" strokeWidth="1.4"/>
+
+                  {/* right half — robotic dashed outline */}
+                  <path d="M50,10 C66,10 78,20 80,42 C82,58 78,76 68,88 L50,92"
+                        stroke="rgba(0,0,0,0.18)" strokeWidth="1" strokeDasharray="3 2"/>
+                  <path d="M80,48 C85,51 85,57 80,59" stroke="rgba(0,0,0,0.18)" strokeWidth="1"/>
+                  <line x1="62" y1="92" x2="62" y2="108" stroke="rgba(0,0,0,0.15)" strokeWidth="1" strokeDasharray="2 2"/>
+                  <line x1="50" y1="108" x2="62" y2="108" stroke="rgba(0,0,0,0.15)" strokeWidth="1" strokeDasharray="2 2"/>
+
+                  {/* right half — ASCII robot face */}
+                  <text x="53" y="34" fontFamily="'Courier New', monospace" fontSize="8" fill="rgba(0,0,0,0.28)">[- -]</text>
+                  <text x="53" y="50" fontFamily="'Courier New', monospace" fontSize="7.5" fill="rgba(0,0,0,0.22)">|o o|</text>
+                  <text x="53" y="66" fontFamily="'Courier New', monospace" fontSize="7.5" fill="rgba(0,0,0,0.18)">|---|</text>
+                  <text x="53" y="82" fontFamily="'Courier New', monospace" fontSize="7" fill="rgba(0,0,0,0.13)">+---+</text>
+                </svg>
+              </div>
+
+              {/* Typed fields */}
+              <div className="lp-pp-fields">
+                <div className="lp-pp-field">
+                  <span className="lp-pp-lbl">Document Type</span>
+                  <span className="lp-pp-val">Voice_ID</span>
+                </div>
+                <div className="lp-pp-field">
+                  <span className="lp-pp-lbl">Issuing Auth</span>
+                  <span className="lp-pp-val">Verbaly</span>
+                </div>
+                <div className="lp-pp-field">
+                  <span className="lp-pp-lbl">Voice Owner</span>
+                  <span className="lp-pp-val">[you]</span>
+                </div>
+                <div className="lp-pp-field">
+                  <span className="lp-pp-lbl">Style</span>
+                  <span className="lp-pp-val">Sharp&nbsp;·&nbsp;Direct&nbsp;·&nbsp;Human</span>
+                </div>
+                <div className="lp-pp-field">
+                  <span className="lp-pp-lbl">Match Score</span>
+                  <span className="lp-pp-val lp-pp-val-accent">94%</span>
+                </div>
+                <div className="lp-pp-field">
+                  <span className="lp-pp-lbl">Status</span>
+                  <span className="lp-pp-val lp-pp-val-accent">Authenticated ✓</span>
+                </div>
+              </div>
+
+            </div>{/* /lp-pp-body */}
+
+            {/* MRZ line */}
+            <div className="lp-pp-mrz" aria-hidden="true">
+              VRBLY&lt;&lt;YOUR&lt;VOICE&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;94
             </div>
 
-            {/* Your Voice pane */}
-            <div className="lp-pane-you">
-              <div className="lp-pane-hdr">
-                <span className="lp-pane-tag lp-pane-tag-active">// YOUR_VOICE.txt</span>
-                <span className="lp-pane-badge">94% match</span>
-              </div>
-              <p className="lp-pane-body-you">
-                Here&rsquo;s the thing &mdash; most companies are sitting on AI tools
-                and still wondering why nothing&rsquo;s getting faster. The data&rsquo;s
-                there. The decisions aren&rsquo;t.<span className="lp-pane-cur" aria-hidden="true" />
-              </p>
-            </div>
           </div>
         </div>{/* /lp-hero-right */}
 
