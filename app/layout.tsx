@@ -21,8 +21,6 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
           rel="stylesheet"
         />
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
       </head>
       <body>
         {children}

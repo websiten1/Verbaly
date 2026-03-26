@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /* ── Design tokens ─────────────────────────────── */
 // black: #0A0A0A  lime: #CCFF00  white: #FFFFFF  purple: #7B5CF0
@@ -325,9 +325,13 @@ const CSS = `
 `
 
 export default function LandingPage() {
-  const navRef = useRef<HTMLElement>(null)
-  const curRef = useRef<HTMLDivElement>(null)
-  const twRef  = useRef<HTMLDivElement>(null)
+  const navRef   = useRef<HTMLElement>(null)
+  const curRef   = useRef<HTMLDivElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const twRef    = useRef<HTMLDivElement>(null)
+
+  const [formState, setFormState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [count,     setCount]     = useState(247)
 
   /* cursor */
   useEffect(() => {
@@ -418,6 +422,28 @@ export default function LandingPage() {
     return () => io.disconnect()
   }, [])
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const email = emailRef.current?.value.trim()
+    if (!email) return
+    setFormState('loading')
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (res.ok) {
+        setFormState('success')
+        setCount(c => c + 1)
+      } else {
+        setFormState('error')
+      }
+    } catch {
+      setFormState('error')
+    }
+  }
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
@@ -426,7 +452,7 @@ export default function LandingPage() {
       {/* ── NAV ─── */}
       <nav ref={navRef} className="lp-nav" role="navigation">
         <a href="/" className="lp-logo"><img src="/logo.png" alt="Verbaly" /></a>
-        <button className="lp-navbtn" onClick={() => document.getElementById('lp-waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} aria-label="Join the waitlist">
+        <button className="lp-navbtn" onClick={() => { emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }); emailRef.current?.focus() }} aria-label="Join the waitlist">
           Join Waitlist
         </button>
       </nav>
@@ -446,18 +472,39 @@ export default function LandingPage() {
         <div className="lp-strip-b">
           <p className="lp-form-heading">Join the Waitlist</p>
           <p className="lp-form-sub">Free Pro Access &middot; First 500 People</p>
-          <div id="lp-waitlist" className="lp-form-block">
-            <div style={{ width: '100%', maxWidth: '560px', margin: '0 auto', overflow: 'visible', minHeight: '150px' }}>
-              <iframe
-                src="https://subscribe-forms.beehiiv.com/3d875e43-6c72-4ed0-af92-0d538ccb2975"
-                className="beehiiv-embed"
-                data-test-id="beehiiv-embed"
-                frameBorder={0}
-                scrolling="no"
-                style={{ width: '100%', maxWidth: '560px', height: '150px', minHeight: '150px', display: 'block', overflow: 'visible', border: 'none', background: 'transparent' }}
-              />
-            </div>
-            <p className="lp-counter">&#10022;&nbsp;247 People Already Waiting</p>
+          <div className="lp-form-block">
+            {formState === 'success' ? (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                backgroundColor: '#0E0E0E', padding: '12px 16px', marginBottom: '10px',
+                animation: 'lp-success-in 0.4s ease-out forwards',
+              }}>
+                <span style={{ color: '#00FF87', fontSize: '14px', lineHeight: 1, flexShrink: 0, display: 'inline-block', animation: 'lp-check-pulse 0.5s ease-out 0.15s both' }}>✓</span>
+                <span style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", fontSize: '11px', textTransform: 'uppercase' as const, letterSpacing: '.12em', color: '#00FF87', fontWeight: '500' }}>
+                  You&apos;re on the list.
+                </span>
+              </div>
+            ) : formState === 'error' ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#1a0000', padding: '12px 16px', marginBottom: '10px' }}>
+                <span style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", fontSize: '11px', textTransform: 'uppercase' as const, letterSpacing: '.12em', color: '#FF4444', fontWeight: '500' }}>
+                  Something went wrong. Try again.
+                </span>
+              </div>
+            ) : (
+              <form className="lp-form-row" onSubmit={handleSubmit} noValidate>
+                <input
+                  ref={emailRef} id="lp-email-input" className="lp-input" type="email"
+                  placeholder="Your email address" autoComplete="email"
+                  required aria-label="Email address"
+                />
+                <button className="lp-btn" type="submit" disabled={formState === 'loading'}>
+                  {formState === 'loading' ? '…' : 'Join →'}
+                </button>
+              </form>
+            )}
+            <p className="lp-counter" aria-label={`${count} people already waiting`}>
+              &#10022;&nbsp;<span key={count} style={{ display: 'inline-block', animation: 'lp-count-up 0.35s ease-out' }}>{count}</span> People Already Waiting
+            </p>
           </div>
         </div>
 
@@ -467,7 +514,7 @@ export default function LandingPage() {
       <div className="lp-sticky-bar" aria-hidden="true">
         <button
           className="lp-sticky-btn"
-          onClick={() => document.getElementById('lp-waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+          onClick={() => { emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }); emailRef.current?.focus() }}
         >
           Join Waitlist →
         </button>
