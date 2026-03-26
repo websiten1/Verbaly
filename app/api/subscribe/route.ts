@@ -5,7 +5,8 @@ export async function POST(req: NextRequest) {
   if (!email) return NextResponse.json({ error: 'Email required' }, { status: 400 })
 
   const apiKey = process.env.BEEHIIV_API_KEY ?? 'To5fGt6RRrORgYVUpufOwqf2CE6jBHAG8sUOwQQZ2TruVKs9oppsU5qM7UAOAzMS'
-  const pubId  = process.env.BEEHIIV_PUB_ID  ?? 'pub_5dbf8d69-9f54-4ee0-9658-260b88b823cb'
+  const rawPubId = process.env.BEEHIIV_PUB_ID ?? '5dbf8d69-9f54-4ee0-9658-260b88b823cb'
+  const pubId    = rawPubId.startsWith('pub_') ? rawPubId : `pub_${rawPubId}`
 
   const res = await fetch(
     `https://api.beehiiv.com/v2/publications/${pubId}/subscriptions`,
