@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 /* ── Design tokens ─────────────────────────────── */
 // black: #0A0A0A  lime: #CCFF00  white: #FFFFFF  purple: #7B5CF0
@@ -325,13 +325,9 @@ const CSS = `
 `
 
 export default function LandingPage() {
-  const navRef   = useRef<HTMLElement>(null)
-  const curRef   = useRef<HTMLDivElement>(null)
-  const emailRef = useRef<HTMLInputElement>(null)
-  const twRef    = useRef<HTMLDivElement>(null)
-
-  const [joinState, setJoinState] = useState<'idle' | 'success'>('idle')
-  const [count,     setCount]     = useState(247)
+  const navRef = useRef<HTMLElement>(null)
+  const curRef = useRef<HTMLDivElement>(null)
+  const twRef  = useRef<HTMLDivElement>(null)
 
   /* canvas favicon */
   useEffect(() => {
@@ -441,21 +437,6 @@ export default function LandingPage() {
     return () => io.disconnect()
   }, [])
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const input = emailRef.current
-    if (!input) return
-    const email = input.value.trim()
-    if (!email) return
-    const iframe = document.createElement('iframe')
-    iframe.style.cssText = 'display:none;width:0;height:0;border:none;position:absolute;'
-    iframe.src = `https://magic.beehiiv.com/v1/5dbf8d69-9f54-4ee0-9658-260b88b823cb?email=${encodeURIComponent(email)}`
-    document.body.appendChild(iframe)
-    setTimeout(() => document.body.removeChild(iframe), 5000)
-    setJoinState('success')
-    setCount(c => c + 1)
-  }
-
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
@@ -464,7 +445,7 @@ export default function LandingPage() {
       {/* ── NAV ─── */}
       <nav ref={navRef} className="lp-nav" role="navigation">
         <a href="/" className="lp-logo"><img src="/logo.png" alt="Verbaly" /></a>
-        <button className="lp-navbtn" onClick={() => emailRef.current?.focus()} aria-label="Join the waitlist">
+        <button className="lp-navbtn" onClick={() => document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} aria-label="Join the waitlist">
           Join Waitlist
         </button>
       </nav>
@@ -484,40 +465,16 @@ export default function LandingPage() {
         <div className="lp-strip-b">
           <p className="lp-form-heading">Join the Waitlist</p>
           <p className="lp-form-sub">Free Pro Access &middot; First 500 People</p>
-          <div className="lp-form-block">
-            {joinState === 'success' ? (
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: '10px',
-                backgroundColor: '#0E0E0E', padding: '12px 16px', marginBottom: '10px',
-                animation: 'lp-success-in 0.4s ease-out forwards',
-              }}>
-                <span style={{
-                  color: '#00FF87', fontSize: '14px', lineHeight: 1, flexShrink: 0,
-                  display: 'inline-block',
-                  animation: 'lp-check-pulse 0.5s ease-out 0.15s both',
-                }}>✓</span>
-                <span style={{
-                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                  fontSize: '11px', textTransform: 'uppercase' as const,
-                  letterSpacing: '.12em', color: '#00FF87', fontWeight: '500',
-                }}>You&apos;re in. Welcome to the waitlist.</span>
-              </div>
-            ) : (
-              <form className="lp-form-row" onSubmit={handleSubmit} noValidate>
-                <input
-                  ref={emailRef} id="lp-email-input" className="lp-input" type="email"
-                  placeholder="Your email address" autoComplete="email"
-                  required aria-label="Email address"
-                />
-                <button className="lp-btn" type="submit">Join →</button>
-              </form>
-            )}
-            <p className="lp-counter" aria-label={`${count} people already waiting`}>
-              &#10022;&nbsp;<span
-                key={count}
-                style={{ display: 'inline-block', animation: 'lp-count-up 0.35s ease-out' }}
-              >{count}</span> People Already Waiting
-            </p>
+          <div id="waitlist" className="lp-form-block" style={{ padding: '0 16px' }}>
+            <iframe
+              src="https://subscribe-forms.beehiiv.com/3d875e43-6c72-4ed0-af92-0d538ccb2975"
+              className="beehiiv-embed"
+              data-test-id="beehiiv-embed"
+              frameBorder={0}
+              scrolling="no"
+              style={{ width: '560px', height: '315px', margin: '0', borderRadius: '0', backgroundColor: 'transparent', boxShadow: '0 0 #0000', maxWidth: '100%' }}
+            />
+            <p className="lp-counter">&#10022;&nbsp;247 People Already Waiting</p>
           </div>
         </div>
 
@@ -527,11 +484,7 @@ export default function LandingPage() {
       <div className="lp-sticky-bar" aria-hidden="true">
         <button
           className="lp-sticky-btn"
-          onClick={() => {
-            const el = document.getElementById('lp-email-input')
-            el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-            el?.focus()
-          }}
+          onClick={() => document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
         >
           Join Waitlist →
         </button>
