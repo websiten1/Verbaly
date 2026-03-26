@@ -170,7 +170,7 @@ const CSS = `
     }
     .lp-sticky-btn {
       width: 100%; padding: 16px;
-      background: #0E0E0E; color: #FFFFFF; border: none;
+      background: #C8FF00; color: #000000; border: none;
       font-family: 'JetBrains Mono', 'Courier New', monospace;
       font-size: 11px; font-weight: 500; text-transform: uppercase;
       letter-spacing: .16em; cursor: pointer;
