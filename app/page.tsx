@@ -4,7 +4,16 @@ import { useEffect, useRef, useState } from 'react'
 
 /* ── Design tokens ─────────────────────────────── */
 // black: #0A0A0A  lime: #CCFF00  white: #FFFFFF  purple: #7B5CF0
-// green (waitlist): #00FF87  yellow (badge): #F5C200
+// green (counter): #00FF87  pink (badge): #FF6B9D
+
+const TW_PHRASES = [
+  'TURN AI TEXT INTO YOUR VOICE',
+  'AI THAT SOUNDS LIKE YOU',
+  'ANALYZING PUNCTUATION PATTERNS...',
+  'ANALYZING SENTENCE RHYTHM...',
+  'ANALYZING VOCABULARY FINGERPRINT...',
+  'OUTPUT: UNMISTAKABLY YOU',
+]
 
 const CSS = `
   /* ── reset + base ──────────────────────────── */
@@ -54,69 +63,86 @@ const CSS = `
   }
   .lp-navbtn:hover { background: #0E0E0E; color: #FFFFFF; }
 
-  /* ── hero — centered single column ─────────── */
+  /* ── hero wrapper ───────────────────────────── */
   .lp-main {
     background: #FFFFFF;
+    padding-top: 56px; /* clear fixed nav */
+  }
+
+  /* ── Section A — identity strip ────────────── */
+  .lp-strip-a {
     display: flex; flex-direction: column;
     align-items: center; text-align: center;
-    padding: 120px clamp(16px, 4vw, 48px) 80px;
+    padding: 24px clamp(16px, 4vw, 48px) 20px;
+    gap: 6px;
   }
 
-  /* PRE-LAUNCH badge */
+  /* PRE-LAUNCH badge — plain text, pink, no fill */
   .lp-badge {
-    display: inline-block;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 9px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .22em; color: #0A0A0A;
-    background: #F5C200;
-    padding: 4px 10px;
-    margin-bottom: 24px;
-    opacity: 0; animation: lp-fadein .6s ease .1s forwards;
+    font-size: 9px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: .28em; color: #FF6B9D;
+    opacity: 0; animation: lp-fadein .5s ease .05s forwards;
   }
 
-  /* VERBALY brand heading */
+  /* VERBALY heading */
   .lp-verbaly {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(56px, 10vw, 140px);
     font-weight: 700; color: #0E0E0E;
-    letter-spacing: -.03em; line-height: 1;
+    letter-spacing: -.03em; line-height: 0.95;
     text-transform: uppercase;
-    margin-bottom: 20px;
-    opacity: 0; animation: lp-fadein .6s ease .2s forwards;
+    opacity: 0; animation: lp-fadein .5s ease .12s forwards;
   }
 
-  /* hero subheadline */
-  .lp-hero-sub {
+  /* typewriter line */
+  .lp-tw {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: clamp(11px, 1.3vw, 15px); font-weight: 400;
+    font-size: clamp(10px, 1.15vw, 13px); font-weight: 400;
     text-transform: uppercase; letter-spacing: .18em;
-    color: rgba(0,0,0,0.4); line-height: 1.5;
-    margin-bottom: 48px;
-    opacity: 0; animation: lp-fadein .6s ease .3s forwards;
+    color: rgba(0,0,0,0.38);
+    height: 20px; display: flex; align-items: center;
+    opacity: 0; animation: lp-fadein .5s ease .22s forwards;
+  }
+  .lp-tw-cur {
+    display: inline-block; width: 6px; height: 12px;
+    background: rgba(0,0,0,0.3); vertical-align: middle;
+    margin-left: 2px;
+    animation: lp-blink .7s step-end infinite;
   }
 
-  /* form block */
-  .lp-form-block {
-    width: 100%; max-width: 480px;
-    opacity: 0; animation: lp-fadein .6s ease .4s forwards;
+  /* ── strip divider ─────────────────────────── */
+  .lp-strip-divider {
+    height: 1px; background: #E0E0E0;
+    margin: 0 clamp(16px, 4vw, 48px);
+  }
+
+  /* ── Section B — waitlist strip ────────────── */
+  .lp-strip-b {
+    display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+    padding: 20px clamp(16px, 4vw, 48px) 24px;
+    gap: 0;
+    opacity: 0; animation: lp-fadein .5s ease .3s forwards;
   }
   .lp-form-heading {
     font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(20px, 2.5vw, 26px); font-weight: 700;
+    font-size: clamp(18px, 2.2vw, 24px); font-weight: 700;
     text-transform: uppercase; letter-spacing: -.01em;
-    color: #0E0E0E; margin-bottom: 8px;
+    color: #0E0E0E; margin-bottom: 6px;
   }
   .lp-form-sub {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .22em;
-    color: rgba(0,0,0,0.4); margin-bottom: 20px;
+    color: rgba(0,0,0,0.4); margin-bottom: 14px;
   }
+  .lp-form-block { width: 100%; max-width: 480px; }
   .lp-form-row {
-    display: flex; border: 1px solid #0E0E0E; margin-bottom: 12px;
+    display: flex; border: 1px solid #0E0E0E; margin-bottom: 10px;
   }
   .lp-input {
     flex: 1; min-width: 0; background: #FFFFFF; border: none;
-    padding: 14px 16px;
+    padding: 12px 14px;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
     color: #0E0E0E; outline: none;
@@ -127,7 +153,7 @@ const CSS = `
     font-size: 11px; font-weight: 500; text-transform: uppercase;
     letter-spacing: .14em; color: #FFFFFF; background: #0E0E0E;
     border: none; border-left: 1px solid #0E0E0E;
-    padding: 14px 22px; cursor: pointer; white-space: nowrap;
+    padding: 12px 22px; cursor: pointer; white-space: nowrap;
     transition: background .2s ease;
   }
   .lp-btn:hover:not(:disabled) { background: #333333; }
@@ -216,15 +242,11 @@ const CSS = `
     overflow: hidden;
     border-top: 1px solid rgba(255,255,255,0.06);
   }
-
-  /* three lines packed tight */
   .lp-voice-lines {
     display: flex; flex-direction: column;
     justify-content: center;
     gap: 0;
   }
-
-  /* font size: ~15–20% larger than previous iteration */
   .lp-voice-line {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(33px, min(9.2vw, 19vh), 134px);
@@ -232,20 +254,15 @@ const CSS = `
     letter-spacing: -.02em; line-height: 0.9;
     white-space: nowrap;
   }
-
   .lp-vl-lime          { color: #CCFF00; }
   .lp-vl-white-outline { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.15); }
   .lp-vl-purple-outline{ color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.15); }
-
-  /* scroll reveal — slide from left */
   .lp-vl-lime          { opacity: 0; transform: translateX(-40px); transition: opacity .6s ease, transform .6s ease; }
   .lp-vl-white-outline { opacity: 0; transform: translateX(-40px); transition: opacity .6s ease .15s, transform .6s ease .15s; }
   .lp-vl-purple-outline{ opacity: 0; transform: translateX(-40px); transition: opacity .6s ease .3s, transform .6s ease .3s; }
   .lp-vl-lime.in           { opacity: 1; transform: translateX(0); }
   .lp-vl-white-outline.in  { opacity: 1; transform: translateX(0); }
   .lp-vl-purple-outline.in { opacity: 1; transform: translateX(0); }
-
-  /* bottom bar pinned */
   .lp-voice-bar {
     flex-shrink: 0;
     display: flex; justify-content: space-between; align-items: center;
@@ -281,7 +298,6 @@ const CSS = `
 
   /* ── responsive ────────────────────────────── */
   @media (max-width: 640px) {
-    .lp-main { padding-top: 80px; padding-bottom: 48px; }
     .lp-browser-body { flex-direction: column; }
     .lp-col + .lp-col { border-left: none; border-top: 1px solid #E0E0E0; }
     #lp-col-you { transform: translateX(0); }
@@ -289,7 +305,7 @@ const CSS = `
   }
   @media (max-width: 480px) {
     .lp-form-row { flex-direction: column; }
-    .lp-btn { border-left: none; border-top: 1px solid #0E0E0E; padding: 14px; width: 100%; }
+    .lp-btn { border-left: none; border-top: 1px solid #0E0E0E; padding: 12px; width: 100%; }
   }
 `
 
@@ -297,6 +313,7 @@ export default function LandingPage() {
   const navRef   = useRef<HTMLElement>(null)
   const curRef   = useRef<HTMLDivElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
+  const twRef    = useRef<HTMLDivElement>(null)
 
   const [joinState, setJoinState] = useState<'idle' | 'success'>('idle')
   const [count,     setCount]     = useState(247)
@@ -340,6 +357,43 @@ export default function LandingPage() {
     const fn = () => nav.classList.toggle('scrolled', window.scrollY > 8)
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
+  }, [])
+
+  /* typewriter loop */
+  useEffect(() => {
+    const el = twRef.current
+    if (!el) return
+    const txtEl = document.createElement('span')
+    const curEl = document.createElement('span')
+    curEl.className = 'lp-tw-cur'
+    el.appendChild(txtEl)
+    el.appendChild(curEl)
+
+    let cancelled = false
+    const delay = (ms: number) => new Promise<void>(res => setTimeout(res, ms))
+
+    async function run() {
+      let idx = 0
+      while (!cancelled) {
+        const phrase = TW_PHRASES[idx % TW_PHRASES.length]
+        idx++
+        for (let i = 0; i <= phrase.length; i++) {
+          if (cancelled) return
+          txtEl.textContent = phrase.slice(0, i)
+          await delay(38)
+        }
+        await delay(1600)
+        for (let i = phrase.length; i >= 0; i--) {
+          if (cancelled) return
+          txtEl.textContent = phrase.slice(0, i)
+          await delay(20)
+        }
+        await delay(320)
+      }
+    }
+
+    run()
+    return () => { cancelled = true }
   }, [])
 
   /* demo browser reveal */
@@ -403,48 +457,54 @@ export default function LandingPage() {
       {/* ── HERO ─── */}
       <main className="lp-main" role="main">
 
-        <span className="lp-badge">Pre-Launch</span>
-        <h1 className="lp-verbaly">Verbaly</h1>
-        <p className="lp-hero-sub">Turn AI text into your voice</p>
+        {/* Section A — identity strip */}
+        <div className="lp-strip-a">
+          <span className="lp-badge">Pre-Launch</span>
+          <h1 className="lp-verbaly">Verbaly</h1>
+          <div ref={twRef} className="lp-tw" aria-live="polite" />
+        </div>
 
-        <div className="lp-form-block">
+        <div className="lp-strip-divider" aria-hidden="true" />
+
+        {/* Section B — waitlist strip */}
+        <div className="lp-strip-b">
           <p className="lp-form-heading">Join the Waitlist</p>
           <p className="lp-form-sub">Free Pro Access &middot; First 500 People</p>
-
-          {joinState === 'success' ? (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '10px',
-              backgroundColor: '#0E0E0E', padding: '13px 18px', marginBottom: '12px',
-              animation: 'lp-success-in 0.4s ease-out forwards',
-            }}>
-              <span style={{
-                color: '#00FF87', fontSize: '15px', lineHeight: 1, flexShrink: 0,
-                display: 'inline-block',
-                animation: 'lp-check-pulse 0.5s ease-out 0.15s both',
-              }}>✓</span>
-              <span style={{
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                fontSize: '11px', textTransform: 'uppercase' as const,
-                letterSpacing: '.12em', color: '#00FF87', fontWeight: '500',
-              }}>You&apos;re in. Welcome to the waitlist.</span>
-            </div>
-          ) : (
-            <form className="lp-form-row" onSubmit={handleSubmit} noValidate>
-              <input
-                ref={emailRef} className="lp-input" type="email"
-                placeholder="Your email address" autoComplete="email"
-                required aria-label="Email address"
-              />
-              <button className="lp-btn" type="submit">Join →</button>
-            </form>
-          )}
-
-          <p className="lp-counter" aria-label={`${count} people already waiting`}>
-            &#10022;&nbsp;<span
-              key={count}
-              style={{ display: 'inline-block', animation: 'lp-count-up 0.35s ease-out' }}
-            >{count}</span> People Already Waiting
-          </p>
+          <div className="lp-form-block">
+            {joinState === 'success' ? (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                backgroundColor: '#0E0E0E', padding: '12px 16px', marginBottom: '10px',
+                animation: 'lp-success-in 0.4s ease-out forwards',
+              }}>
+                <span style={{
+                  color: '#00FF87', fontSize: '14px', lineHeight: 1, flexShrink: 0,
+                  display: 'inline-block',
+                  animation: 'lp-check-pulse 0.5s ease-out 0.15s both',
+                }}>✓</span>
+                <span style={{
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                  fontSize: '11px', textTransform: 'uppercase' as const,
+                  letterSpacing: '.12em', color: '#00FF87', fontWeight: '500',
+                }}>You&apos;re in. Welcome to the waitlist.</span>
+              </div>
+            ) : (
+              <form className="lp-form-row" onSubmit={handleSubmit} noValidate>
+                <input
+                  ref={emailRef} className="lp-input" type="email"
+                  placeholder="Your email address" autoComplete="email"
+                  required aria-label="Email address"
+                />
+                <button className="lp-btn" type="submit">Join →</button>
+              </form>
+            )}
+            <p className="lp-counter" aria-label={`${count} people already waiting`}>
+              &#10022;&nbsp;<span
+                key={count}
+                style={{ display: 'inline-block', animation: 'lp-count-up 0.35s ease-out' }}
+              >{count}</span> People Already Waiting
+            </p>
+          </div>
         </div>
 
       </main>
