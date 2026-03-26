@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 
 /* ── Design tokens ─────────────────────────────── */
 // black: #0A0A0A  lime: #CCFF00  white: #FFFFFF  purple: #7B5CF0
+// green (waitlist): #00FF87  yellow (badge): #F5C200
 
 const CSS = `
   /* ── reset + base ──────────────────────────── */
@@ -62,12 +63,15 @@ const CSS = `
     gap: clamp(20px, 4vw, 60px);
   }
 
-  /* eyebrow */
-  .lp-eyebrow {
+  /* PRE-LAUNCH badge */
+  .lp-badge {
+    display: inline-block;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 10px; font-weight: 400; text-transform: uppercase;
-    letter-spacing: .3em; color: rgba(0,0,0,0.3);
-    margin-bottom: 18px;
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .22em; color: #0A0A0A;
+    background: #F5C200;
+    padding: 4px 10px;
+    margin-bottom: 20px;
     opacity: 0; animation: lp-fadein .6s ease .1s forwards;
   }
 
@@ -78,32 +82,24 @@ const CSS = `
     font-weight: 700; color: #0E0E0E;
     letter-spacing: -.03em; line-height: 1;
     text-transform: uppercase;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     opacity: 0; animation: lp-fadein .6s ease .2s forwards;
+  }
+
+  /* hero subheadline */
+  .lp-hero-sub {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: clamp(13px, 1.6vw, 18px); font-weight: 400;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: rgba(0,0,0,0.5); line-height: 1.5;
+    max-width: 440px;
+    opacity: 0; animation: lp-fadein .6s ease .3s forwards;
   }
 
   /* left column */
   .lp-hero-left {
     flex: 1; min-width: 0;
     display: flex; flex-direction: column; align-items: flex-start;
-  }
-
-  /* CLI boot sequence */
-  .lp-cli {
-    margin-bottom: 0;
-    opacity: 0; transition: opacity .3s ease;
-  }
-  .lp-cli.in { opacity: 1; }
-  .lp-cli-line {
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 12px; color: rgba(0,0,0,0.35);
-    letter-spacing: .02em; line-height: 2;
-    white-space: nowrap;
-  }
-  .lp-cli-cur {
-    display: inline-block; width: 7px; height: 13px;
-    background: #7B5CF0; vertical-align: middle; margin-left: 3px;
-    animation: lp-blink .7s step-end infinite;
   }
 
   /* right column — form only */
@@ -118,9 +114,8 @@ const CSS = `
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: clamp(22px, 3vw, 30px); font-weight: 700;
     text-transform: uppercase; letter-spacing: -.01em;
-    color: #0E0E0E; margin-bottom: 8px;
+    color: #0E0E0E; margin-bottom: 20px;
   }
-  .lp-form-rule { height: 1px; background: #7B5CF0; margin-bottom: 8px; }
   .lp-form-sub {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .22em;
@@ -130,7 +125,7 @@ const CSS = `
     display: flex; border: 1px solid #0E0E0E; margin-bottom: 12px;
     transition: border-color .2s;
   }
-  .lp-form-row:focus-within { border-color: #7B5CF0; }
+  .lp-form-row:focus-within { border-color: #00FF87; }
   .lp-input {
     flex: 1; min-width: 0; background: #FFFFFF; border: none;
     padding: 14px 16px;
@@ -142,20 +137,20 @@ const CSS = `
   .lp-btn {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 11px; font-weight: 500; text-transform: uppercase;
-    letter-spacing: .14em; color: #FFFFFF; background: #0E0E0E;
-    border: none; border-left: 1px solid #0E0E0E;
+    letter-spacing: .14em; color: #0A0A0A; background: #00FF87;
+    border: none; border-left: 1px solid #00FF87;
     padding: 14px 22px; cursor: pointer; white-space: nowrap;
     transition: background .2s ease;
   }
-  .lp-btn:hover:not(:disabled) { background: #7B5CF0; }
+  .lp-btn:hover:not(:disabled) { background: #00cc6a; }
   .lp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .lp-counter {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
-    color: #7B5CF0; text-align: center;
+    color: #00FF87; text-align: center;
   }
 
-  /* ── identity section (passport + code cards) ─ */
+  /* ── identity section (passport + features) ── */
   .lp-id-section {
     background: #FFFFFF;
     border-top: 1px solid #E0E0E0;
@@ -166,17 +161,29 @@ const CSS = `
     align-items: flex-start;
   }
   .lp-id-left  { flex: 1; min-width: 0; }
-  .lp-id-right { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .lp-id-right { flex: 1; min-width: 0; }
 
   /* passport card shell */
   .lp-passport {
     border: 1px solid #0E0E0E;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    overflow: hidden;
+    overflow: hidden; position: relative;
+  }
+  .lp-passport::before {
+    content: 'VERBALY';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: 72px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; color: rgba(0,0,0,0.03);
+    transform: rotate(-25deg);
+    pointer-events: none; user-select: none;
+    z-index: 0;
   }
   .lp-pp-hdr {
     background: #0E0E0E; padding: 8px 14px;
     display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 1;
   }
   .lp-pp-hdr-left { display: flex; align-items: center; gap: 8px; }
   .lp-pp-hdot { width: 7px; height: 7px; border-radius: 50%; background: #7B5CF0; }
@@ -192,32 +199,35 @@ const CSS = `
   /* body: portrait left, fields right */
   .lp-pp-body {
     display: flex; border-bottom: 1px solid #E0E0E0;
+    position: relative; z-index: 1;
   }
   .lp-pp-portrait {
-    width: 96px; flex-shrink: 0;
+    width: 84px; flex-shrink: 0;
     border-right: 1px solid #E0E0E0;
     display: flex; align-items: center; justify-content: center;
-    padding: 14px 8px;
+    padding: 12px 6px;
     background: #FAFAFA;
   }
   .lp-pp-fields {
-    flex: 1; padding: 12px 16px;
-    display: flex; flex-direction: column; gap: 6px;
+    flex: 1; padding: 10px 14px;
+    display: flex; flex-direction: column; gap: 5px;
   }
   .lp-pp-field {
     display: flex; gap: 6px; align-items: baseline;
     opacity: 0;
   }
   .lp-pp-fields-active .lp-pp-field:nth-child(1) { animation: lp-fadein .25s ease 0.05s forwards; }
-  .lp-pp-fields-active .lp-pp-field:nth-child(2) { animation: lp-fadein .25s ease 0.2s  forwards; }
-  .lp-pp-fields-active .lp-pp-field:nth-child(3) { animation: lp-fadein .25s ease 0.35s forwards; }
-  .lp-pp-fields-active .lp-pp-field:nth-child(4) { animation: lp-fadein .25s ease 0.5s  forwards; }
-  .lp-pp-fields-active .lp-pp-field:nth-child(5) { animation: lp-fadein .25s ease 0.65s forwards; }
-  .lp-pp-fields-active .lp-pp-field:nth-child(6) { animation: lp-fadein .25s ease 0.8s  forwards; }
+  .lp-pp-fields-active .lp-pp-field:nth-child(2) { animation: lp-fadein .25s ease 0.18s forwards; }
+  .lp-pp-fields-active .lp-pp-field:nth-child(3) { animation: lp-fadein .25s ease 0.31s forwards; }
+  .lp-pp-fields-active .lp-pp-field:nth-child(4) { animation: lp-fadein .25s ease 0.44s forwards; }
+  .lp-pp-fields-active .lp-pp-field:nth-child(5) { animation: lp-fadein .25s ease 0.57s forwards; }
+  .lp-pp-fields-active .lp-pp-field:nth-child(6) { animation: lp-fadein .25s ease 0.70s forwards; }
+  .lp-pp-fields-active .lp-pp-field:nth-child(7) { animation: lp-fadein .25s ease 0.83s forwards; }
+  .lp-pp-fields-active .lp-pp-field:nth-child(8) { animation: lp-fadein .25s ease 0.96s forwards; }
   .lp-pp-lbl {
-    font-size: 8px; text-transform: uppercase; letter-spacing: .14em;
+    font-size: 7.5px; text-transform: uppercase; letter-spacing: .14em;
     color: rgba(0,0,0,0.28); white-space: nowrap; flex-shrink: 0;
-    min-width: 108px;
+    min-width: 120px;
   }
   .lp-pp-val {
     font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
@@ -233,37 +243,46 @@ const CSS = `
     overflow: hidden; font-family: 'Courier New', monospace;
     border-top: 1px dashed #E0E0E0;
     background: #FAFAFA;
+    position: relative; z-index: 1;
   }
 
-  /* code snippet cards */
-  .lp-code-card {
-    border: 1px solid #2A2A2A;
+  /* ── voice dimensions list ──────────────────── */
+  .lp-feat-eyebrow {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    overflow: hidden;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .3em;
+    color: rgba(0,0,0,0.3); margin-bottom: 24px;
   }
-  .lp-code-card:nth-child(2) { margin-left: 20px; }
-  .lp-code-card:nth-child(3) { margin-left: 10px; }
-  .lp-code-card-hdr {
-    background: #1A1A1A; padding: 8px 14px;
-    display: flex; align-items: center; gap: 8px;
+  .lp-feat-list {
+    display: flex; flex-direction: column;
   }
-  .lp-code-card-hdot { width: 7px; height: 7px; border-radius: 50%; background: #7B5CF0; }
-  .lp-code-card-fname {
-    font-size: 9px; letter-spacing: .08em;
-    color: rgba(255,255,255,0.35);
+  .lp-feat-item {
+    padding: 14px 0;
+    border-top: 1px solid #F0F0F0;
   }
-  .lp-code-card-body {
-    background: #111111; padding: 14px 16px;
-    display: flex; flex-direction: column; gap: 2px;
+  .lp-feat-lbl {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 10px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: .18em; color: #0E0E0E;
+    margin-bottom: 4px;
   }
-  .lp-code-line {
-    font-size: 11px; color: rgba(255,255,255,0.3);
-    letter-spacing: .02em; line-height: 1.9;
-    white-space: nowrap;
+  .lp-feat-desc {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 10px; color: rgba(0,0,0,0.38);
+    letter-spacing: .03em; line-height: 1.6;
   }
-  .lp-code-val  { color: #7B5CF0; }
-  .lp-code-str  { color: rgba(204,255,0,0.65); }
-  .lp-code-key  { color: rgba(255,255,255,0.55); }
+
+  /* ── no credit card strip ───────────────────── */
+  .lp-noccard {
+    background: #0A0A0A;
+    padding: 32px clamp(16px, 4vw, 48px);
+    text-align: center;
+  }
+  .lp-noccard-text {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: clamp(24px, 3.8vw, 52px); font-weight: 700;
+    text-transform: uppercase; letter-spacing: -.01em;
+    color: #FFFFFF;
+  }
 
   /* ── demo section ──────────────────────────── */
   .lp-demo {
@@ -410,13 +429,12 @@ const CSS = `
   @media (max-width: 860px) {
     .lp-main { flex-direction: column; padding-top: 80px; gap: 32px; padding-bottom: 48px; }
     .lp-hero-left { align-items: center; text-align: center; }
+    .lp-hero-sub { text-align: center; max-width: 100%; }
     .lp-hero-right { width: 100%; }
     .lp-form-block { width: 100%; }
     .lp-id-inner { flex-direction: column; }
-    .lp-code-card:nth-child(2) { margin-left: 0; }
-    .lp-code-card:nth-child(3) { margin-left: 0; }
-    .lp-pp-portrait { width: 80px; }
-    .lp-pp-lbl { min-width: 90px; }
+    .lp-pp-portrait { width: 72px; }
+    .lp-pp-lbl { min-width: 100px; }
   }
   @media (max-width: 640px) {
     .lp-browser-body { flex-direction: column; }
@@ -426,22 +444,14 @@ const CSS = `
   }
   @media (max-width: 480px) {
     .lp-form-row { flex-direction: column; }
-    .lp-btn { border-left: none; border-top: 1px solid #0E0E0E; padding: 14px; width: 100%; }
+    .lp-btn { border-left: none; border-top: 1px solid #00FF87; padding: 14px; width: 100%; }
   }
 `
 
-const CLI_LINES = [
-  '> init verbaly.engine',
-  '> voice_match: 94%',
-  '> style: sharp, direct, human',
-  '> output: ready.',
-]
-
 export default function LandingPage() {
-  const navRef           = useRef<HTMLElement>(null)
-  const curRef           = useRef<HTMLDivElement>(null)
-  const cliRef           = useRef<HTMLDivElement>(null)
-  const emailRef         = useRef<HTMLInputElement>(null)
+  const navRef            = useRef<HTMLElement>(null)
+  const curRef            = useRef<HTMLDivElement>(null)
+  const emailRef          = useRef<HTMLInputElement>(null)
   const passportFieldsRef = useRef<HTMLDivElement>(null)
 
   const [joinState, setJoinState] = useState<'idle' | 'success'>('idle')
@@ -486,47 +496,6 @@ export default function LandingPage() {
     const fn = () => nav.classList.toggle('scrolled', window.scrollY > 8)
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
-  }, [])
-
-  /* CLI boot — type all lines, leave blinking cursor at end */
-  useEffect(() => {
-    const cliEl = cliRef.current
-    if (!cliEl) return
-    const c: HTMLDivElement = cliEl
-
-    c.classList.add('in')
-
-    function typeLine(idx: number, onDone: () => void) {
-      if (idx >= CLI_LINES.length) { onDone(); return }
-      const text = CLI_LINES[idx]
-      const div  = document.createElement('div')
-      div.className = 'lp-cli-line'
-      const txt = document.createElement('span')
-      const cur = document.createElement('span')
-      cur.className = 'lp-cli-cur'
-      div.appendChild(txt)
-      div.appendChild(cur)
-      c.appendChild(div)
-      let i = 0
-      function tick() {
-        txt.textContent = text.slice(0, ++i)
-        if (i < text.length) setTimeout(tick, 26)
-        else { cur.remove(); setTimeout(() => typeLine(idx + 1, onDone), 180) }
-      }
-      tick()
-    }
-
-    setTimeout(() => {
-      typeLine(0, () => {
-        /* add persistent blinking cursor on its own line */
-        const div = document.createElement('div')
-        div.className = 'lp-cli-line'
-        const cur = document.createElement('span')
-        cur.className = 'lp-cli-cur'
-        div.appendChild(cur)
-        c.appendChild(div)
-      })
-    }, 400)
   }, [])
 
   /* demo browser reveal */
@@ -604,18 +573,17 @@ export default function LandingPage() {
       {/* ── HERO ─── */}
       <main className="lp-main" role="main">
 
-        {/* Left column — eyebrow + VERBALY + CLI */}
+        {/* Left column — badge + VERBALY + subheadline */}
         <div className="lp-hero-left">
-          <p className="lp-eyebrow">Pre-Launch &middot; Turn AI Text Into Your Voice</p>
+          <span className="lp-badge">Pre-Launch</span>
           <h1 className="lp-verbaly">Verbaly</h1>
-          <div ref={cliRef} className="lp-cli" aria-live="polite" />
+          <p className="lp-hero-sub">Turn AI text into your voice</p>
         </div>
 
         {/* Right column — waitlist form */}
         <div className="lp-hero-right">
           <div className="lp-form-block">
             <p className="lp-form-heading">Join the Waitlist</p>
-            <div className="lp-form-rule" aria-hidden="true" />
             <p className="lp-form-sub">Free Pro Access &middot; First 500 People</p>
 
             {joinState === 'success' ? (
@@ -626,14 +594,14 @@ export default function LandingPage() {
                 animation: 'lp-success-in 0.4s ease-out forwards',
               }}>
                 <span style={{
-                  color: '#CCFF00', fontSize: '15px', lineHeight: 1, flexShrink: 0,
+                  color: '#00FF87', fontSize: '15px', lineHeight: 1, flexShrink: 0,
                   display: 'inline-block',
                   animation: 'lp-check-pulse 0.5s ease-out 0.15s both',
                 }}>✓</span>
                 <span style={{
                   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
                   fontSize: '11px', textTransform: 'uppercase' as const,
-                  letterSpacing: '.12em', color: '#CCFF00', fontWeight: '500',
+                  letterSpacing: '.12em', color: '#00FF87', fontWeight: '500',
                 }}>You&apos;re in. Welcome to the waitlist.</span>
               </div>
             ) : (
@@ -658,67 +626,82 @@ export default function LandingPage() {
 
       </main>
 
-      {/* ── IDENTITY SECTION — passport + code cards ─── */}
+      {/* ── IDENTITY SECTION — passport + voice dimensions ─── */}
       <section className="lp-id-section" aria-label="Voice Identity">
         <div className="lp-id-inner">
 
           {/* Left — passport card */}
           <div className="lp-id-left">
-            <div className="lp-passport" role="img" aria-label="Verbaly Voice ID passport card">
+            <div className="lp-passport" role="img" aria-label="Verbaly Voice Passport">
 
               <div className="lp-pp-hdr">
                 <div className="lp-pp-hdr-left">
                   <span className="lp-pp-hdot" aria-hidden="true" />
-                  <span className="lp-pp-doc">Voice&nbsp;ID&nbsp;Document</span>
+                  <span className="lp-pp-doc">Voice&nbsp;Passport</span>
                 </div>
                 <span className="lp-pp-issuer">Verbaly&nbsp;/&nbsp;Auth</span>
               </div>
 
               <div className="lp-pp-body">
+                {/* SVG portrait — abstract half human / half bracket grid */}
                 <div className="lp-pp-portrait" aria-hidden="true">
-                  <svg viewBox="0 0 100 120" width="80" height="96" fill="none">
-                    <line x1="50" y1="4" x2="50" y2="116" stroke="#7B5CF0" strokeWidth="0.6" strokeDasharray="2.5 2"/>
-                    <path d="M50,10 C34,10 22,20 20,42 C18,58 22,76 32,88 L50,92"
-                          stroke="#0E0E0E" strokeWidth="1.4" strokeLinecap="round"/>
-                    <path d="M20,48 C15,51 15,57 20,59" stroke="#0E0E0E" strokeWidth="1.4" strokeLinecap="round"/>
-                    <line x1="38" y1="92" x2="38" y2="108" stroke="#0E0E0E" strokeWidth="1.4"/>
-                    <line x1="50" y1="108" x2="38" y2="108" stroke="#0E0E0E" strokeWidth="1.4"/>
-                    <path d="M50,10 C66,10 78,20 80,42 C82,58 78,76 68,88 L50,92"
-                          stroke="rgba(0,0,0,0.18)" strokeWidth="1" strokeDasharray="3 2"/>
-                    <path d="M80,48 C85,51 85,57 80,59" stroke="rgba(0,0,0,0.18)" strokeWidth="1"/>
-                    <line x1="62" y1="92" x2="62" y2="108" stroke="rgba(0,0,0,0.15)" strokeWidth="1" strokeDasharray="2 2"/>
-                    <line x1="50" y1="108" x2="62" y2="108" stroke="rgba(0,0,0,0.15)" strokeWidth="1" strokeDasharray="2 2"/>
-                    <text x="53" y="34" fontFamily="'Courier New', monospace" fontSize="8" fill="rgba(0,0,0,0.28)">[- -]</text>
-                    <text x="53" y="50" fontFamily="'Courier New', monospace" fontSize="7.5" fill="rgba(0,0,0,0.22)">|o o|</text>
-                    <text x="53" y="66" fontFamily="'Courier New', monospace" fontSize="7.5" fill="rgba(0,0,0,0.18)">|---|</text>
-                    <text x="53" y="82" fontFamily="'Courier New', monospace" fontSize="7" fill="rgba(0,0,0,0.13)">+---+</text>
+                  <svg viewBox="0 0 90 110" width="70" height="88" fill="none">
+                    {/* center divider */}
+                    <line x1="45" y1="4" x2="45" y2="106" stroke="#7B5CF0" strokeWidth="0.5" strokeDasharray="2.5 2"/>
+
+                    {/* left half — clean minimal human outline */}
+                    <path d="M45,8 C31,8 20,17 18,38 C16,53 20,70 30,82 L45,85"
+                          stroke="#0E0E0E" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                    {/* left ear */}
+                    <path d="M18,43 C13,46 13,52 18,54" stroke="#0E0E0E" strokeWidth="1.3" strokeLinecap="round"/>
+                    {/* left neck */}
+                    <line x1="35" y1="85" x2="35" y2="100" stroke="#0E0E0E" strokeWidth="1.3"/>
+                    <line x1="45" y1="100" x2="35" y2="100" stroke="#0E0E0E" strokeWidth="1.3"/>
+
+                    {/* right half — dissolves into bracket/grid chars */}
+                    <text x="46" y="22" fontFamily="'Courier New', monospace" fontSize="7" fill="rgba(0,0,0,0.22)">/ \</text>
+                    <text x="46" y="33" fontFamily="'Courier New', monospace" fontSize="7" fill="rgba(0,0,0,0.20)">[   ]</text>
+                    <text x="47" y="44" fontFamily="'Courier New', monospace" fontSize="6.5" fill="rgba(0,0,0,0.17)">|   |</text>
+                    <text x="47" y="55" fontFamily="'Courier New', monospace" fontSize="6.5" fill="rgba(0,0,0,0.14)">|___|</text>
+                    <text x="48" y="66" fontFamily="'Courier New', monospace" fontSize="6" fill="rgba(0,0,0,0.11)">+---+</text>
+                    <text x="48" y="76" fontFamily="'Courier New', monospace" fontSize="5.5" fill="rgba(0,0,0,0.08)">|   |</text>
+                    <text x="49" y="86" fontFamily="'Courier New', monospace" fontSize="5" fill="rgba(0,0,0,0.06)">+--+</text>
                   </svg>
                 </div>
 
+                {/* Passport fields */}
                 <div ref={passportFieldsRef} className="lp-pp-fields">
                   <div className="lp-pp-field">
                     <span className="lp-pp-lbl">Document Type</span>
-                    <span className="lp-pp-val">Voice_ID</span>
+                    <span className="lp-pp-val">Voice_Passport</span>
                   </div>
                   <div className="lp-pp-field">
-                    <span className="lp-pp-lbl">Issuing Auth</span>
-                    <span className="lp-pp-val">Verbaly</span>
+                    <span className="lp-pp-lbl">Holder</span>
+                    <span className="lp-pp-val">[First]&nbsp;[Last]</span>
                   </div>
                   <div className="lp-pp-field">
-                    <span className="lp-pp-lbl">Voice Owner</span>
-                    <span className="lp-pp-val">[you]</span>
+                    <span className="lp-pp-lbl">Origin</span>
+                    <span className="lp-pp-val">AI_Generated_Text</span>
                   </div>
                   <div className="lp-pp-field">
-                    <span className="lp-pp-lbl">Style</span>
-                    <span className="lp-pp-val">Sharp&nbsp;·&nbsp;Direct&nbsp;·&nbsp;Human</span>
+                    <span className="lp-pp-lbl">Destination</span>
+                    <span className="lp-pp-val lp-pp-val-accent">Your_Voice</span>
+                  </div>
+                  <div className="lp-pp-field">
+                    <span className="lp-pp-lbl">Detection Risk</span>
+                    <span className="lp-pp-val lp-pp-val-accent">None</span>
                   </div>
                   <div className="lp-pp-field">
                     <span className="lp-pp-lbl">Match Score</span>
                     <span className="lp-pp-val lp-pp-val-accent">94%</span>
                   </div>
                   <div className="lp-pp-field">
+                    <span className="lp-pp-lbl">Valid For</span>
+                    <span className="lp-pp-val">Unlimited&nbsp;Rewrites</span>
+                  </div>
+                  <div className="lp-pp-field">
                     <span className="lp-pp-lbl">Status</span>
-                    <span className="lp-pp-val lp-pp-val-accent">Authenticated ✓</span>
+                    <span className="lp-pp-val lp-pp-val-accent">Cleared&nbsp;for&nbsp;Departure&nbsp;✓</span>
                   </div>
                 </div>
               </div>
@@ -730,53 +713,33 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right — code snippet cards */}
+          {/* Right — voice dimensions */}
           <div className="lp-id-right">
-
-            <div className="lp-code-card">
-              <div className="lp-code-card-hdr">
-                <span className="lp-code-card-hdot" aria-hidden="true" />
-                <span className="lp-code-card-fname">// voice_profile.js</span>
-              </div>
-              <div className="lp-code-card-body">
-                <div className="lp-code-line"><span className="lp-code-key">&gt;</span> analyzing sentence_rhythm<span className="lp-code-val">...</span> done</div>
-                <div className="lp-code-line"><span className="lp-code-key">&gt;</span> avg_sentence_len: <span className="lp-code-val">11.4 words</span></div>
-                <div className="lp-code-line"><span className="lp-code-key">&gt;</span> tone: <span className="lp-code-str">&quot;direct, no fluff&quot;</span></div>
-                <div className="lp-code-line"><span className="lp-code-key">&gt;</span> hedge_words: <span className="lp-code-val">0.3%</span> <span className="lp-code-str">// very low</span></div>
-                <div className="lp-code-line"><span className="lp-code-key">&gt;</span> voice_model: <span className="lp-code-val">built ✓</span></div>
-              </div>
+            <p className="lp-feat-eyebrow">Voice Dimensions</p>
+            <div className="lp-feat-list">
+              {[
+                { lbl: 'Punctuation Patterns',   desc: 'Em-dash usage, ellipsis frequency, comma rhythm' },
+                { lbl: 'Sentence Structure',      desc: 'Fragment tolerance, average length, clause depth' },
+                { lbl: 'Vocabulary Fingerprint',  desc: 'Word choice, formality level, preferred synonyms' },
+                { lbl: 'Tone Markers',            desc: 'Directness, humor index, hedging frequency' },
+                { lbl: 'Opening Hooks',           desc: 'How you start sentences and paragraphs' },
+                { lbl: 'Passive Voice Ratio',     desc: 'How often you let the subject act vs. be acted on' },
+              ].map(({ lbl, desc }) => (
+                <div key={lbl} className="lp-feat-item">
+                  <div className="lp-feat-lbl">{lbl}</div>
+                  <div className="lp-feat-desc">{desc}</div>
+                </div>
+              ))}
             </div>
-
-            <div className="lp-code-card">
-              <div className="lp-code-card-hdr">
-                <span className="lp-code-card-hdot" aria-hidden="true" />
-                <span className="lp-code-card-fname">// style_dna.json</span>
-              </div>
-              <div className="lp-code-card-body">
-                <div className="lp-code-line">{'{'}</div>
-                <div className="lp-code-line">&nbsp;&nbsp;<span className="lp-code-str">&quot;punctuation&quot;</span>: <span className="lp-code-str">&quot;em-dash heavy&quot;</span>,</div>
-                <div className="lp-code-line">&nbsp;&nbsp;<span className="lp-code-str">&quot;openings&quot;</span>: <span className="lp-code-str">&quot;question or contrast&quot;</span>,</div>
-                <div className="lp-code-line">&nbsp;&nbsp;<span className="lp-code-str">&quot;match_score&quot;</span>: <span className="lp-code-val">94</span></div>
-                <div className="lp-code-line">{'}'}</div>
-              </div>
-            </div>
-
-            <div className="lp-code-card">
-              <div className="lp-code-card-hdr">
-                <span className="lp-code-card-hdot" aria-hidden="true" />
-                <span className="lp-code-card-fname">// rewrite.log</span>
-              </div>
-              <div className="lp-code-card-body">
-                <div className="lp-code-line"><span className="lp-code-key">&gt;</span> input: <span className="lp-code-str">AI_generated_text.txt</span></div>
-                <div className="lp-code-line"><span className="lp-code-key">&gt;</span> applying voice_model<span className="lp-code-val">...</span></div>
-                <div className="lp-code-line"><span className="lp-code-key">&gt;</span> humanized: <span className="lp-code-val">true</span></div>
-                <div className="lp-code-line"><span className="lp-code-key">&gt;</span> output: <span className="lp-code-str">sounds_like_you.txt</span> <span className="lp-code-val">✓</span></div>
-              </div>
-            </div>
-
           </div>
+
         </div>
       </section>
+
+      {/* ── NO CREDIT CARD STRIP ─── */}
+      <div className="lp-noccard" aria-label="No credit card ever">
+        <p className="lp-noccard-text">No credit card. Ever.</p>
+      </div>
 
       {/* ── DEMO ─── */}
       <section className="lp-demo" aria-label="See the difference">
