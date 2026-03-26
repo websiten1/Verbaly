@@ -477,6 +477,7 @@ export default function LandingPage() {
           <span className="lp-badge">Pre-Launch</span>
           <h1 className="lp-verbaly">Verbaly</h1>
           <div ref={twRef} className="lp-tw" aria-live="polite" />
+          <p className="lp-form-sub" style={{ marginTop: '18px' }}>Built for students who write with AI.</p>
         </div>
 
         {/* Section B — waitlist strip */}
