@@ -95,13 +95,13 @@ export default function RewritePage() {
       if (!user) { router.push('/login'); return }
       setUserId(user.id)
 
-      const [profileRes, traitsRes] = await Promise.all([
+      const [profileRes, samplesRes] = await Promise.all([
         supabase.from('profiles').select('onboarding_complete').eq('user_id', user.id).maybeSingle(),
-        supabase.from('style_traits').select('trait_name').eq('user_id', user.id).limit(1),
+        supabase.from('writing_samples').select('id').eq('user_id', user.id).limit(1),
       ])
 
       const onboardingOk = profileRes.data?.onboarding_complete === true
-      setStyleProfileReady((traitsRes.data ?? []).length > 0)
+      setStyleProfileReady((samplesRes.data ?? []).length > 0)
 
       if (onboardingOk) {
         const key = 'vbTooltipSeen_rewrite'
@@ -116,7 +116,7 @@ export default function RewritePage() {
     if (!originalText.trim()) { setError('Enter some text to rewrite first.'); return }
     if (!userId)               { setError('You need to be logged in.'); return }
     if (!styleProfileReady) {
-      setError('Upload writing samples first — Verbaly needs them to learn your voice. Go to Style Profile →')
+      setError('No writing samples found. Go to Style Profile → and upload some writing samples first.')
       return
     }
     setError(null); setWarning(null); setLoading(true); setRewrittenText(''); setMatchScore(null)

@@ -111,12 +111,6 @@ const CSS = `
     animation: lp-blink .7s step-end infinite;
   }
 
-  /* ── strip divider ─────────────────────────── */
-  .lp-strip-divider {
-    height: 1px; background: #E0E0E0;
-    margin: 0 clamp(16px, 4vw, 48px);
-  }
-
   /* ── Section B — waitlist strip ────────────── */
   .lp-strip-b {
     display: flex; flex-direction: column;
@@ -161,7 +155,26 @@ const CSS = `
   .lp-counter {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 10px; text-transform: uppercase; letter-spacing: .2em;
-    color: #00FF87; text-align: center;
+    color: #7B5CF0; text-align: center;
+  }
+
+  /* ── mobile sticky waitlist bar ────────────── */
+  .lp-sticky-bar {
+    display: none;
+  }
+  @media (max-width: 768px) {
+    .lp-sticky-bar {
+      display: block;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+      border-top: 1px solid #E0E0E0;
+    }
+    .lp-sticky-btn {
+      width: 100%; padding: 16px;
+      background: #0E0E0E; color: #FFFFFF; border: none;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 11px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: .16em; cursor: pointer;
+    }
   }
 
   /* ── demo section ──────────────────────────── */
@@ -464,8 +477,6 @@ export default function LandingPage() {
           <div ref={twRef} className="lp-tw" aria-live="polite" />
         </div>
 
-        <div className="lp-strip-divider" aria-hidden="true" />
-
         {/* Section B — waitlist strip */}
         <div className="lp-strip-b">
           <p className="lp-form-heading">Join the Waitlist</p>
@@ -491,7 +502,7 @@ export default function LandingPage() {
             ) : (
               <form className="lp-form-row" onSubmit={handleSubmit} noValidate>
                 <input
-                  ref={emailRef} className="lp-input" type="email"
+                  ref={emailRef} id="lp-email-input" className="lp-input" type="email"
                   placeholder="Your email address" autoComplete="email"
                   required aria-label="Email address"
                 />
@@ -508,6 +519,20 @@ export default function LandingPage() {
         </div>
 
       </main>
+
+      {/* ── MOBILE STICKY BAR ─── */}
+      <div className="lp-sticky-bar" aria-hidden="true">
+        <button
+          className="lp-sticky-btn"
+          onClick={() => {
+            const el = document.getElementById('lp-email-input')
+            el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            el?.focus()
+          }}
+        >
+          Join Waitlist →
+        </button>
+      </div>
 
       {/* ── DEMO ─── */}
       <section className="lp-demo" aria-label="See the difference">
