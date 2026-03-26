@@ -447,14 +447,14 @@ export default function LandingPage() {
           <p className="lp-form-heading">Join the Waitlist</p>
           <p className="lp-form-sub">Free Pro Access &middot; First 500 People</p>
           <div id="lp-waitlist" className="lp-form-block">
-            <div style={{ overflow: 'hidden', height: '80px', width: '100%', maxWidth: '560px' }}>
+            <div style={{ width: '100%', maxWidth: '560px', margin: '0 auto', overflow: 'visible', minHeight: '150px' }}>
               <iframe
                 src="https://subscribe-forms.beehiiv.com/3d875e43-6c72-4ed0-af92-0d538ccb2975"
                 className="beehiiv-embed"
                 data-test-id="beehiiv-embed"
                 frameBorder={0}
                 scrolling="no"
-                style={{ width: '100%', maxWidth: '560px', height: '80px', margin: 0, borderRadius: 0, backgroundColor: 'transparent', boxShadow: 'none' }}
+                style={{ width: '100%', maxWidth: '560px', height: '150px', minHeight: '150px', display: 'block', overflow: 'visible', border: 'none', background: 'transparent' }}
               />
             </div>
             <p className="lp-counter">&#10022;&nbsp;247 People Already Waiting</p>
