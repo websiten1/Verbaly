@@ -485,7 +485,7 @@ export default function LandingPage() {
                 </span>
               </div>
             ) : formState === 'error' ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#1a0000', padding: '12px 16px', marginBottom: '10px' }}>
+              <div onClick={() => setFormState('idle')} style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#1a0000', padding: '12px 16px', marginBottom: '10px', cursor: 'pointer' }}>
                 <span style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", fontSize: '11px', textTransform: 'uppercase' as const, letterSpacing: '.12em', color: '#FF4444', fontWeight: '500' }}>
                   Something went wrong. Try again.
                 </span>
