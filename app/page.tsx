@@ -53,63 +53,149 @@ const CSS = `
   }
   .lp-navbtn:hover { background: #0E0E0E; color: #FFFFFF; }
 
-  /* ── hero ──────────────────────────────────── */
+  /* ── hero — two-column ─────────────────────── */
   .lp-main {
     background: #FFFFFF;
-    display: flex; flex-direction: column;
-    align-items: center; text-align: center;
-    padding: 110px clamp(16px, 4vw, 32px) 80px;
+    display: flex; flex-direction: row;
+    align-items: center; min-height: 100vh;
+    padding: 80px clamp(16px, 4vw, 48px) 60px;
+    gap: clamp(20px, 4vw, 60px);
   }
 
   /* eyebrow */
   .lp-eyebrow {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 11px; font-weight: 400; text-transform: uppercase;
-    letter-spacing: .3em; color: rgba(0,0,0,0.35);
-    margin-bottom: 32px;
+    font-size: 10px; font-weight: 400; text-transform: uppercase;
+    letter-spacing: .3em; color: rgba(0,0,0,0.3);
+    margin-bottom: 24px;
     opacity: 0; animation: lp-fadein .6s ease .1s forwards;
   }
 
-  /* giant title — solid black */
-  .lp-title {
-    font-family: 'Courier Prime', 'Courier New', monospace;
-    font-size: clamp(56px, 13vw, 180px);
-    font-weight: 700; text-transform: uppercase;
-    letter-spacing: -.025em; line-height: .9;
-    color: #0E0E0E;
-    margin-bottom: 20px; max-width: 100%;
-    opacity: 0; animation: lp-fadein .5s ease .05s forwards;
+  /* left column */
+  .lp-hero-left {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; align-items: flex-start;
   }
-  .lp-title .lp-c {
-    display: inline-block; opacity: 0; transform: translateY(-12px);
-    transition: opacity .09s ease, transform .09s ease;
-  }
-  .lp-title .lp-c.in { opacity: 1; transform: translateY(0); }
 
-  /* subtitle */
+  /* CLI boot sequence */
+  .lp-cli {
+    margin-bottom: 22px; min-height: 88px;
+    opacity: 0; transition: opacity .3s ease;
+  }
+  .lp-cli.in { opacity: 1; }
+  .lp-cli-line {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 12px; color: rgba(0,0,0,0.35);
+    letter-spacing: .02em; line-height: 2;
+    white-space: nowrap;
+  }
+  .lp-cli-cur {
+    display: inline-block; width: 7px; height: 13px;
+    background: #7B5CF0; vertical-align: middle; margin-left: 3px;
+    animation: lp-blink .7s step-end infinite;
+  }
+
+  /* final headline */
+  .lp-headline {
+    opacity: 0; transform: translateY(10px);
+    transition: opacity .5s ease, transform .5s ease;
+    margin-bottom: 14px;
+  }
+  .lp-headline.in { opacity: 1; transform: translateY(0); }
+  .lp-hl-main {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: clamp(32px, 4.8vw, 68px);
+    font-weight: 700; color: #0E0E0E;
+    letter-spacing: -.025em; line-height: .95;
+    text-transform: uppercase; display: block;
+  }
+  .lp-hl-code {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: clamp(12px, 1.5vw, 19px); font-weight: 400;
+    color: #7B5CF0; letter-spacing: .02em;
+    display: block; margin-top: 10px;
+  }
+  .lp-hl-tick { opacity: 0.4; }
+
+  /* subheadline */
   .lp-sub {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: clamp(10px, 1.4vw, 13px); font-weight: 400;
-    text-transform: uppercase; letter-spacing: .35em;
-    color: rgba(0,0,0,0.4); margin-bottom: 20px;
-    opacity: 0; transition: opacity .6s ease;
+    font-size: clamp(10px, .95vw, 12px); color: rgba(0,0,0,0.45);
+    line-height: 1.8; letter-spacing: .03em;
+    max-width: 400px; margin-bottom: 28px;
+    opacity: 0; transition: opacity .5s ease .1s;
   }
   .lp-sub.in { opacity: 1; }
-
-  /* typewriter cycler — purple */
-  .lp-cycler {
-    display: flex; align-items: center; justify-content: center;
+  .lp-sub-code {
+    background: rgba(123,92,240,0.08); color: #7B5CF0;
+    padding: 1px 5px; border-radius: 2px;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: clamp(11px, 1.4vw, 13px); font-weight: 400;
-    text-transform: uppercase; letter-spacing: .14em;
-    color: #7B5CF0; min-height: 20px; margin-bottom: 36px;
-    opacity: 0; transition: opacity .4s ease;
   }
-  .lp-cycler.in { opacity: 1; }
-  .lp-vcur {
-    display: inline-block; width: 2px; height: 13px;
-    background: #7B5CF0; margin-left: 2px; vertical-align: middle;
-    animation: lp-blink .7s step-end infinite;
+
+  /* right column — terminal panel */
+  .lp-hero-right {
+    flex: 1; min-width: 0;
+    opacity: 0; transform: translateX(16px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .lp-hero-right.in { opacity: 1; transform: translateX(0); }
+
+  .lp-panel { border: 1px solid #E0E0E0; }
+  .lp-panel-bar {
+    background: #F5F5F5; padding: 7px 12px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #E0E0E0;
+  }
+  .lp-panel-dots { display: flex; gap: 5px; flex-shrink: 0; }
+  .lp-pdot { width: 9px; height: 9px; border-radius: 50%; }
+  .lp-pdot-r { background: #FF5F57; }
+  .lp-pdot-y { background: #FFBD2E; }
+  .lp-pdot-g { background: #28C840; }
+  .lp-panel-fname {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 9px; color: rgba(0,0,0,0.3); letter-spacing: .12em;
+    text-transform: uppercase; margin-left: auto;
+  }
+  .lp-pane-ai {
+    background: #0E0E0E;
+    padding: clamp(12px, 1.8vw, 20px) clamp(14px, 2vw, 22px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .lp-pane-you {
+    background: #FFFFFF;
+    padding: clamp(12px, 1.8vw, 20px) clamp(14px, 2vw, 22px);
+  }
+  .lp-pane-tag {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 9px; text-transform: uppercase; letter-spacing: .18em;
+    margin-bottom: 8px;
+  }
+  .lp-pane-tag-muted  { color: rgba(255,255,255,0.2); }
+  .lp-pane-tag-active { color: #7B5CF0; }
+  .lp-pane-hdr {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 8px;
+  }
+  .lp-pane-body-ai {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: clamp(10px, 1vw, 12px); line-height: 1.65;
+    color: rgba(255,255,255,0.18);
+  }
+  .lp-pane-body-you {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: clamp(10px, 1vw, 12px); line-height: 1.65;
+    color: #0E0E0E;
+  }
+  .lp-pane-cur {
+    display: inline-block; width: 2px; height: 12px;
+    background: #7B5CF0; vertical-align: middle; margin-left: 1px;
+    animation: lp-blink .8s step-end infinite;
+  }
+  .lp-pane-badge {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 9px; text-transform: uppercase; letter-spacing: .1em;
+    color: #FFFFFF; background: #7B5CF0;
+    padding: 2px 7px; border-radius: 2px; white-space: nowrap;
   }
 
   /* form block */
@@ -297,6 +383,13 @@ const CSS = `
   @keyframes lp-count-up   { from{opacity:0;transform:translateY(7px);} to{opacity:1;transform:translateY(0);} }
 
   /* ── responsive ────────────────────────────── */
+  @media (max-width: 860px) {
+    .lp-main { flex-direction: column; padding-top: 90px; gap: 36px; min-height: auto; padding-bottom: 60px; }
+    .lp-hero-left { align-items: center; text-align: center; }
+    .lp-sub { max-width: 100%; }
+    .lp-hero-right { width: 100%; transform: translateX(0); }
+    .lp-form-block { width: 100%; }
+  }
   @media (max-width: 640px) {
     .lp-browser-body { flex-direction: column; }
     .lp-col + .lp-col { border-left: none; border-top: 1px solid #E0E0E0; }
@@ -309,20 +402,21 @@ const CSS = `
   }
 `
 
-const PHRASES = [
-  "YOUR VOICE. NOT A ROBOT'S.",
-  "YOUR WORDS. YOUR STYLE.",
-  "AI THAT SOUNDS LIKE YOU.",
+const CLI_LINES = [
+  '> init verbaly.engine',
+  '> voice_match: 94%',
+  '> style: sharp, direct, human',
+  '> output: ready.',
 ]
 
 export default function LandingPage() {
-  const navRef    = useRef<HTMLElement>(null)
-  const curRef    = useRef<HTMLDivElement>(null)
-  const titleRef  = useRef<HTMLHeadingElement>(null)
-  const subRef    = useRef<HTMLParagraphElement>(null)
-  const cyclerRef = useRef<HTMLDivElement>(null)
-  const cyclerTxt = useRef<HTMLSpanElement>(null)
-  const emailRef  = useRef<HTMLInputElement>(null)
+  const navRef      = useRef<HTMLElement>(null)
+  const curRef      = useRef<HTMLDivElement>(null)
+  const cliRef      = useRef<HTMLDivElement>(null)
+  const headlineRef = useRef<HTMLDivElement>(null)
+  const subRef      = useRef<HTMLParagraphElement>(null)
+  const rightRef    = useRef<HTMLDivElement>(null)
+  const emailRef    = useRef<HTMLInputElement>(null)
 
   const [joinState, setJoinState] = useState<'idle' | 'success'>('idle')
   const [count,     setCount]     = useState(247)
@@ -368,53 +462,53 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  /* title → subtitle → cycler chain */
+  /* CLI boot → headline reveal */
   useEffect(() => {
-    const title = titleRef.current
-    if (!title) return
-    title.innerHTML = ''
-    ;[...'VERBALY'].forEach((ch, i) => {
-      const s = document.createElement('span')
-      s.className = 'lp-c'
-      s.textContent = ch
-      title.appendChild(s)
-      setTimeout(() => s.classList.add('in'), 200 + i * 50)
-    })
-    const afterTitle = 200 + 7 * 50 + 120
-    setTimeout(() => {
-      subRef.current?.classList.add('in')
-      setTimeout(startCycler, 400)
-    }, afterTitle)
+    const cliEl = cliRef.current
+    const hl    = headlineRef.current
+    const sub   = subRef.current
+    const right = rightRef.current
+    if (!cliEl) return
+    const c: HTMLDivElement = cliEl
 
-    function startCycler() {
-      const wrap = cyclerRef.current
-      const txt  = cyclerTxt.current
-      if (!wrap || !txt) return
-      wrap.classList.add('in')
-      const t = txt
-      let pi = 0, ci = 0, del = false, paused = false
+    c.classList.add('in')
+
+    function typeLine(idx: number, onDone: () => void) {
+      if (idx >= CLI_LINES.length) { onDone(); return }
+      const text = CLI_LINES[idx]
+      const div  = document.createElement('div')
+      div.className = 'lp-cli-line'
+      const txt = document.createElement('span')
+      const cur = document.createElement('span')
+      cur.className = 'lp-cli-cur'
+      div.appendChild(txt)
+      div.appendChild(cur)
+      c.appendChild(div)
+      let i = 0
       function tick() {
-        if (paused) return
-        const p = PHRASES[pi]
-        if (!del) {
-          t.textContent = p.slice(0, ++ci)
-          if (ci === p.length) {
-            paused = true
-            setTimeout(() => { paused = false; del = true; tick() }, 2000)
-            return
-          }
-          setTimeout(tick, 38)
-        } else {
-          t.textContent = p.slice(0, --ci)
-          if (ci === 0) {
-            del = false; pi = (pi + 1) % PHRASES.length
-            setTimeout(tick, 400); return
-          }
-          setTimeout(tick, 20)
-        }
+        txt.textContent = text.slice(0, ++i)
+        if (i < text.length) setTimeout(tick, 26)
+        else { cur.remove(); setTimeout(() => typeLine(idx + 1, onDone), 180) }
       }
-      setTimeout(tick, 200)
+      tick()
     }
+
+    setTimeout(() => {
+      typeLine(0, () => {
+        setTimeout(() => {
+          c.style.transition = 'opacity .35s ease'
+          c.style.opacity = '0'
+          setTimeout(() => {
+            c.style.display = 'none'
+            hl?.classList.add('in')
+            setTimeout(() => {
+              sub?.classList.add('in')
+              right?.classList.add('in')
+            }, 200)
+          }, 350)
+        }, 700)
+      })
+    }, 400)
   }, [])
 
   /* demo browser reveal */
@@ -478,62 +572,109 @@ export default function LandingPage() {
       {/* ── HERO ─── */}
       <main className="lp-main" role="main">
 
-        <p className="lp-eyebrow">Pre-Launch &middot; Turn AI Text Into Your Voice</p>
+        {/* Left column */}
+        <div className="lp-hero-left">
 
-        <h1 ref={titleRef} className="lp-title" aria-label="Verbaly" />
+          <p className="lp-eyebrow">Pre-Launch &middot; Turn AI Text Into Your Voice</p>
 
-        <p ref={subRef} className="lp-sub">Everything Sounds Like You</p>
+          {/* CLI boot sequence */}
+          <div ref={cliRef} className="lp-cli" aria-live="polite" />
 
-        <div ref={cyclerRef} className="lp-cycler" aria-live="polite" aria-atomic="true">
-          <span ref={cyclerTxt} />
-          <span className="lp-vcur" aria-hidden="true" />
-        </div>
+          {/* Final headline */}
+          <div ref={headlineRef} className="lp-headline" aria-label="Your voice. Rendered perfectly.">
+            <span className="lp-hl-main">Your voice.</span>
+            <span className="lp-hl-code">
+              <span className="lp-hl-tick">`</span>rendered perfectly.<span className="lp-hl-tick">`</span>
+            </span>
+          </div>
 
-        <div className="lp-form-block">
-          <p className="lp-form-heading">Join the Waitlist</p>
-          <div className="lp-form-rule" aria-hidden="true" />
-          <p className="lp-form-sub">Free Pro Access &middot; First 500 People</p>
+          {/* Subheadline */}
+          <p ref={subRef} className="lp-sub">
+            Verbaly analyzes your <span className="lp-sub-code">writing_patterns</span> and rewrites any AI&nbsp;text to sound unmistakably like you.
+          </p>
 
-          {joinState === 'success' ? (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '10px',
-              backgroundColor: '#0E0E0E', padding: '13px 18px', marginBottom: '12px',
-              borderRadius: '2px',
-              animation: 'lp-success-in 0.4s ease-out forwards',
-            }}>
-              <span style={{
-                color: '#CCFF00', fontSize: '15px', lineHeight: 1, flexShrink: 0,
-                display: 'inline-block',
-                animation: 'lp-check-pulse 0.5s ease-out 0.15s both',
-              }}>✓</span>
-              <span style={{
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                fontSize: '11px', textTransform: 'uppercase' as const,
-                letterSpacing: '.12em', color: '#CCFF00', fontWeight: '500',
-              }}>You&apos;re in. Welcome to the waitlist.</span>
-            </div>
-          ) : (
-            <>
+          {/* Waitlist form */}
+          <div className="lp-form-block">
+            <p className="lp-form-heading">Join the Waitlist</p>
+            <div className="lp-form-rule" aria-hidden="true" />
+            <p className="lp-form-sub">Free Pro Access &middot; First 500 People</p>
+
+            {joinState === 'success' ? (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                backgroundColor: '#0E0E0E', padding: '13px 18px', marginBottom: '12px',
+                borderRadius: '2px',
+                animation: 'lp-success-in 0.4s ease-out forwards',
+              }}>
+                <span style={{
+                  color: '#CCFF00', fontSize: '15px', lineHeight: 1, flexShrink: 0,
+                  display: 'inline-block',
+                  animation: 'lp-check-pulse 0.5s ease-out 0.15s both',
+                }}>✓</span>
+                <span style={{
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                  fontSize: '11px', textTransform: 'uppercase' as const,
+                  letterSpacing: '.12em', color: '#CCFF00', fontWeight: '500',
+                }}>You&apos;re in. Welcome to the waitlist.</span>
+              </div>
+            ) : (
               <form className="lp-form-row" onSubmit={handleSubmit} noValidate>
                 <input
                   ref={emailRef} className="lp-input" type="email"
                   placeholder="Your email address" autoComplete="email"
                   required aria-label="Email address"
                 />
-                <button className="lp-btn" type="submit">
-                  Join →
-                </button>
+                <button className="lp-btn" type="submit">Join →</button>
               </form>
-            </>
-          )}
+            )}
 
-          <p className="lp-counter" aria-label={`${count} people already waiting`}>
-            &#10022;&nbsp;<span
-              key={count}
-              style={{ display: 'inline-block', animation: 'lp-count-up 0.35s ease-out' }}
-            >{count}</span> People Already Waiting
-          </p>
-        </div>
+            <p className="lp-counter" aria-label={`${count} people already waiting`}>
+              &#10022;&nbsp;<span
+                key={count}
+                style={{ display: 'inline-block', animation: 'lp-count-up 0.35s ease-out' }}
+              >{count}</span> People Already Waiting
+            </p>
+          </div>
+
+        </div>{/* /lp-hero-left */}
+
+        {/* Right column — split terminal panel */}
+        <div ref={rightRef} className="lp-hero-right">
+          <div className="lp-panel">
+            <div className="lp-panel-bar" aria-hidden="true">
+              <div className="lp-panel-dots">
+                <span className="lp-pdot lp-pdot-r" />
+                <span className="lp-pdot lp-pdot-y" />
+                <span className="lp-pdot lp-pdot-g" />
+              </div>
+              <span className="lp-panel-fname">verbaly_output.txt</span>
+            </div>
+
+            {/* AI pane */}
+            <div className="lp-pane-ai">
+              <div className="lp-pane-tag lp-pane-tag-muted">// AI_OUTPUT.txt</div>
+              <p className="lp-pane-body-ai">
+                In today&rsquo;s competitive landscape, leveraging cutting-edge artificial
+                intelligence solutions enables organizations to optimize operational
+                efficiency and maximize stakeholder value through data-driven
+                decision-making processes.
+              </p>
+            </div>
+
+            {/* Your Voice pane */}
+            <div className="lp-pane-you">
+              <div className="lp-pane-hdr">
+                <span className="lp-pane-tag lp-pane-tag-active">// YOUR_VOICE.txt</span>
+                <span className="lp-pane-badge">94% match</span>
+              </div>
+              <p className="lp-pane-body-you">
+                Here&rsquo;s the thing &mdash; most companies are sitting on AI tools
+                and still wondering why nothing&rsquo;s getting faster. The data&rsquo;s
+                there. The decisions aren&rsquo;t.<span className="lp-pane-cur" aria-hidden="true" />
+              </p>
+            </div>
+          </div>
+        </div>{/* /lp-hero-right */}
 
       </main>
 
