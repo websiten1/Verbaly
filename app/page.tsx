@@ -49,6 +49,8 @@ const CSS = `
     transition: border-color .2s ease;
   }
   .lp-nav.scrolled { border-bottom-color: #E0E0E0; }
+  .lp-logo img { height: 32px; width: auto; display: block; }
+  @media (min-width: 769px) { .lp-logo img { height: 52px; } }
   .lp-logo {
     font-family: 'Courier Prime', 'Courier New', monospace;
     font-size: 13px; font-weight: 700; text-transform: uppercase;
@@ -461,7 +463,7 @@ export default function LandingPage() {
 
       {/* ── NAV ─── */}
       <nav ref={navRef} className="lp-nav" role="navigation">
-        <a href="/" className="lp-logo"><img src="/logo.png" alt="Verbaly" style={{ height: '32px', width: 'auto', display: 'block' }} /></a>
+        <a href="/" className="lp-logo"><img src="/logo.png" alt="Verbaly" /></a>
         <button className="lp-navbtn" onClick={() => emailRef.current?.focus()} aria-label="Join the waitlist">
           Join Waitlist
         </button>
