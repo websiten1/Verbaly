@@ -170,7 +170,7 @@ const CSS = `
     }
     .lp-sticky-btn {
       width: 100%; padding: 16px;
-      background: #C8FF00; color: #000000; border: none;
+      background: #000000; color: #FFFFFF; border: none;
       font-family: 'JetBrains Mono', 'Courier New', monospace;
       font-size: 11px; font-weight: 500; text-transform: uppercase;
       letter-spacing: .16em; cursor: pointer;
@@ -461,7 +461,7 @@ export default function LandingPage() {
 
       {/* ── NAV ─── */}
       <nav ref={navRef} className="lp-nav" role="navigation">
-        <a href="/" className="lp-logo">Verbaly</a>
+        <a href="/" className="lp-logo"><img src="/logo.png" alt="Verbaly" style={{ height: '32px', width: 'auto', display: 'block' }} /></a>
         <button className="lp-navbtn" onClick={() => emailRef.current?.focus()} aria-label="Join the waitlist">
           Join Waitlist
         </button>

@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Verbaly — Sounds Like You",
   description:
     "Verbaly learns your unique voice from your own writing and transforms any AI-generated text to sound unmistakably, authentically like you.",
+  icons: { icon: '/favicon.png' },
 };
 
 export default function RootLayout({
